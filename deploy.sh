@@ -19,7 +19,7 @@ echo "--- Removing existing files"
 rm -rf dist/*
 
 echo "--- Generating site"
-NODE_ENV=production yarn build
+NODE_ENV=production yarn build --no-clean
 
 echo "--- Updating gh-pages branch"
 cd dist && git add --all && git commit -m "Publishing to gh-pages (publish.sh)"
