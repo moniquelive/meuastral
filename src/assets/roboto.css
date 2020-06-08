@@ -1,0 +1,55 @@
+/* roboto-100 - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'roboto';
+  font-style: normal;
+  font-weight: 100;
+  src: local('roboto thin'), local('roboto-thin'),
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-100.woff2') format('woff2'), /* chrome 26+, opera 23+, firefox 39+ */
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-100.woff') format('woff'); /* chrome 6+, firefox 3.6+, ie 9+, safari 5.1+ */
+}
+/* roboto-300 - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: local('roboto light'), local('roboto-light'),
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-300.woff2') format('woff2'), /* chrome 26+, opera 23+, firefox 39+ */
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-300.woff') format('woff'); /* chrome 6+, firefox 3.6+, ie 9+, safari 5.1+ */
+}
+/* roboto-regular - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('roboto'), local('roboto-regular'),
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff2') format('woff2'), /* chrome 26+, opera 23+, firefox 39+ */
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff') format('woff'); /* chrome 6+, firefox 3.6+, ie 9+, safari 5.1+ */
+}
+/* roboto-500 - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: local('roboto medium'), local('roboto-medium'),
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-500.woff2') format('woff2'), /* chrome 26+, opera 23+, firefox 39+ */
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-500.woff') format('woff'); /* chrome 6+, firefox 3.6+, ie 9+, safari 5.1+ */
+}
+/* roboto-700 - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('roboto bold'), local('roboto-bold'),
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-700.woff2') format('woff2'), /* chrome 26+, opera 23+, firefox 39+ */
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-700.woff') format('woff'); /* chrome 6+, firefox 3.6+, ie 9+, safari 5.1+ */
+}
+/* roboto-900 - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'roboto';
+  font-style: normal;
+  font-weight: 900;
+  src: local('roboto black'), local('roboto-black'),
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-900.woff2') format('woff2'), /* chrome 26+, opera 23+, firefox 39+ */
+  url('/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-900.woff') format('woff'); /* chrome 6+, firefox 3.6+, ie 9+, safari 5.1+ */
+}
+
