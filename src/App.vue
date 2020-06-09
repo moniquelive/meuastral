@@ -50,12 +50,14 @@
           <v-btn class="mx-2" fab dark small
                  color="primary"
                  target="_blank"
+                 rel="noreferrer"
                  href="https://www.facebook.com/meuastral/">
             <v-icon dark>mdi-facebook</v-icon>
           </v-btn>
           <v-btn class="mx-2" fab dark small
                  color="primary"
                  target="_blank"
+                 rel="noreferrer"
                  href="https://twitter.com/MeuAstral_Com">
             <v-icon dark>mdi-twitter</v-icon>
           </v-btn>
