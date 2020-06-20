@@ -22,8 +22,7 @@
                 &nbsp;<span>{{h.name}}&nbsp;<i class="caption">de {{h.from}} a {{h.to}}</i></span>
               </h4>
               <br>
-              <p :class="$vuetify.breakpoint.mdAndUp ? 'headline' : 'body-1'">
-                {{h.resume}}
+              <p :class="$vuetify.breakpoint.mdAndUp ? 'headline' : 'body-1'" v-html="$options.filters.decode(h.resume)">
               </p>
             </v-col>
           </v-row>
@@ -58,6 +57,13 @@
         current: 0,
       }
     },
+    filters: {
+      decode: (html) => {
+        const txt = document.createElement("textarea")
+        txt.innerHTML = html
+        return txt.value
+      },
+    },
     computed: {
       ...mapState(['horoscope', 'dob']),
     },
@@ -74,7 +80,7 @@
         const day = parseInt(splitDate[2])
         const month = parseInt(splitDate[1])
         return ranges.map(r => this.inInterval(day, month, r)).indexOf(true)
-      }
+      },
     },
     watch: {
       horoscope() {
