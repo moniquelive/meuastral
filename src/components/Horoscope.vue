@@ -14,7 +14,7 @@
                         <v-col cols="4">
                             <h2>{{h.name}}</h2>
                         </v-col>
-                        <v-col cols="8">
+                        <v-col class="d-none d-sm-block" cols="8">
                             <h3 class="font-italic">{{h.from}} a {{h.to}}</h3>
                         </v-col>
                     </v-row>
