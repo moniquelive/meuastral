@@ -1,6 +1,9 @@
 module Main exposing (..)
 
 import Browser
+import Date exposing (..)
+import DatePicker exposing (Msg(..))
+import DatePickerProps exposing (pickerProps)
 import Html
     exposing
         ( Html
@@ -20,7 +23,7 @@ import Html
         )
 import Html.Attributes exposing (alt, attribute, class, href, src, target)
 import Task
-import Time
+import Time exposing (Month(..), Weekday(..))
 
 
 
@@ -28,12 +31,27 @@ import Time
 
 
 type alias Model =
-    { year : Int }
+    { year : Int
+    , datePickerData : DatePicker.Model
+    , selectedDate : Maybe Date
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model 0, Cmd.none )
+    let
+        ( datePickerData, datePickerInitCmd ) =
+            DatePicker.init "my-datepicker-id"
+    in
+    ( { year = 0
+      , datePickerData = datePickerData
+      , selectedDate = Nothing
+      }
+    , Cmd.batch
+        [ Cmd.map DatePickerMsg datePickerInitCmd
+        , whatYearIsIt |> Task.perform GotYear
+        ]
+    )
 
 
 
@@ -44,7 +62,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { view = view
-        , init = \_ -> ( Model 2022, whatYearIsIt |> Task.perform GotYear )
+        , init = \_ -> init
         , update = update
         , subscriptions = always Sub.none
         }
@@ -61,6 +79,7 @@ whatYearIsIt =
 
 type Msg
     = GotYear Int
+    | DatePickerMsg DatePicker.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -68,6 +87,26 @@ update msg model =
     case msg of
         GotYear yyyy ->
             ( { model | year = yyyy }, Cmd.none )
+
+        DatePickerMsg datePickerMsg ->
+            DatePicker.update datePickerMsg model.datePickerData
+                -- set the data returned from datePickerUpdate. Don't discard the command!
+                |> (\( data, cmd ) ->
+                        ( { model | datePickerData = data }
+                        , Cmd.map DatePickerMsg cmd
+                        )
+                   )
+                -- and now we can respond to any internal messages we want
+                |> (\( newModel, cmd ) ->
+                        case datePickerMsg of
+                            SubmitClicked currentSelectedDate ->
+                                ( { newModel | selectedDate = Just currentSelectedDate }
+                                , cmd
+                                )
+
+                            _ ->
+                                ( newModel, cmd )
+                   )
 
 
 
@@ -80,11 +119,11 @@ view model =
         [ header [ class "w-full flex justify-center items-center border-b border-grey p-3" ]
             [ img [ class "h-28", src "logo.png", alt "logo" ] [] ]
         , main_ [ class "flex-1 overflow-y-scroll p-4 content-center", attribute "data-theme" "light" ]
-            [ dob
-            , userInfo
-            , horoscope
-            , bio
-            , comments
+            [ dob model
+            , userInfo model
+            , horoscope model
+            , bio model
+            , comments model
             ]
         , footer [ class "w-full border-t border-grey p-4 justify-between items-center flex" ]
             [ div []
@@ -106,38 +145,42 @@ view model =
         ]
 
 
-dob : Html Msg
-dob =
+dob : Model -> Html Msg
+dob model =
     section sectionAttributes
         [ sectionTitle "Data de Nascimento"
         , hr [] []
+        , DatePicker.view
+            model.datePickerData
+            pickerProps
+            |> Html.map DatePickerMsg
         ]
 
 
-userInfo : Html Msg
-userInfo =
+userInfo : Model -> Html Msg
+userInfo model =
     section sectionAttributes
         [ text "user info" ]
 
 
-horoscope : Html Msg
-horoscope =
+horoscope : Model -> Html Msg
+horoscope model =
     section sectionAttributes
         [ sectionTitle "Horóscopo"
         , hr [] []
         ]
 
 
-bio : Html Msg
-bio =
+bio : Model -> Html Msg
+bio model =
     section sectionAttributes
         [ sectionTitle "Biorritmo"
         , hr [] []
         ]
 
 
-comments : Html Msg
-comments =
+comments : Model -> Html Msg
+comments model =
     section sectionAttributes
         [ hr [] []
         , sectionTitle "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!"
