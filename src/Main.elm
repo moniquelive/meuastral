@@ -9,7 +9,6 @@ import Html
         ( Html
         , a
         , b
-        , button
         , div
         , footer
         , h2
@@ -23,7 +22,9 @@ import Html
         , span
         , text
         )
-import Html.Attributes exposing (alt, attribute, class, href, src, target)
+import Html.Attributes exposing (alt, attribute, class, href, id, src, target)
+import Http
+import Json.Decode as D
 import Task
 import Time exposing (Month(..), Weekday(..))
 
@@ -32,10 +33,18 @@ import Time exposing (Month(..), Weekday(..))
 ---- MODEL ----
 
 
+type alias Horoscope =
+    { id : String
+    , name : String
+    , resume : String
+    }
+
+
 type alias Model =
     { year : Int
     , datePickerData : DatePicker.Model
     , selectedDate : Maybe Date
+    , horoscopes : List Horoscope
     }
 
 
@@ -48,10 +57,15 @@ init =
     ( { year = 0
       , datePickerData = datePickerData
       , selectedDate = Nothing
+      , horoscopes = []
       }
     , Cmd.batch
         [ Cmd.map DatePickerMsg datePickerInitCmd
         , whatYearIsIt |> Task.perform GotYear
+        , Http.get
+            { url = "https://p1.trrsf.com/cengine/horoscopo/card-sign%3Fcountry=br&language=pt"
+            , expect = Http.expectJson GotHoroscope horoscopeDecoder
+            }
         ]
     )
 
@@ -82,6 +96,7 @@ whatYearIsIt =
 type Msg
     = GotYear Int
     | DatePickerMsg DatePicker.Msg
+    | GotHoroscope (Result Http.Error (List Horoscope))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -98,6 +113,18 @@ update msg model =
                         , Cmd.map DatePickerMsg cmd
                         )
                    )
+
+        GotHoroscope result ->
+            case result of
+                Err _ ->
+                    ( model, Cmd.none )
+
+                Ok horoscopes ->
+                    ( { model | horoscopes = horoscopes }, Cmd.none )
+
+
+
+---- VIEW ----
 
 
 view : Model -> Html Msg
@@ -130,6 +157,10 @@ view model =
             , div [] [ p [] [ text (String.fromInt model.year ++ " - "), b [] [ text "MeuAstral.com" ] ] ]
             ]
         ]
+
+
+
+---- VIEW Helpers ----
 
 
 dob : Model -> Html Msg
@@ -194,9 +225,43 @@ formatDob model =
 
 horoscope : Model -> Html Msg
 horoscope model =
+    let
+        indexHoroscope i h =
+            let
+                ii =
+                    String.fromInt (i + 1)
+            in
+            div [ id ("item" ++ ii), class "carousel-item w-full" ]
+                [ div []
+                    [ h2 [] [ text h.name ]
+                    , p [] [ text h.resume ]
+                    ]
+                ]
+
+        horoscopesList =
+            model.horoscopes |> List.indexedMap indexHoroscope
+
+        -- <div id="item1" class="carousel-item w-full">
+        --   <img src="https://api.lorem.space/image/car?w=800&h=200&hash=8B7BCDC2" class="w-full" />
+        -- </div>
+        indexMap i _ =
+            let
+                ii =
+                    String.fromInt (i + 1)
+            in
+            a [ href ("#item" ++ ii), class "btn btn-xs" ]
+                [ text ii ]
+
+        indexesList =
+            model.horoscopes |> List.indexedMap indexMap
+    in
     section sectionAttributes
         [ sectionTitle "Horóscopo"
         , hr [] []
+        , div []
+            [ div [ class "carousel w-full" ] horoscopesList
+            , div [ class "flex justify-center w-full py-2 gap-2" ] indexesList
+            ]
         ]
 
 
@@ -224,3 +289,19 @@ sectionAttributes =
 sectionTitle : String -> Html Msg
 sectionTitle title =
     h2 [ class "text-xl" ] [ text title ]
+
+
+
+---- JSON Processing ----
+
+
+horoscopeDecoder : D.Decoder (List Horoscope)
+horoscopeDecoder =
+    D.field "signs_list"
+        (D.list
+            (D.map3 Horoscope
+                (D.field "id" D.string)
+                (D.field "name" D.string)
+                (D.field "resume" D.string)
+            )
+        )
