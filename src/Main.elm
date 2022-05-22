@@ -9,6 +9,7 @@ import Html
         ( Html
         , a
         , b
+        , button
         , div
         , footer
         , h2
@@ -19,6 +20,7 @@ import Html
         , main_
         , p
         , section
+        , span
         , text
         )
 import Html.Attributes exposing (alt, attribute, class, href, src, target)
@@ -92,25 +94,10 @@ update msg model =
             DatePicker.update datePickerMsg model.datePickerData
                 -- set the data returned from datePickerUpdate. Don't discard the command!
                 |> (\( data, cmd ) ->
-                        ( { model | datePickerData = data }
+                        ( { model | datePickerData = data, selectedDate = data.selectedDate }
                         , Cmd.map DatePickerMsg cmd
                         )
                    )
-                -- and now we can respond to any internal messages we want
-                |> (\( newModel, cmd ) ->
-                        case datePickerMsg of
-                            SubmitClicked currentSelectedDate ->
-                                ( { newModel | selectedDate = Just currentSelectedDate }
-                                , cmd
-                                )
-
-                            _ ->
-                                ( newModel, cmd )
-                   )
-
-
-
----- VIEW ----
 
 
 view : Model -> Html Msg
@@ -150,17 +137,59 @@ dob model =
     section sectionAttributes
         [ sectionTitle "Data de Nascimento"
         , hr [] []
-        , DatePicker.view
-            model.datePickerData
-            pickerProps
-            |> Html.map DatePickerMsg
+        , div [ class "flex place-content-center pt-4" ]
+            [ DatePicker.view
+                model.datePickerData
+                pickerProps
+                |> Html.map DatePickerMsg
+            ]
         ]
 
 
 userInfo : Model -> Html Msg
 userInfo model =
     section sectionAttributes
-        [ text "user info" ]
+        [ div [ class "flex place-content-center" ]
+            [ div [ class "card w-96 bg-neutral shadow-xl" ]
+                [ div [ class "card-body text-neutral-content" ]
+                    [ p []
+                        [ text "As pessoas nascidas em "
+                        , span [ class "font-bold" ] [ formatDob model ]
+                        , text " possuem mais ou menos "
+                        , span [ class "font-bold" ] [ daysSince model ]
+                        , text " dias de vida."
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+
+daysSince : Model -> Html Msg
+daysSince model =
+    case model.selectedDate of
+        Nothing ->
+            text "..."
+
+        Just selectedDate ->
+            case model.datePickerData.today of
+                Nothing ->
+                    text "..."
+
+                Just today ->
+                    Date.diff Date.Days selectedDate today
+                        |> String.fromInt
+                        |> text
+
+
+formatDob : Model -> Html Msg
+formatDob model =
+    case model.selectedDate of
+        Nothing ->
+            text "..."
+
+        Just d ->
+            text <| Date.format "d/M/y" d
 
 
 horoscope : Model -> Html Msg
