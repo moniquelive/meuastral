@@ -40,7 +40,7 @@ export default new Vuex.Store({
   },
   actions: {
     fetchHoroscope({commit}) {
-      fetch("//p1.trrsf.com/cengine/horoscopo/card-sign?country=br&language=pt")
+      fetch("//www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false")
         .then(response => response.json())
         .then(json => json['signs_list'])
         .then(signs => signs.map(z => ({
