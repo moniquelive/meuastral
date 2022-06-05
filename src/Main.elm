@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Array
 import Browser
 import Date exposing (..)
 import DatePicker exposing (Msg(..))
@@ -8,6 +9,7 @@ import Html
     exposing
         ( Html
         , a
+        , article
         , b
         , div
         , footer
@@ -22,7 +24,8 @@ import Html
         , span
         , text
         )
-import Html.Attributes exposing (alt, attribute, class, href, id, src, target)
+import Html.Attributes exposing (alt, attribute, class, href, src, target)
+import Html.Events exposing (onClick)
 import Http
 import Json.Decode as D
 import Task
@@ -40,11 +43,17 @@ type alias Horoscope =
     }
 
 
+defaultHoroscope : Horoscope
+defaultHoroscope =
+    Horoscope "" "" ""
+
+
 type alias Model =
     { year : Int
     , datePickerData : DatePicker.Model
     , selectedDate : Maybe Date
     , horoscopes : List Horoscope
+    , selectedHoroscope : Horoscope
     }
 
 
@@ -58,12 +67,13 @@ init =
       , datePickerData = datePickerData
       , selectedDate = Nothing
       , horoscopes = []
+      , selectedHoroscope = defaultHoroscope
       }
     , Cmd.batch
         [ Cmd.map DatePickerMsg datePickerInitCmd
         , whatYearIsIt |> Task.perform GotYear
         , Http.get
-            { url = "https://p1.trrsf.com/cengine/horoscopo/card-sign%3Fcountry=br&language=pt"
+            { url = "https://www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false"
             , expect = Http.expectJson GotHoroscope horoscopeDecoder
             }
         ]
@@ -97,6 +107,7 @@ type Msg
     = GotYear Int
     | DatePickerMsg DatePicker.Msg
     | GotHoroscope (Result Http.Error (List Horoscope))
+    | SelectHoroscope Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -109,7 +120,7 @@ update msg model =
             DatePicker.update datePickerMsg model.datePickerData
                 -- set the data returned from datePickerUpdate. Don't discard the command!
                 |> (\( data, cmd ) ->
-                        ( { model | datePickerData = data, selectedDate = data.selectedDate }
+                        ( { model | selectedHoroscope = horoscopeFromDate data.selectedDate model.horoscopes, datePickerData = data, selectedDate = data.selectedDate }
                         , Cmd.map DatePickerMsg cmd
                         )
                    )
@@ -120,7 +131,66 @@ update msg model =
                     ( model, Cmd.none )
 
                 Ok horoscopes ->
-                    ( { model | horoscopes = horoscopes }, Cmd.none )
+                    ( { model | selectedHoroscope = horoscopeOrDefault 0 horoscopes, horoscopes = horoscopes }, Cmd.none )
+
+        SelectHoroscope index ->
+            ( { model | selectedHoroscope = horoscopeOrDefault index model.horoscopes }, Cmd.none )
+
+
+horoscopeFromDate : Maybe Date -> List Horoscope -> Horoscope
+horoscopeFromDate date horoscopes =
+    case date of
+        Nothing ->
+            defaultHoroscope
+
+        Just dt ->
+            let
+                year =
+                    Date.year dt
+
+                fcd =
+                    Date.fromCalendarDate
+
+                sf =
+                    Tuple.second >> Tuple.first
+
+                ss =
+                    Tuple.second >> Tuple.second
+
+                dateRanges =
+                    [ ( "aquarius", ( fcd year Jan 21, fcd year Feb 19 ) )
+                    , ( "pisces", ( fcd year Feb 20, fcd year Mar 20 ) )
+                    , ( "aries", ( fcd year Mar 21, fcd year Apr 20 ) )
+                    , ( "taurus", ( fcd year Apr 21, fcd year May 21 ) )
+                    , ( "gemini", ( fcd year May 22, fcd year Jun 21 ) )
+                    , ( "cancer", ( fcd year Jun 22, fcd year Jul 22 ) )
+                    , ( "leo", ( fcd year Jul 23, fcd year Aug 21 ) )
+                    , ( "virgo", ( fcd year Aug 22, fcd year Sep 23 ) )
+                    , ( "libra", ( fcd year Sep 24, fcd year Oct 23 ) )
+                    , ( "scorpio", ( fcd year Oct 24, fcd year Nov 22 ) )
+                    , ( "sagittarius", ( fcd year Nov 23, fcd year Dec 22 ) )
+                    , ( "capricorn", ( fcd year Dec 23, fcd year Dec 31 ) )
+                    , ( "capricorn", ( fcd year Jan 1, fcd year Jan 20 ) )
+                    ]
+            in
+            dateRanges
+                |> List.filter (\e -> Date.isBetween (sf e) (ss e) dt)
+                |> List.head
+                |> Maybe.map Tuple.first
+                |> Maybe.withDefault ""
+                |> (\id -> List.filter (\z -> z.id == id) horoscopes)
+                |> List.head
+                |> Maybe.withDefault
+                    defaultHoroscope
+
+
+horoscopeOrDefault : Int -> List Horoscope -> Horoscope
+horoscopeOrDefault index horoscopes =
+    horoscopes
+        |> Array.fromList
+        |> Array.get index
+        |> Maybe.withDefault
+            defaultHoroscope
 
 
 
@@ -226,41 +296,28 @@ formatDob model =
 horoscope : Model -> Html Msg
 horoscope model =
     let
-        indexHoroscope i h =
-            let
-                ii =
-                    String.fromInt (i + 1)
-            in
-            div [ id ("item" ++ ii), class "carousel-item w-full" ]
-                [ div []
-                    [ h2 [] [ text h.name ]
-                    , p [] [ text h.resume ]
+        horoscopeView =
+            div [ class "card w-full bg-base-100 shadow-xl" ]
+                [ article [ class "card-body" ]
+                    [ h2 [ class "card-title" ] [ text model.selectedHoroscope.name ]
+                    , p [] [ text model.selectedHoroscope.resume ]
                     ]
                 ]
 
-        horoscopesList =
-            model.horoscopes |> List.indexedMap indexHoroscope
-
-        -- <div id="item1" class="carousel-item w-full">
-        --   <img src="https://api.lorem.space/image/car?w=800&h=200&hash=8B7BCDC2" class="w-full" />
-        -- </div>
-        indexMap i _ =
-            let
-                ii =
-                    String.fromInt (i + 1)
-            in
-            a [ href ("#item" ++ ii), class "btn btn-xs" ]
-                [ text ii ]
-
-        indexesList =
-            model.horoscopes |> List.indexedMap indexMap
+        symbolsView =
+            model.horoscopes
+                |> List.indexedMap
+                    (\index h ->
+                        a [ onClick (SelectHoroscope index), href "#" ]
+                            [ i [ class ("ai " ++ h.id) ] [] ]
+                    )
     in
     section sectionAttributes
         [ sectionTitle "Horóscopo"
         , hr [] []
-        , div []
-            [ div [ class "carousel w-full" ] horoscopesList
-            , div [ class "flex justify-center w-full py-2 gap-2" ] indexesList
+        , div [ class "pt-3" ]
+            [ horoscopeView
+            , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ] symbolsView
             ]
         ]
 
