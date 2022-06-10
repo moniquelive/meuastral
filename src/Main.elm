@@ -315,7 +315,7 @@ horoscope model =
     section sectionAttributes
         [ sectionTitle "Horóscopo"
         , hr [] []
-        , div [ class "pt-3" ]
+        , div [ class "place-self-center pt-3 w-96 box-content" ]
             [ horoscopeView
             , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ] symbolsView
             ]
@@ -340,7 +340,7 @@ comments model =
 
 sectionAttributes : List (Html.Attribute Msg)
 sectionAttributes =
-    [ class "p-4" ]
+    [ class "p-4 grid" ]
 
 
 sectionTitle : String -> Html Msg
