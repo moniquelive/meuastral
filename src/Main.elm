@@ -297,7 +297,7 @@ horoscope : Model -> Html Msg
 horoscope model =
     let
         horoscopeView =
-            div [ class "card w-full bg-base-100 shadow-xl" ]
+            div [ class "card w-96 bg-base-100 shadow-xl" ]
                 [ article [ class "card-body" ]
                     [ h2 [ class "card-title" ] [ text model.selectedHoroscope.name ]
                     , p [] [ text model.selectedHoroscope.resume ]
@@ -315,7 +315,7 @@ horoscope model =
     section sectionAttributes
         [ sectionTitle "Horóscopo"
         , hr [] []
-        , div [ class "place-self-center pt-3 w-96 box-content" ]
+        , div [ class "place-self-center pt-3 box-content" ]
             [ horoscopeView
             , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ] symbolsView
             ]
