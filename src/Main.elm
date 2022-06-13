@@ -1,3 +1,6 @@
+-- vim: tw=0
+
+
 module Main exposing (..)
 
 import Array
@@ -49,9 +52,9 @@ defaultHoroscope =
 
 
 type alias Model =
-    { year : Int
+    { today : Date
     , datePickerData : DatePicker.Model
-    , selectedDate : Maybe Date
+    , selectedDate : Date
     , horoscopes : List Horoscope
     , selectedHoroscope : Horoscope
     }
@@ -63,15 +66,15 @@ init =
         ( datePickerData, datePickerInitCmd ) =
             DatePicker.init "my-datepicker-id"
     in
-    ( { year = 0
+    ( { today = Date.fromRataDie 1
       , datePickerData = datePickerData
-      , selectedDate = Nothing
+      , selectedDate = Date.fromRataDie 1
       , horoscopes = []
       , selectedHoroscope = defaultHoroscope
       }
     , Cmd.batch
         [ Cmd.map DatePickerMsg datePickerInitCmd
-        , whatYearIsIt |> Task.perform GotYear
+        , Date.today |> Task.perform GotToday
         , Http.get
             { url = "https://www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false"
             , expect = Http.expectJson GotHoroscope horoscopeDecoder
@@ -94,17 +97,12 @@ main =
         }
 
 
-whatYearIsIt : Task.Task Never Int
-whatYearIsIt =
-    Task.map2 Time.toYear Time.here Time.now
-
-
 
 ---- UPDATE ----
 
 
 type Msg
-    = GotYear Int
+    = GotToday Date
     | DatePickerMsg DatePicker.Msg
     | GotHoroscope (Result Http.Error (List Horoscope))
     | SelectHoroscope Int
@@ -113,14 +111,18 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GotYear yyyy ->
-            ( { model | year = yyyy }, Cmd.none )
+        GotToday today ->
+            ( { model | today = today, selectedDate = today }, Cmd.none )
 
         DatePickerMsg datePickerMsg ->
             DatePicker.update datePickerMsg model.datePickerData
                 -- set the data returned from datePickerUpdate. Don't discard the command!
                 |> (\( data, cmd ) ->
-                        ( { model | selectedHoroscope = horoscopeFromDate data.selectedDate model.horoscopes, datePickerData = data, selectedDate = data.selectedDate }
+                        ( { model
+                            | selectedHoroscope = horoscopeFromDate (Maybe.withDefault model.today data.selectedDate) model.horoscopes
+                            , datePickerData = data
+                            , selectedDate = Maybe.withDefault model.today data.selectedDate
+                          }
                         , Cmd.map DatePickerMsg cmd
                         )
                    )
@@ -128,60 +130,56 @@ update msg model =
         GotHoroscope result ->
             case result of
                 Err _ ->
+                    -- TODO: deal with this
                     ( model, Cmd.none )
 
                 Ok horoscopes ->
-                    ( { model | selectedHoroscope = horoscopeOrDefault 0 horoscopes, horoscopes = horoscopes }, Cmd.none )
+                    ( { model | horoscopes = horoscopes, selectedHoroscope = horoscopeFromDate model.today horoscopes }, Cmd.none )
 
         SelectHoroscope index ->
             ( { model | selectedHoroscope = horoscopeOrDefault index model.horoscopes }, Cmd.none )
 
 
-horoscopeFromDate : Maybe Date -> List Horoscope -> Horoscope
+horoscopeFromDate : Date -> List Horoscope -> Horoscope
 horoscopeFromDate date horoscopes =
-    case date of
-        Nothing ->
+    let
+        year =
+            Date.year date
+
+        fcd =
+            Date.fromCalendarDate
+
+        from =
+            Tuple.second >> Tuple.first
+
+        to =
+            Tuple.second >> Tuple.second
+
+        horoscopeName tuple =
+            Maybe.withDefault "" <|
+                Maybe.map Tuple.first tuple
+    in
+    [ ( "aquarius", ( fcd year Jan 21, fcd year Feb 19 ) )
+    , ( "pisces", ( fcd year Feb 20, fcd year Mar 20 ) )
+    , ( "aries", ( fcd year Mar 21, fcd year Apr 20 ) )
+    , ( "taurus", ( fcd year Apr 21, fcd year May 21 ) )
+    , ( "gemini", ( fcd year May 22, fcd year Jun 21 ) )
+    , ( "cancer", ( fcd year Jun 22, fcd year Jul 22 ) )
+    , ( "leo", ( fcd year Jul 23, fcd year Aug 21 ) )
+    , ( "virgo", ( fcd year Aug 22, fcd year Sep 23 ) )
+    , ( "libra", ( fcd year Sep 24, fcd year Oct 23 ) )
+    , ( "scorpio", ( fcd year Oct 24, fcd year Nov 22 ) )
+    , ( "sagittarius", ( fcd year Nov 23, fcd year Dec 22 ) )
+    , ( "capricorn", ( fcd year Dec 23, fcd year Dec 31 ) )
+    , ( "capricorn", ( fcd year Jan 1, fcd year Jan 20 ) )
+    ]
+        |> List.filter (\e -> Date.isBetween (from e) (to e) date)
+        |> List.head
+        |> horoscopeName
+        |> (\name -> List.filter (\z -> z.id == name) horoscopes)
+        |> List.head
+        |> Maybe.withDefault
             defaultHoroscope
-
-        Just dt ->
-            let
-                year =
-                    Date.year dt
-
-                fcd =
-                    Date.fromCalendarDate
-
-                sf =
-                    Tuple.second >> Tuple.first
-
-                ss =
-                    Tuple.second >> Tuple.second
-
-                dateRanges =
-                    [ ( "aquarius", ( fcd year Jan 21, fcd year Feb 19 ) )
-                    , ( "pisces", ( fcd year Feb 20, fcd year Mar 20 ) )
-                    , ( "aries", ( fcd year Mar 21, fcd year Apr 20 ) )
-                    , ( "taurus", ( fcd year Apr 21, fcd year May 21 ) )
-                    , ( "gemini", ( fcd year May 22, fcd year Jun 21 ) )
-                    , ( "cancer", ( fcd year Jun 22, fcd year Jul 22 ) )
-                    , ( "leo", ( fcd year Jul 23, fcd year Aug 21 ) )
-                    , ( "virgo", ( fcd year Aug 22, fcd year Sep 23 ) )
-                    , ( "libra", ( fcd year Sep 24, fcd year Oct 23 ) )
-                    , ( "scorpio", ( fcd year Oct 24, fcd year Nov 22 ) )
-                    , ( "sagittarius", ( fcd year Nov 23, fcd year Dec 22 ) )
-                    , ( "capricorn", ( fcd year Dec 23, fcd year Dec 31 ) )
-                    , ( "capricorn", ( fcd year Jan 1, fcd year Jan 20 ) )
-                    ]
-            in
-            dateRanges
-                |> List.filter (\e -> Date.isBetween (sf e) (ss e) dt)
-                |> List.head
-                |> Maybe.map Tuple.first
-                |> Maybe.withDefault ""
-                |> (\id -> List.filter (\z -> z.id == id) horoscopes)
-                |> List.head
-                |> Maybe.withDefault
-                    defaultHoroscope
 
 
 horoscopeOrDefault : Int -> List Horoscope -> Horoscope
@@ -189,8 +187,7 @@ horoscopeOrDefault index horoscopes =
     horoscopes
         |> Array.fromList
         |> Array.get index
-        |> Maybe.withDefault
-            defaultHoroscope
+        |> Maybe.withDefault defaultHoroscope
 
 
 
@@ -224,7 +221,7 @@ view model =
                     ]
                     [ i [ class "fab fa-twitter fa-xl" ] [] ]
                 ]
-            , div [] [ p [] [ text (String.fromInt model.year ++ " - "), b [] [ text "MeuAstral.com" ] ] ]
+            , div [] [ p [] [ text (String.fromInt (Date.year model.today) ++ " - "), b [] [ text "MeuAstral.com" ] ] ]
             ]
         ]
 
@@ -268,29 +265,20 @@ userInfo model =
 
 daysSince : Model -> Html Msg
 daysSince model =
-    case model.selectedDate of
-        Nothing ->
-            text "..."
+    ageInDays model.selectedDate model
+        |> String.fromInt
+        |> text
 
-        Just selectedDate ->
-            case model.datePickerData.today of
-                Nothing ->
-                    text "..."
 
-                Just today ->
-                    Date.diff Date.Days selectedDate today
-                        |> String.fromInt
-                        |> text
+ageInDays : Date -> Model -> Int
+ageInDays since model =
+    Date.diff Date.Days since model.today
 
 
 formatDob : Model -> Html Msg
 formatDob model =
-    case model.selectedDate of
-        Nothing ->
-            text "..."
-
-        Just d ->
-            text <| Date.format "d/M/y" d
+    Date.format "d/M/y" model.selectedDate
+        |> text
 
 
 horoscope : Model -> Html Msg
