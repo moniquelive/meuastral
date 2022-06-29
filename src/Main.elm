@@ -15,6 +15,7 @@ import Html.Attributes as HA exposing (class)
 import Html.Events as HE
 import Http
 import Json.Decode as D
+import Ports
 import Round as R
 import Task
 import Time exposing (Month(..), Weekday(..))
@@ -51,38 +52,61 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Maybe String -> ( Model, Cmd Msg )
+init userBirthday =
     let
-        ( datePickerData, datePickerInitCmd ) =
-            DatePicker.init "my-datepicker-id"
+        defaultCmds =
+            [ Date.today |> Task.perform GotToday
+            , Http.get
+                { url = "https://www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false"
+                , expect = Http.expectJson GotHoroscope horoscopeDecoder
+                }
+            ]
+
+        userBirthdayResult =
+            Maybe.map Date.fromIsoString userBirthday
+                |> Maybe.andThen Result.toMaybe
     in
-    ( { today = Date.fromRataDie 1
-      , datePickerData = datePickerData
-      , selectedDate = Date.fromRataDie 1
-      , horoscopes = []
-      , selectedHoroscope = defaultHoroscope
-      }
-    , Cmd.batch
-        [ Cmd.map DatePickerMsg datePickerInitCmd
-        , Date.today |> Task.perform GotToday
-        , Http.get
-            { url = "https://www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false"
-            , expect = Http.expectJson GotHoroscope horoscopeDecoder
-            }
-        ]
-    )
+    case userBirthdayResult of
+        Nothing ->
+            let
+                ( datePickerData, datePickerInitCmd ) =
+                    DatePicker.init "my-datepicker-id"
+            in
+            ( { today = Date.fromRataDie 1
+              , datePickerData = datePickerData
+              , selectedDate = Date.fromRataDie 1
+              , horoscopes = []
+              , selectedHoroscope = defaultHoroscope
+              }
+            , Cmd.batch
+                (Cmd.map DatePickerMsg datePickerInitCmd :: defaultCmds)
+            )
+
+        Just userDoB ->
+            let
+                datePickerData =
+                    DatePicker.initFromDate "my-datepicker-id" userDoB
+            in
+            ( { today = userDoB
+              , datePickerData = datePickerData
+              , selectedDate = userDoB
+              , horoscopes = []
+              , selectedHoroscope = defaultHoroscope
+              }
+            , Cmd.batch defaultCmds
+            )
 
 
 
 ---- PROGRAM ----
 
 
-main : Program () Model Msg
+main : Program (Maybe String) Model Msg
 main =
     Browser.element
         { view = view
-        , init = \_ -> init
+        , init = \flags -> init flags
         , update = update
         , subscriptions = always Sub.none
         }
@@ -103,29 +127,40 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotToday today ->
-            ( { model | today = today, selectedDate = today }, Cmd.none )
+            ( { model | today = today }, Cmd.none )
 
         DatePickerMsg datePickerMsg ->
             DatePicker.update datePickerMsg model.datePickerData
                 -- set the data returned from datePickerUpdate. Don't discard the command!
                 |> (\( data, cmd ) ->
+                        let
+                            newBirthday =
+                                Maybe.withDefault model.today data.selectedDate
+                        in
                         ( { model
-                            | selectedHoroscope = horoscopeFromDate (Maybe.withDefault model.today data.selectedDate) model.horoscopes
+                            | selectedHoroscope = horoscopeFromDate newBirthday model.horoscopes
                             , datePickerData = data
-                            , selectedDate = Maybe.withDefault model.today data.selectedDate
+                            , selectedDate = newBirthday
                           }
-                        , Cmd.map DatePickerMsg cmd
+                        , Cmd.batch
+                            [ Cmd.map DatePickerMsg cmd
+                            , saveDoB newBirthday
+                            ]
                         )
                    )
 
         GotHoroscope result ->
             case result of
                 Err _ ->
-                    -- TODO: deal with this
-                    ( model, Cmd.none )
+                    Debug.log "got horoscope:" ( model, Cmd.none )
 
                 Ok horoscopes ->
-                    ( { model | horoscopes = horoscopes, selectedHoroscope = horoscopeFromDate model.today horoscopes }, Cmd.none )
+                    ( { model
+                        | horoscopes = horoscopes
+                        , selectedHoroscope = horoscopeFromDate model.selectedDate horoscopes
+                      }
+                    , Cmd.none
+                    )
 
         SelectHoroscope index ->
             ( { model | selectedHoroscope = horoscopeOrDefault index model.horoscopes }, Cmd.none )
@@ -309,7 +344,7 @@ bio model =
 
         card period color label icon =
             div [ class "indicator" ]
-                [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color, HA.style "border" "0" ] [ H.text <| val period ++ "%" ]
+                [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ] [ H.text <| val period ++ "%" ]
                 , div [ class "card card-compact w-96 bg-base-100 shadow-xl" ]
                     [ C.chart
                         [ CA.height 50
@@ -401,3 +436,10 @@ horoscopeDecoder =
                 (D.field "resume" D.string)
             )
         )
+
+
+saveDoB : Date -> Cmd msg
+saveDoB birthday =
+    birthday
+        |> Date.toIsoString
+        |> Ports.storeDoB
