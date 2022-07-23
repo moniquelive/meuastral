@@ -14,7 +14,7 @@ rm -rf build
 
 echo "--- Checking out gh-pages branch into dist"
 #git worktree add -B gh-pages build origin/gh-pages
-git worktree add build gh-pages
+git worktree add -f build gh-pages
 
 echo "--- Removing existing files"
 rm -rf build/*
