@@ -412,8 +412,7 @@ comments model =
         , H.div
             [ class "fb-comment-embed"
             , HA.attribute "data-href" "meuastral.com"
-            , HA.attribute "data-numposts" "2"
-            , HA.attribute "data-width" ""
+            , HA.attribute "data-lazy" "true"
             ]
             []
         ]
