@@ -27,5 +27,5 @@ cd build &&
   git commit -m "Publishing to gh-pages (publish.sh)" &&
   git push origin gh-pages
 
-git worktree remove build &&
-  cd ..
+git worktree remove build
+cd ..
