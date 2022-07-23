@@ -152,7 +152,7 @@ update msg model =
         GotHoroscope result ->
             case result of
                 Err _ ->
-                    Debug.log "got horoscope:" ( model, Cmd.none )
+                    ( model, Cmd.none )
 
                 Ok horoscopes ->
                     ( { model
