@@ -408,7 +408,14 @@ comments : Model -> Html Msg
 comments model =
     H.section sectionAttributes
         [ H.hr [] []
-        , sectionTitle "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!"
+        , H.h2 [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 text-xl" ] [ H.text "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!" ]
+        , H.div
+            [ class "fb-comments"
+            , HA.attribute "data-href" "meuastral.com"
+            , HA.attribute "data-numposts" "2"
+            , HA.attribute "data-width" ""
+            ]
+            []
         ]
 
 
