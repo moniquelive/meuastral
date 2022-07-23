@@ -1,0 +1,148 @@
+.ai {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 24px;
+}
+.ai.aries,
+.ai.taurus,
+.ai.gemini,
+.ai.cancer,
+.ai.leo,
+.ai.virgo,
+.ai.libra,
+.ai.scorpio,
+.ai.sagittarius,
+.ai.capricorn,
+.ai.aquarius,
+.ai.pisces {
+  font-weight: normal;
+}
+.ai.aries:before {
+  content: "\2648";
+  display: inline;
+  text-decoration: none;
+}
+.ai.taurus:before {
+  content: "\2649";
+}
+.ai.gemini:before {
+  content: "\264A";
+}
+.ai.cancer:before {
+  content: "\264B";
+}
+.ai.leo:before {
+  content: "\264C";
+}
+.ai.virgo:before {
+  content: "\264D";
+}
+.ai.libra:before {
+  content: "\264E";
+}
+.ai.scorpio:before {
+  content: "\264F";
+}
+.ai.sagittarius:before {
+  content: "\2650";
+}
+.ai.capricorn:before {
+  content: "\2651";
+}
+.ai.aquarius:before {
+  content: "\2652";
+}
+.ai.pisces:before {
+  content: "\2653";
+}
+.ai.sun:before {
+  content: "\2609";
+}
+.ai.moon:before {
+  content: "\263D";
+}
+.ai.moon-variant:before {
+  content: "\263E";
+}
+.ai.earth:before {
+  content: "\2295";
+}
+.ai.mercury:before {
+  content: "\263F";
+}
+.ai.venus:before {
+  content: "\2640";
+}
+.ai.mars:before {
+  content: "\2642";
+}
+.ai.jupiter:before {
+  content: "\2643";
+}
+.ai.saturn:before {
+  content: "\2644";
+}
+.ai.uranus:before {
+  content: "\2645";
+}
+.ai.neptune:before {
+  content: "\2646";
+}
+.ai.pluto:before {
+  content: "\2647";
+}
+.ai.chiron:before {
+  content: "\26B7";
+}
+.ai.north-node:before {
+  content: "\260A";
+}
+.ai.south-node:before {
+  content: "\260B";
+}
+.ai.part-of-fortune:before {
+  content: "\2297";
+}
+.ai.lilith:before {
+  content: "\26B8";
+}
+.ai.ceres:before {
+  content: "\2A1";
+}
+.ai.juno:before {
+  content: "\26B5";
+}
+.ai.pallas:before {
+  content: "\26B4";
+}
+.ai.vesta:before {
+  content: "\26B6";
+}
+.ai.conjunction:before {
+  content: "\260C";
+}
+.ai.square:before {
+  content: "\25A1";
+}
+.ai.trine:before {
+  content: "\25B3";
+}
+.ai.opposition:before {
+  content: "\260D";
+}
+.ai.semisquare:before {
+  content: "\2220";
+}
+.ai.quintile:before {
+  content: "\051";
+}
+.ai.biquintile:before {
+  content: "\0062\0051";
+}
+.ai.retrograde:before {
+  content: "\211E";
+}
+.ai.comet:before {
+  content: "\2604";
+}
