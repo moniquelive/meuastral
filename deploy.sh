@@ -8,19 +8,18 @@ fi
 
 echo "--- Deleting old publication"
 rm -rf build
-# mkdir build
-# git worktree prune
-# rm -rf .git/worktrees/build/
 
 echo "--- Checking out gh-pages branch into dist"
 #git worktree add -B gh-pages build origin/gh-pages
-git worktree add -f build gh-pages
+git worktree add build gh-pages
 
 echo "--- Removing existing files"
 rm -rf build/*
+mv build/.git /tmp/meuastral_git
 
 echo "--- Generating site"
 elm-app build
+mv /tmp/meuastral_git build/.git
 
 echo "--- Updating gh-pages branch"
 cd build &&
@@ -28,6 +27,5 @@ cd build &&
   git commit -m "Publishing to gh-pages (publish.sh)" &&
   git push origin gh-pages
 
-git worktree remove build
-
-cd ..
+git worktree remove build &&
+  cd ..
