@@ -405,17 +405,19 @@ bioSeries period model =
 
 
 comments : Model -> Html Msg
-comments model =
+comments _ =
     H.section sectionAttributes
         [ H.hr [] []
         , H.h2 [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 text-xl" ] [ H.text "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!" ]
-        , H.div
-            [ class "fb-comments"
-            , HA.attribute "data-href" "http://meuastral.com"
-            , HA.attribute "data-numposts" "5"
-            , HA.attribute "data-lazy" "true"
+        , H.div [ class "flex justify-center" ]
+            [ H.div
+                [ class "fb-comments"
+                , HA.attribute "data-href" "http://meuastral.com"
+                , HA.attribute "data-numposts" "5"
+                , HA.attribute "data-lazy" "true"
+                ]
+                []
             ]
-            []
         ]
 
 
