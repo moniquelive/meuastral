@@ -410,8 +410,9 @@ comments model =
         [ H.hr [] []
         , H.h2 [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 text-xl" ] [ H.text "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!" ]
         , H.div
-            [ class "fb-comment-embed"
-            , HA.attribute "data-href" "http://meuastral.com/"
+            [ class "fb-comments"
+            , HA.attribute "data-href" "http://meuastral.com"
+            , HA.attribute "data-numposts" "5"
             , HA.attribute "data-lazy" "true"
             ]
             []
