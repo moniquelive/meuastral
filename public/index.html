@@ -1,100 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="aqua">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <!--
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <title>MeuAstral.com</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.2.x/dist/typography.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@2.14.3/dist/full.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <title>MeuAstral.com</title>
+  <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.2.x/dist/typography.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.14.3/dist/full.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- OpenGraph -->
-    <meta property="og:title" content="Como estará MeuAstral hoje?" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://meuastral.com/" />
-    <meta
-      property="og:image"
-      content="https://meuastral.com/meuastral-marca.png"
-    />
-    <meta property="og:site_name" content="MeuAstral" />
-    <meta
-      property="og:description"
-      content="Confira diariamente como está seu astral gratuitamente!"
-    />
-    <meta property="fb:admins" content="506596308" />
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Como estará MeuAstral hoje?" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://meuastral.com/" />
+  <meta property="og:image" content="https://meuastral.com/meuastral-marca.png" />
+  <meta property="og:site_name" content="MeuAstral" />
+  <meta property="og:description" content="Confira diariamente como está seu astral gratuitamente!" />
 
-    <title>Meu Astral</title>
+  <title>Meu Astral</title>
 
-    <link rel="preconnect" href="https://www.google-analytics.com" />
-    <link rel="preconnect" href="https://cdn.syndication.twimg.com" />
-    <link rel="preconnect" href="https://connect.facebook.net" />
-    <link rel="preconnect" href="https://static.xx.fbcdn.net" />
-    <link rel="preconnect" href="https://scontent.fsdu5-1.fna.fbcdn.net" />
-  </head>
+  <link rel="preconnect" href="https://www.google-analytics.com" />
+  <link rel="preconnect" href="https://cdn.syndication.twimg.com" />
+</head>
 
-  <body class="subpixel-antialiased">
-    <div id="fb-root"></div>
-    <noscript> You need to enable JavaScript to run this app. </noscript>
-    <div id="root"></div>
+<body class="subpixel-antialiased">
+  <noscript> You need to enable JavaScript to run this app. </noscript>
+  <div id="root"></div>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script
-      async
-      defer
-      crossorigin="anonymous"
-      src="https://connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v14.0&appId=306456439378733&autoLogAppEvents=1"
-      nonce="XbAr49Mv"
-    ></script>
-    <script
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7232537493483974"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      (function (i, s, o, g, r, a, m) {
-        i["GoogleAnalyticsObject"] = r;
-        (i[r] =
-          i[r] ||
-          function () {
-            (i[r].q = i[r].q || []).push(arguments);
-          }),
-          (i[r].l = 1 * new Date());
-        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-      })(
-        window,
-        document,
-        "script",
-        "//www.google-analytics.com/analytics.js",
-        "ga"
-      );
-      ga("create", "UA-31528282-1", "meuastral.com");
-      ga("send", "pageview");
-    </script>
-  </body>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7232537493483974"
+    crossorigin="anonymous"></script>
+  <script>
+    (function (i, s, o, g, r, a, m) {
+      i["GoogleAnalyticsObject"] = r;
+      (i[r] =
+        i[r] ||
+        function () {
+          (i[r].q = i[r].q || []).push(arguments);
+        }),
+        (i[r].l = 1 * new Date());
+      (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m);
+    })(
+      window,
+      document,
+      "script",
+      "//www.google-analytics.com/analytics.js",
+      "ga"
+    );
+    ga("create", "UA-31528282-1", "meuastral.com");
+    ga("send", "pageview");
+  </script>
+</body>
+
 </html>
