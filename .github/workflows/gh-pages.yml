@@ -25,7 +25,7 @@ jobs:
         run: npm install create-elm-app --global
 
       - name: Make
-        run: rm -rf build/* && mv build/.git build/.git.dont && elm-app build && mv build/.git.dont build/.git
+        run: rm -rf build/* && elm-app build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
