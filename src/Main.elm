@@ -412,7 +412,7 @@ comments _ =
         , H.div [ class "flex justify-center" ]
             [ H.div
                 [ class "fb-comments"
-                , HA.attribute "data-href" "http://meuastral.com"
+                , HA.attribute "data-href" "https://developers.facebook.com/docs/plugins/comments#configurator"
                 , HA.attribute "data-numposts" "5"
                 , HA.attribute "data-lazy" "true"
                 ]
