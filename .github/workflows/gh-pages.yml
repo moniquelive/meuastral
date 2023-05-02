@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: read
   pages: write
   id-token: write
-  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,6 +17,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -27,23 +29,17 @@ jobs:
         id: pages
         uses: actions/configure-pages@v3
       - name: Make
-        run: elm-app build
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
+        run: cd "${{ steps.pages.outputs.base_path }}" && elm-app build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: ./build
 
   deploy:
-    runs-on: ubuntu-latest
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
+    runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Deploy to GitHub Pages
