@@ -230,7 +230,8 @@ view model =
             , userInfo model
             , horoscope model
             , bio model
-            , comments model
+
+            -- , comments model -- ninho de spam :(
             ]
         , H.footer [ class "w-full border-t border-grey p-4 justify-between items-center flex" ]
             [ div []
