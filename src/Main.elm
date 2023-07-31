@@ -275,7 +275,7 @@ userInfo : Model -> Html Msg
 userInfo model =
     H.section sectionAttributes
         [ div [ class "flex place-content-center" ]
-            [ div [ class "card w-96 bg-neutral shadow-xl" ]
+            [ div [ class "card lg:w-96 bg-neutral shadow-xl" ]
                 [ div [ class "card-body text-neutral-content" ]
                     [ H.p []
                         [ H.text "As pessoas nascidas em "
@@ -312,7 +312,7 @@ horoscope : Model -> Html Msg
 horoscope model =
     let
         horoscopeView =
-            div [ class "card w-96 bg-base-100 shadow-xl" ]
+            div [ class "card lg:w-96 bg-base-100 shadow-xl" ]
                 [ H.article [ class "card-body" ]
                     [ H.h2 [ class "card-title" ] [ H.text model.selectedHoroscope.name ]
                     , H.p [] [ H.text model.selectedHoroscope.resume ]
@@ -346,7 +346,7 @@ bio model =
         card period color label icon =
             div [ class "indicator" ]
                 [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ] [ H.text <| val period ++ "%" ]
-                , div [ class "card card-compact w-96 bg-base-100 shadow-xl" ]
+                , div [ class "card card-compact w-80 lg:w-96 bg-base-100 shadow-xl" ]
                     [ C.chart
                         [ CA.height 50
                         , CA.width 200
