@@ -4,6 +4,7 @@
 module Main exposing (..)
 
 import Array
+import AscentMasters
 import Browser
 import Chart as C
 import Chart.Attributes as CA
@@ -49,6 +50,7 @@ type alias Model =
     , selectedDate : Date
     , horoscopes : List Horoscope
     , selectedHoroscope : Horoscope
+    , ascentMaster : Maybe AscentMasters.CosmicRay
     }
 
 
@@ -78,6 +80,7 @@ init userBirthday =
               , selectedDate = Date.fromRataDie 1
               , horoscopes = []
               , selectedHoroscope = defaultHoroscope
+              , ascentMaster = Nothing
               }
             , Cmd.batch
                 (Cmd.map DatePickerMsg datePickerInitCmd :: defaultCmds)
@@ -93,6 +96,7 @@ init userBirthday =
               , selectedDate = userDoB
               , horoscopes = []
               , selectedHoroscope = defaultHoroscope
+              , ascentMaster = AscentMasters.for_birthday userDoB
               }
             , Cmd.batch defaultCmds
             )
@@ -141,6 +145,7 @@ update msg model =
                             | selectedHoroscope = horoscopeFromDate newBirthday model.horoscopes
                             , datePickerData = data
                             , selectedDate = newBirthday
+                            , ascentMaster = AscentMasters.for_birthday newBirthday
                           }
                         , Cmd.batch
                             [ Cmd.map DatePickerMsg cmd
@@ -229,6 +234,7 @@ view model =
             [ dob model
             , userInfo model
             , horoscope model
+            , ascent_master model
             , bio model
 
             -- , comments model -- ninho de spam :(
@@ -260,7 +266,7 @@ view model =
 dob : Model -> Html Msg
 dob model =
     H.section sectionAttributes
-        [ sectionTitle "Data de Nascimento"
+        [ sectionTitle "Data do meu Aniversário"
         , H.hr [] []
         , div [ class "flex place-content-center pt-4" ]
             [ DatePicker.view
@@ -334,6 +340,46 @@ horoscope model =
             [ horoscopeView
             , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ] symbolsView
             ]
+        ]
+
+
+ascent_master : Model -> Html Msg
+ascent_master model =
+    let
+        ascent_master_view =
+            case model.ascentMaster of
+                Nothing ->
+                    div [] []
+
+                Just m ->
+                    div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
+                        [ div [ class "indicator card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
+                            [ H.span [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold", HA.style "background" (AscentMasters.color_name m.color) ] [ H.text (String.fromInt m.number) ]
+                            , H.figure [ class "flex-col w-full" ]
+                                [ H.img [ class "rounded ring", HA.src m.masterImage ] []
+                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text (AscentMasters.master_name m.master) ]
+                                ]
+                            , H.hr [] []
+                            , div [ class "card-body" ]
+                                [ H.p [ class "prose w-fit" ] [ H.text m.masterDetails ]
+                                ]
+                            ]
+                        , div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
+                            [ H.figure [ class "flex-col w-full" ]
+                                [ H.img [ class "rounded ring", HA.src m.angelImage ] []
+                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text ("Arcanjo " ++ AscentMasters.archangel_name m.archangel) ]
+                                ]
+                            , H.hr [] []
+                            , div [ class "card-body" ]
+                                [ H.p [ class "prose w-fit" ] [ H.text m.rayDetails ]
+                                ]
+                            ]
+                        ]
+    in
+    H.section sectionAttributes
+        [ sectionTitle "Mestre Ascencionado"
+        , H.hr [] []
+        , div [ class "place-self-center pt-3 box-content" ] [ ascent_master_view ]
         ]
 
 
