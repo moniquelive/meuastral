@@ -4,7 +4,7 @@
 module Main exposing (..)
 
 import Array
-import AscentMasters
+import AscentMasters as AM exposing (CosmicRay)
 import Browser
 import Chart as C
 import Chart.Attributes as CA
@@ -50,7 +50,7 @@ type alias Model =
     , selectedDate : Date
     , horoscopes : List Horoscope
     , selectedHoroscope : Horoscope
-    , ascentMaster : Maybe AscentMasters.CosmicRay
+    , ascentMaster : Maybe CosmicRay
     }
 
 
@@ -96,7 +96,7 @@ init userBirthday =
               , selectedDate = userDoB
               , horoscopes = []
               , selectedHoroscope = defaultHoroscope
-              , ascentMaster = AscentMasters.for_birthday userDoB
+              , ascentMaster = AM.for_birthday userDoB
               }
             , Cmd.batch defaultCmds
             )
@@ -145,7 +145,7 @@ update msg model =
                             | selectedHoroscope = horoscopeFromDate newBirthday model.horoscopes
                             , datePickerData = data
                             , selectedDate = newBirthday
-                            , ascentMaster = AscentMasters.for_birthday newBirthday
+                            , ascentMaster = AM.for_birthday newBirthday
                           }
                         , Cmd.batch
                             [ Cmd.map DatePickerMsg cmd
@@ -354,24 +354,24 @@ ascent_master model =
                 Just m ->
                     div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
                         [ div [ class "indicator card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
-                            [ H.span [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold", HA.style "background" (AscentMasters.color_name m.color) ] [ H.text (String.fromInt m.number) ]
+                            [ H.span [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold", HA.style "background" (AM.color_name m) ] [ H.text (AM.number m) ]
                             , H.figure [ class "flex-col w-full" ]
-                                [ H.img [ class "rounded ring", HA.src m.masterImage ] []
-                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text (AscentMasters.master_name m.master) ]
+                                [ H.img [ class "rounded ring", HA.src (AM.master_image m) ] []
+                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text (AM.master_name m) ]
                                 ]
                             , H.hr [] []
                             , div [ class "card-body" ]
-                                [ H.p [ class "prose w-fit" ] [ H.text m.masterDetails ]
+                                [ H.p [ class "prose w-fit" ] [ H.text (AM.master_details m) ]
                                 ]
                             ]
                         , div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
                             [ H.figure [ class "flex-col w-full" ]
-                                [ H.img [ class "rounded ring", HA.src m.angelImage ] []
-                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text ("Arcanjo " ++ AscentMasters.archangel_name m.archangel) ]
+                                [ H.img [ class "rounded ring", HA.src (AM.archangel_image m) ] []
+                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text ("Arcanjo " ++ AM.archangel_name m) ]
                                 ]
                             , H.hr [] []
                             , div [ class "card-body" ]
-                                [ H.p [ class "prose w-fit" ] [ H.text m.rayDetails ]
+                                [ H.p [ class "prose w-fit" ] [ H.text (AM.ray_details m) ]
                                 ]
                             ]
                         ]
