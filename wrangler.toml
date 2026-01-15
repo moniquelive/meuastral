@@ -6,4 +6,4 @@ workers_dev = true
 assets = { binding = "ASSETS", directory = "build" }
 
 [build]
-command = "elm-app build"
+command = "npx elm-app build"

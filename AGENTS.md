@@ -29,6 +29,6 @@
 - Reference tracking issues in the PR body and note any configuration updates (`elmapp.config.js`, `mise.toml`) so reviewers can verify deployments.
 
 ## Cloudflare Worker Deployment
-- Build assets with `elm-app build`; the worker uses the generated `build/` directory through the `ASSETS` binding configured in `wrangler.toml`.
+- Build assets with `npx elm-app build`; the worker uses the generated `build/` directory through the `ASSETS` binding configured in `wrangler.toml`. Using `npx` matches the Cloudflare build command so the CLI is always resolved even in ephemeral environments.
 - Preview the worker locally with `npx wrangler dev`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
 - Deploy via `npx wrangler deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.
