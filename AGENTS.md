@@ -10,7 +10,7 @@
 - `mise install` – installs the pinned Node 16 runtime from `mise.toml`, ensuring Elm tooling works.
 - `npm install` – pulls `create-elm-app`/`wrangler` into `node_modules`; run once per clone (CI can run `npm ci` for clean installs).
 - `npm run start` (or `./dev.sh` to skip auto-opening a browser) – wraps `elm-app start` with hot reload and pins `ELM_HOME=.elm-home` so Elm caches live in-repo.
-- `npm run build` – emits the optimized bundle in `build/`, shares the same `ELM_HOME` setting, and is the script executed by Cloudflare.
+- `npm run build` – emits the optimized bundle in `build/`, shares the same `ELM_HOME` setting, adds `NODE_OPTIONS=--openssl-legacy-provider`, and is the script executed by Cloudflare.
 - `npm test` – runs `elm-app test` once in CI mode so it exits immediately; use `ELM_HOME=.elm-home elm-app test --watch` when you need interactive reruns.
 
 ## Coding Style & Naming Conventions
@@ -31,6 +31,6 @@
 
 ## Cloudflare Worker Deployment
 - Install JS dependencies via `npm install` (CI can call `npm ci` first); this makes the local `elm-app` executable available for all scripts.
-- Build assets with `npm run build`; the script already exports `ELM_HOME=.elm-home` so Elm caches stay inside the repo, and the worker consumes the generated `build/` directory via the `STATIC_CONTENT` binding configured in `wrangler.toml`.
+- Build assets with `npm run build`; the script already exports `ELM_HOME=.elm-home` and `NODE_OPTIONS=--openssl-legacy-provider` so Elm caches stay inside the repo and Webpack remains compatible with Node 20+, and the worker consumes the generated `build/` directory via the `STATIC_CONTENT` binding configured in `wrangler.toml`.
 - Preview the worker locally with `npm run dev:worker`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
 - Deploy via `npm run deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.

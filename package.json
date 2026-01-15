@@ -5,7 +5,7 @@
   "main": "elmapp.config.js",
   "scripts": {
     "start": "cross-env ELM_HOME=.elm-home elm-app start",
-    "build": "cross-env ELM_HOME=.elm-home elm-app build",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider ELM_HOME=.elm-home elm-app build",
     "test": "cross-env ELM_HOME=.elm-home CI=true elm-app test",
     "dev:worker": "wrangler dev",
     "deploy": "wrangler deploy"
