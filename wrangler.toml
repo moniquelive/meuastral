@@ -1,0 +1,9 @@
+name = "meuastral"
+main = "worker/index.js"
+compatibility_date = "2024-05-01"
+workers_dev = true
+
+assets = { binding = "ASSETS", directory = "build" }
+
+[build]
+command = "elm-app build"
