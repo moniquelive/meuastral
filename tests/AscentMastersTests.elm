@@ -30,8 +30,7 @@ for_birthday =
             \_ ->
                 case Date.fromCalendarDate 1977 May 3 |> AM.for_birthday of
                     Just c ->
-                        AM.number c
-                            |> Expect.equal "5"
+                        AM.number c |> Expect.equal "5"
 
                     Nothing ->
                         Expect.fail "Should not be Nothing"
@@ -39,8 +38,7 @@ for_birthday =
             \_ ->
                 case Date.fromCalendarDate 1982 Mar 31 |> AM.for_birthday of
                     Just c ->
-                        AM.number c
-                            |> Expect.equal "2"
+                        AM.number c |> Expect.equal "2"
 
                     Nothing ->
                         Expect.fail "Should not be Nothing"

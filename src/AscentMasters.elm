@@ -133,8 +133,8 @@ color_name r =
 
 
 getWithDefault : CosmicRay -> Array String -> String
-getWithDefault r arr =
-    (Array.get (index r) >> Maybe.withDefault "") arr
+getWithDefault r =
+    Array.get (index r) >> Maybe.withDefault ""
 
 
 index : CosmicRay -> Int
