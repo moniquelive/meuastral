@@ -7,10 +7,11 @@
 - `tests/` holds Elm test modules (currently `AscentMastersTests.elm`). Mirror source filenames with a `Tests` suffix for quick discovery.
 
 ## Build, Test, and Development Commands
-- `mise install` – installs the pinned Node 16 runtime from `mise.toml`.
-- `elm-app start` (or `./dev.sh` to skip auto-opening a browser) – launches the dev server with hot reload.
-- `elm-app build` – produces an optimized bundle in `build/` using the homepage defined in `elmapp.config.js`.
-- `elm-app test` – runs the Elm test suite; use `--watch` while iterating on `tests/`.
+- `mise install` – installs the pinned Node 16 runtime from `mise.toml`, ensuring Elm tooling works.
+- `npm install` – pulls `create-elm-app`/`wrangler` into `node_modules`; run once per clone (CI can run `npm ci` for clean installs).
+- `npm run start` (or `./dev.sh` to skip auto-opening a browser) – wraps `elm-app start` with hot reload and pins `ELM_HOME=.elm-home` so Elm caches live in-repo.
+- `npm run build` – emits the optimized bundle in `build/`, shares the same `ELM_HOME` setting, and is the script executed by Cloudflare.
+- `npm test` – runs `elm-app test` once in CI mode so it exits immediately; use `ELM_HOME=.elm-home elm-app test --watch` when you need interactive reruns.
 
 ## Coding Style & Naming Conventions
 - Format Elm files with `elm-format` before committing; it enforces 4-space indentation, trailing newline, and alphabetical import grouping.
@@ -29,6 +30,7 @@
 - Reference tracking issues in the PR body and note any configuration updates (`elmapp.config.js`, `mise.toml`) so reviewers can verify deployments.
 
 ## Cloudflare Worker Deployment
-- Build assets with `npx elm-app build`; the worker uses the generated `build/` directory through the `ASSETS` binding configured in `wrangler.toml`. Using `npx` matches the Cloudflare build command so the CLI is always resolved even in ephemeral environments.
-- Preview the worker locally with `npx wrangler dev`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
-- Deploy via `npx wrangler deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.
+- Install JS dependencies via `npm install` (CI can call `npm ci` first); this makes the local `elm-app` executable available for all scripts.
+- Build assets with `npm run build`; the script already exports `ELM_HOME=.elm-home` so Elm caches stay inside the repo, and the worker uses the generated `build/` directory through the `ASSETS` binding configured in `wrangler.toml`.
+- Preview the worker locally with `npm run dev:worker`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
+- Deploy via `npm run deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.

@@ -4,6 +4,7 @@ dist/
 
 # elm-package generated files
 elm-stuff/
+.elm-home/
 
 # elm-repl generated files
 repl-temp-*
@@ -13,4 +14,3 @@ node_modules/
 
 # Desktop Services Store on macOS
 .DS_Store
-

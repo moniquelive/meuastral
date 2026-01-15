@@ -1,9 +1,16 @@
 name = "meuastral"
+pages_build_output_dir = "./dist"
 main = "worker/index.js"
-compatibility_date = "2024-05-01"
+compatibility_date = "2025-07-31"
 workers_dev = true
 
-assets = { binding = "ASSETS", directory = "build" }
+[assets]
+directory = "build"
+binding = "ASSETS"
 
 [build]
-command = "npx elm-app build"
+command = "npm install && npm run build"
+
+[dev]
+port = 3000
+local_protocol = "http"

@@ -1,0 +1,26 @@
+{
+  "name": "meuastral",
+  "version": "1.0.0",
+  "description": "Facebook comments generator powered by Elm",
+  "main": "elmapp.config.js",
+  "scripts": {
+    "start": "cross-env ELM_HOME=.elm-home elm-app start",
+    "build": "cross-env ELM_HOME=.elm-home elm-app build",
+    "test": "cross-env ELM_HOME=.elm-home CI=true elm-app test",
+    "dev:worker": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "gh:moniquelive/meuastral"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "create-elm-app": "^5.22.0",
+    "cross-env": "^10.1.0",
+    "wrangler": "^4.59.2"
+  }
+}
