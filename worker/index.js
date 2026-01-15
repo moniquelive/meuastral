@@ -1,6 +1,6 @@
 export default {
   async fetch(request, env) {
-    const response = await env.ASSETS.fetch(request);
+    const response = await env.STATIC_CONTENT.fetch(request);
 
     if (response.status !== 404) {
       return response;
@@ -17,7 +17,7 @@ function handleSpaFallback(request, env) {
 
   if (!isAssetRequest && request.method === "GET") {
     const indexUrl = new URL("/index.html", url.origin);
-    return env.ASSETS.fetch(
+    return env.STATIC_CONTENT.fetch(
       new Request(indexUrl.toString(), {
         headers: request.headers,
         method: "GET",

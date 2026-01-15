@@ -11,7 +11,7 @@ This project now deploys through Cloudflare Workers. The worker script in `worke
 3. Preview locally (Worker runtime + built assets): `npm run dev:worker`
 4. Deploy to Cloudflare: `npm run deploy`
 
-Deployment uses `wrangler.toml`, which binds the `build/` directory as worker assets and runs `elm-app build` before each deploy. Update `wrangler.toml` with your Cloudflare account ID, routes, and any environment secrets.
+Deployment uses `wrangler.toml`, which binds the `build/` directory to the `STATIC_CONTENT` asset binding and runs `elm-app build` before each deploy. Update `wrangler.toml` with your Cloudflare account ID, routes, and any environment secrets.
 
 ## Testing
 

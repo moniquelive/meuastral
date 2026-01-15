@@ -6,7 +6,7 @@ workers_dev = true
 
 [assets]
 directory = "build"
-binding = "ASSETS"
+binding = "STATIC_CONTENT"
 
 [build]
 command = "npm install && npm run build"

@@ -31,6 +31,6 @@
 
 ## Cloudflare Worker Deployment
 - Install JS dependencies via `npm install` (CI can call `npm ci` first); this makes the local `elm-app` executable available for all scripts.
-- Build assets with `npm run build`; the script already exports `ELM_HOME=.elm-home` so Elm caches stay inside the repo, and the worker uses the generated `build/` directory through the `ASSETS` binding configured in `wrangler.toml`.
+- Build assets with `npm run build`; the script already exports `ELM_HOME=.elm-home` so Elm caches stay inside the repo, and the worker consumes the generated `build/` directory via the `STATIC_CONTENT` binding configured in `wrangler.toml`.
 - Preview the worker locally with `npm run dev:worker`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
 - Deploy via `npm run deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.
