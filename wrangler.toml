@@ -1,5 +1,4 @@
 name = "meuastral"
-pages_build_output_dir = "./dist"
 main = "worker/index.js"
 compatibility_date = "2025-07-31"
 workers_dev = true
@@ -10,7 +9,3 @@ binding = "STATIC_CONTENT"
 
 [build]
 command = "npm install && npm run build"
-
-[dev]
-port = 3000
-local_protocol = "http"
