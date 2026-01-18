@@ -174,12 +174,6 @@ update msg model =
 horoscopeFromDate : Date -> List Horoscope -> Horoscope
 horoscopeFromDate date horoscopes =
     let
-        year =
-            Date.year date
-
-        fcd =
-            Date.fromCalendarDate
-
         from =
             Tuple.second >> Tuple.first
 
@@ -189,6 +183,21 @@ horoscopeFromDate date horoscopes =
         horoscopeName tuple =
             Maybe.withDefault "" <|
                 Maybe.map Tuple.first tuple
+    in
+    horoscopeRanges (Date.year date)
+        |> List.filter (\e -> Date.isBetween (from e) (to e) date)
+        |> List.head
+        |> horoscopeName
+        |> (\name -> List.filter (\z -> z.id == name) horoscopes)
+        |> List.head
+        |> Maybe.withDefault defaultHoroscope
+
+
+horoscopeRanges : Int -> List ( String, ( Date, Date ) )
+horoscopeRanges year =
+    let
+        fcd =
+            Date.fromCalendarDate
     in
     [ ( "aquarius", ( fcd year Jan 21, fcd year Feb 19 ) )
     , ( "pisces", ( fcd year Feb 20, fcd year Mar 20 ) )
@@ -204,13 +213,6 @@ horoscopeFromDate date horoscopes =
     , ( "capricorn", ( fcd year Dec 23, fcd year Dec 31 ) )
     , ( "capricorn", ( fcd year Jan 1, fcd year Jan 20 ) )
     ]
-        |> List.filter (\e -> Date.isBetween (from e) (to e) date)
-        |> List.head
-        |> horoscopeName
-        |> (\name -> List.filter (\z -> z.id == name) horoscopes)
-        |> List.head
-        |> Maybe.withDefault
-            defaultHoroscope
 
 
 horoscopeOrDefault : Int -> List Horoscope -> Horoscope
