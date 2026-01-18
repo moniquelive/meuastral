@@ -1,10 +1,9 @@
 module AscentMastersTests exposing (all, all_attributes, for_birthday, ray_number_edge_cases)
 
-import Array exposing (..)
 import AscentMasters as AM
-import Date exposing (..)
+import Date exposing (fromCalendarDate)
 import Expect
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 import Time exposing (Month(..))
 
 
@@ -28,7 +27,7 @@ for_birthday =
     describe "For Birthday"
         [ test "known date M" <|
             \_ ->
-                case Date.fromCalendarDate 1977 May 3 |> AM.for_birthday of
+                case fromCalendarDate 1977 May 3 |> AM.for_birthday of
                     Just c ->
                         AM.number c |> Expect.equal "5"
 
@@ -36,7 +35,7 @@ for_birthday =
                         Expect.fail "Should not be Nothing"
         , test "known date C" <|
             \_ ->
-                case Date.fromCalendarDate 1982 Mar 31 |> AM.for_birthday of
+                case fromCalendarDate 1982 Mar 31 |> AM.for_birthday of
                     Just c ->
                         AM.number c |> Expect.equal "2"
 
@@ -50,7 +49,7 @@ ray_number_edge_cases =
     describe "Ray number edge cases"
         [ test "sum digits that exceeds 7" <|
             \_ ->
-                case Date.fromCalendarDate 1999 Dec 31 |> AM.for_birthday of
+                case fromCalendarDate 1999 Dec 31 |> AM.for_birthday of
                     Just c ->
                         AM.number c |> Expect.equal "1"
 
@@ -58,7 +57,7 @@ ray_number_edge_cases =
                         Expect.fail "Should not be Nothing"
         , test "date that reduces to 1" <|
             \_ ->
-                case Date.fromCalendarDate 2000 Jan 1 |> AM.for_birthday of
+                case fromCalendarDate 2000 Jan 1 |> AM.for_birthday of
                     Just c ->
                         AM.number c |> Expect.equal "4"
 

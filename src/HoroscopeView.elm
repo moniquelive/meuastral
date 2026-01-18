@@ -1,15 +1,10 @@
 module HoroscopeView exposing (content)
 
+import Horoscope exposing (Horoscope)
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
 import Html.Events as HE
-
-
-type alias Horoscope =
-    { id : String
-    , name : String
-    , resume : String
-    }
+import Json.Decode as D
 
 
 content : (Int -> msg) -> Horoscope -> List Horoscope -> Html msg
@@ -39,5 +34,8 @@ horoscopeSymbols onSelect horoscopes =
 
 horoscopeSymbol : (Int -> msg) -> Int -> Horoscope -> Html msg
 horoscopeSymbol onSelect index horoscopeData =
-    H.a [ HE.onClick (onSelect index), HA.href "#" ]
+    H.a
+        [ HA.href "#"
+        , HE.preventDefaultOn "click" (D.succeed ( onSelect index, True ))
+        ]
         [ H.i [ class ("ai " ++ horoscopeData.id) ] [] ]

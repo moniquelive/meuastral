@@ -128,23 +128,19 @@ attributes =
         ]
 
 
-defaultAttributes : CosmicRayAttributes
-defaultAttributes =
-    { number = ""
-    , colorName = ""
-    , masterName = ""
-    , masterDetails = ""
-    , masterImage = ""
-    , archangelName = ""
-    , archangelImage = ""
-    , rayDetails = ""
-    }
-
-
-getAttributes : CosmicRay -> CosmicRayAttributes
+getAttributes : CosmicRay -> Maybe CosmicRayAttributes
 getAttributes r =
     Array.get (index r) attributes
-        |> Maybe.withDefault defaultAttributes
+
+
+attributeOrEmpty : (CosmicRayAttributes -> String) -> CosmicRay -> String
+attributeOrEmpty getter ray =
+    case getAttributes ray of
+        Just attrs ->
+            getter attrs
+
+        Nothing ->
+            ""
 
 
 sumDigits : Int -> Int
@@ -169,42 +165,42 @@ rayNumber ds =
 
 master_image : CosmicRay -> String
 master_image r =
-    (getAttributes r).masterImage
+    attributeOrEmpty .masterImage r
 
 
 archangel_image : CosmicRay -> String
 archangel_image r =
-    (getAttributes r).archangelImage
+    attributeOrEmpty .archangelImage r
 
 
 master_details : CosmicRay -> String
 master_details r =
-    (getAttributes r).masterDetails
+    attributeOrEmpty .masterDetails r
 
 
 ray_details : CosmicRay -> String
 ray_details r =
-    (getAttributes r).rayDetails
+    attributeOrEmpty .rayDetails r
 
 
 number : CosmicRay -> String
 number r =
-    (getAttributes r).number
+    attributeOrEmpty .number r
 
 
 master_name : CosmicRay -> String
 master_name r =
-    (getAttributes r).masterName
+    attributeOrEmpty .masterName r
 
 
 archangel_name : CosmicRay -> String
 archangel_name r =
-    (getAttributes r).archangelName
+    attributeOrEmpty .archangelName r
 
 
 color_name : CosmicRay -> String
 color_name r =
-    (getAttributes r).colorName
+    attributeOrEmpty .colorName r
 
 
 index : CosmicRay -> Int

@@ -12,6 +12,7 @@
 - `npm run start` (or `./dev.sh` to skip auto-opening a browser) – wraps `elm-app start` with hot reload and pins `ELM_HOME=.elm-home` so Elm caches live in-repo.
 - `npm run build` – emits the optimized bundle in `build/`, shares the same `ELM_HOME` setting, adds `NODE_OPTIONS=--openssl-legacy-provider`, and is the script executed by Cloudflare.
 - `npm test` – runs `elm-app test` once in CI mode so it exits immediately; use `ELM_HOME=.elm-home elm-app test --watch` when you need interactive reruns.
+ - Always run `npm run build` and `npm test` before returning results to the user, and report any failures.
 
 ## Coding Style & Naming Conventions
 - Format Elm files with `elm-format` before committing; it enforces 4-space indentation, trailing newline, and alphabetical import grouping.

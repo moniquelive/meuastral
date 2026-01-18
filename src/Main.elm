@@ -8,9 +8,11 @@ import AscentMasterView
 import AscentMasters as AM exposing (CosmicRay)
 import BiorhythmView
 import Browser
-import Date exposing (..)
+import Date exposing (Date, Unit(..), diff, format, fromCalendarDate, fromIsoString, isBetween, toIsoString, today, year)
 import DatePicker exposing (Msg(..))
 import DatePickerProps exposing (pickerProps)
+import Dict
+import Horoscope exposing (Horoscope, defaultHoroscope)
 import HoroscopeView
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
@@ -25,24 +27,13 @@ import Time exposing (Month(..), Weekday(..))
 ---- MODEL ----
 
 
-type alias Horoscope =
-    { id : String
-    , name : String
-    , resume : String
-    }
-
-
-defaultHoroscope : Horoscope
-defaultHoroscope =
-    Horoscope "" "" ""
-
-
 type alias Model =
     { today : Maybe Date
     , datePickerData : DatePicker.Model
     , selectedDate : Maybe Date
     , horoscopes : List Horoscope
-    , selectedHoroscope : Horoscope
+    , horoscopesById : Dict.Dict String Horoscope
+    , selectedHoroscopeId : Maybe String
     , ascentMaster : Maybe CosmicRay
     }
 
@@ -72,7 +63,8 @@ init userBirthday =
               , datePickerData = datePickerData
               , selectedDate = Nothing
               , horoscopes = []
-              , selectedHoroscope = defaultHoroscope
+              , horoscopesById = Dict.empty
+              , selectedHoroscopeId = Nothing
               , ascentMaster = Nothing
               }
             , Cmd.batch
@@ -88,7 +80,8 @@ init userBirthday =
               , datePickerData = datePickerData
               , selectedDate = Just userDoB
               , horoscopes = []
-              , selectedHoroscope = defaultHoroscope
+              , horoscopesById = Dict.empty
+              , selectedHoroscopeId = Nothing
               , ascentMaster = AM.for_birthday userDoB
               }
             , Cmd.batch defaultCmds
@@ -132,7 +125,7 @@ update msg model =
                     selectedDateOrToday updatedModel
             in
             ( { updatedModel
-                | selectedHoroscope = horoscopeFromMaybeDate effectiveDate updatedModel.horoscopes
+                | selectedHoroscopeId = horoscopeIdFromMaybeDate effectiveDate
                 , ascentMaster = Maybe.andThen AM.for_birthday effectiveDate
               }
             , Cmd.none
@@ -152,7 +145,7 @@ update msg model =
                                         model.today
                         in
                         ( { model
-                            | selectedHoroscope = horoscopeFromMaybeDate newBirthday model.horoscopes
+                            | selectedHoroscopeId = horoscopeIdFromMaybeDate newBirthday
                             , datePickerData = data
                             , selectedDate = newBirthday
                             , ascentMaster = Maybe.andThen AM.for_birthday newBirthday
@@ -177,13 +170,14 @@ update msg model =
                 Ok horoscopes ->
                     ( { model
                         | horoscopes = horoscopes
-                        , selectedHoroscope = horoscopeFromMaybeDate (selectedDateOrToday model) horoscopes
+                        , horoscopesById = Dict.fromList (List.map (\entry -> ( entry.id, entry )) horoscopes)
+                        , selectedHoroscopeId = horoscopeIdFromMaybeDate (selectedDateOrToday model)
                       }
                     , Cmd.none
                     )
 
         SelectHoroscope index ->
-            ( { model | selectedHoroscope = horoscopeOrDefault index model.horoscopes }
+            ( { model | selectedHoroscopeId = horoscopeIdByIndex index model.horoscopes }
             , Cmd.none
             )
 
@@ -198,14 +192,13 @@ selectedDateOrToday model =
             model.today
 
 
-horoscopeFromMaybeDate : Maybe Date -> List Horoscope -> Horoscope
-horoscopeFromMaybeDate maybeDate horoscopes =
-    Maybe.map (\date -> horoscopeFromDate date horoscopes) maybeDate
-        |> Maybe.withDefault defaultHoroscope
+horoscopeIdFromMaybeDate : Maybe Date -> Maybe String
+horoscopeIdFromMaybeDate maybeDate =
+    Maybe.andThen horoscopeIdFromDate maybeDate
 
 
-horoscopeFromDate : Date -> List Horoscope -> Horoscope
-horoscopeFromDate date horoscopes =
+horoscopeIdFromDate : Date -> Maybe String
+horoscopeIdFromDate date =
     let
         from =
             Tuple.second >> Tuple.first
@@ -214,16 +207,12 @@ horoscopeFromDate date horoscopes =
             Tuple.second >> Tuple.second
 
         horoscopeName tuple =
-            Maybe.withDefault "" <|
-                Maybe.map Tuple.first tuple
+            Maybe.map Tuple.first tuple
     in
     horoscopeRanges (Date.year date)
         |> List.filter (\e -> Date.isBetween (from e) (to e) date)
         |> List.head
         |> horoscopeName
-        |> (\name -> List.filter (\z -> z.id == name) horoscopes)
-        |> List.head
-        |> Maybe.withDefault defaultHoroscope
 
 
 horoscopeRanges : Int -> List ( String, ( Date, Date ) )
@@ -248,11 +237,23 @@ horoscopeRanges year =
     ]
 
 
-horoscopeOrDefault : Int -> List Horoscope -> Horoscope
-horoscopeOrDefault index horoscopes =
+horoscopeIdByIndex : Int -> List Horoscope -> Maybe String
+horoscopeIdByIndex index horoscopes =
     horoscopes
         |> Array.fromList
         |> Array.get index
+        |> Maybe.map .id
+
+
+selectedHoroscope : Model -> Horoscope
+selectedHoroscope model =
+    horoscopeById model.selectedHoroscopeId model.horoscopesById
+
+
+horoscopeById : Maybe String -> Dict.Dict String Horoscope -> Horoscope
+horoscopeById maybeId horoscopesById =
+    maybeId
+        |> Maybe.andThen (\id -> Dict.get id horoscopesById)
         |> Maybe.withDefault defaultHoroscope
 
 
@@ -362,7 +363,7 @@ horoscope model =
     H.section sectionAttributes
         [ sectionTitle "Horóscopo"
         , H.hr [] []
-        , HoroscopeView.content SelectHoroscope model.selectedHoroscope model.horoscopes
+        , HoroscopeView.content SelectHoroscope (selectedHoroscope model) model.horoscopes
         ]
 
 

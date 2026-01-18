@@ -1,6 +1,6 @@
 module DatePickerProps exposing (pickerProps)
 
-import Date exposing (..)
+import Date exposing (Date, day, month, weekday)
 import DatePicker exposing (Msg(..))
 import Time exposing (Month(..), Weekday(..))
 
