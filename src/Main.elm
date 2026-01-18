@@ -3,7 +3,6 @@
 
 module Main exposing (main)
 
-import Array
 import AscentMasterView
 import AscentMasters as AM exposing (CosmicRay)
 import BiorhythmView
@@ -12,7 +11,8 @@ import Date exposing (Date, Unit(..), diff, format, fromCalendarDate, fromIsoStr
 import DatePicker exposing (Msg(..))
 import DatePickerProps exposing (pickerProps)
 import Dict
-import Horoscope exposing (Horoscope, defaultHoroscope)
+import Horoscope exposing (Horoscope, HoroscopeId, defaultHoroscope)
+import HoroscopeRanges
 import HoroscopeView
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
@@ -32,8 +32,7 @@ type alias Model =
     , datePickerData : DatePicker.Model
     , selectedDate : Maybe Date
     , horoscopes : List Horoscope
-    , horoscopesById : Dict.Dict String Horoscope
-    , selectedHoroscopeId : Maybe String
+    , selectedHoroscopeId : Maybe HoroscopeId
     , ascentMaster : Maybe CosmicRay
     }
 
@@ -63,7 +62,6 @@ init userBirthday =
               , datePickerData = datePickerData
               , selectedDate = Nothing
               , horoscopes = []
-              , horoscopesById = Dict.empty
               , selectedHoroscopeId = Nothing
               , ascentMaster = Nothing
               }
@@ -80,7 +78,6 @@ init userBirthday =
               , datePickerData = datePickerData
               , selectedDate = Just userDoB
               , horoscopes = []
-              , horoscopesById = Dict.empty
               , selectedHoroscopeId = Nothing
               , ascentMaster = AM.for_birthday userDoB
               }
@@ -110,7 +107,7 @@ type Msg
     = GotToday Date
     | DatePickerMsg DatePicker.Msg
     | GotHoroscope (Result Http.Error (List Horoscope))
-    | SelectHoroscope Int
+    | SelectHoroscopeId HoroscopeId
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -125,7 +122,7 @@ update msg model =
                     selectedDateOrToday updatedModel
             in
             ( { updatedModel
-                | selectedHoroscopeId = horoscopeIdFromMaybeDate effectiveDate
+                | selectedHoroscopeId = horoscopeIdForDate effectiveDate
                 , ascentMaster = Maybe.andThen AM.for_birthday effectiveDate
               }
             , Cmd.none
@@ -145,7 +142,7 @@ update msg model =
                                         model.today
                         in
                         ( { model
-                            | selectedHoroscopeId = horoscopeIdFromMaybeDate newBirthday
+                            | selectedHoroscopeId = horoscopeIdForDate newBirthday
                             , datePickerData = data
                             , selectedDate = newBirthday
                             , ascentMaster = Maybe.andThen AM.for_birthday newBirthday
@@ -170,14 +167,13 @@ update msg model =
                 Ok horoscopes ->
                     ( { model
                         | horoscopes = horoscopes
-                        , horoscopesById = Dict.fromList (List.map (\entry -> ( entry.id, entry )) horoscopes)
-                        , selectedHoroscopeId = horoscopeIdFromMaybeDate (selectedDateOrToday model)
+                        , selectedHoroscopeId = horoscopeIdForDate (selectedDateOrToday model)
                       }
                     , Cmd.none
                     )
 
-        SelectHoroscope index ->
-            ( { model | selectedHoroscopeId = horoscopeIdByIndex index model.horoscopes }
+        SelectHoroscopeId horoscopeId ->
+            ( { model | selectedHoroscopeId = Just horoscopeId }
             , Cmd.none
             )
 
@@ -192,12 +188,12 @@ selectedDateOrToday model =
             model.today
 
 
-horoscopeIdFromMaybeDate : Maybe Date -> Maybe String
-horoscopeIdFromMaybeDate maybeDate =
+horoscopeIdForDate : Maybe Date -> Maybe HoroscopeId
+horoscopeIdForDate maybeDate =
     Maybe.andThen horoscopeIdFromDate maybeDate
 
 
-horoscopeIdFromDate : Date -> Maybe String
+horoscopeIdFromDate : Date -> Maybe HoroscopeId
 horoscopeIdFromDate date =
     let
         from =
@@ -216,45 +212,25 @@ horoscopeIdFromDate date =
 
 
 horoscopeRanges : Int -> List ( String, ( Date, Date ) )
-horoscopeRanges year =
-    let
-        fcd =
-            Date.fromCalendarDate
-    in
-    [ ( "aquarius", ( fcd year Jan 21, fcd year Feb 19 ) )
-    , ( "pisces", ( fcd year Feb 20, fcd year Mar 20 ) )
-    , ( "aries", ( fcd year Mar 21, fcd year Apr 20 ) )
-    , ( "taurus", ( fcd year Apr 21, fcd year May 21 ) )
-    , ( "gemini", ( fcd year May 22, fcd year Jun 21 ) )
-    , ( "cancer", ( fcd year Jun 22, fcd year Jul 22 ) )
-    , ( "leo", ( fcd year Jul 23, fcd year Aug 21 ) )
-    , ( "virgo", ( fcd year Aug 22, fcd year Sep 23 ) )
-    , ( "libra", ( fcd year Sep 24, fcd year Oct 23 ) )
-    , ( "scorpio", ( fcd year Oct 24, fcd year Nov 22 ) )
-    , ( "sagittarius", ( fcd year Nov 23, fcd year Dec 22 ) )
-    , ( "capricorn", ( fcd year Dec 23, fcd year Dec 31 ) )
-    , ( "capricorn", ( fcd year Jan 1, fcd year Jan 20 ) )
-    ]
-
-
-horoscopeIdByIndex : Int -> List Horoscope -> Maybe String
-horoscopeIdByIndex index horoscopes =
-    horoscopes
-        |> Array.fromList
-        |> Array.get index
-        |> Maybe.map .id
+horoscopeRanges =
+    HoroscopeRanges.ranges
 
 
 selectedHoroscope : Model -> Horoscope
 selectedHoroscope model =
-    horoscopeById model.selectedHoroscopeId model.horoscopesById
+    horoscopeById model.selectedHoroscopeId model.horoscopes
 
 
-horoscopeById : Maybe String -> Dict.Dict String Horoscope -> Horoscope
-horoscopeById maybeId horoscopesById =
+horoscopeById : Maybe HoroscopeId -> List Horoscope -> Horoscope
+horoscopeById maybeId horoscopes =
     maybeId
-        |> Maybe.andThen (\id -> Dict.get id horoscopesById)
+        |> Maybe.andThen (\id -> Dict.get id (horoscopeIndex horoscopes))
         |> Maybe.withDefault defaultHoroscope
+
+
+horoscopeIndex : List Horoscope -> Dict.Dict HoroscopeId Horoscope
+horoscopeIndex horoscopes =
+    Dict.fromList (List.map (\entry -> ( entry.id, entry )) horoscopes)
 
 
 
@@ -363,7 +339,7 @@ horoscope model =
     H.section sectionAttributes
         [ sectionTitle "Horóscopo"
         , H.hr [] []
-        , HoroscopeView.content SelectHoroscope (selectedHoroscope model) model.horoscopes
+        , HoroscopeView.content SelectHoroscopeId (selectedHoroscope model) model.horoscopes
         ]
 
 
