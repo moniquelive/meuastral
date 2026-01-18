@@ -1,7 +1,7 @@
 {
   "name": "meuastral",
   "version": "1.0.0",
-  "description": "Facebook comments generator powered by Elm",
+  "description": "MeuAstral.com",
   "main": "elmapp.config.js",
   "scripts": {
     "start": "cross-env ELM_HOME=.elm-home elm-app start",

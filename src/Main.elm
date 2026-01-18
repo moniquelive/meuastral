@@ -1,7 +1,7 @@
 -- vim: tw=0
 
 
-module Main exposing (..)
+module Main exposing (main)
 
 import Array
 import AscentMasters as AM exposing (CosmicRay)

@@ -1,4 +1,4 @@
-module AscentMastersTests exposing (..)
+module AscentMastersTests exposing (all_attributes, for_birthday)
 
 import Array exposing (..)
 import AscentMasters as AM
