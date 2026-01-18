@@ -45,9 +45,9 @@ type alias Datum =
 
 
 type alias Model =
-    { today : Date
+    { today : Maybe Date
     , datePickerData : DatePicker.Model
-    , selectedDate : Date
+    , selectedDate : Maybe Date
     , horoscopes : List Horoscope
     , selectedHoroscope : Horoscope
     , ascentMaster : Maybe CosmicRay
@@ -75,9 +75,9 @@ init userBirthday =
                 ( datePickerData, datePickerInitCmd ) =
                     DatePicker.init "my-datepicker-id"
             in
-            ( { today = Date.fromRataDie 1
+            ( { today = Nothing
               , datePickerData = datePickerData
-              , selectedDate = Date.fromRataDie 1
+              , selectedDate = Nothing
               , horoscopes = []
               , selectedHoroscope = defaultHoroscope
               , ascentMaster = Nothing
@@ -91,9 +91,9 @@ init userBirthday =
                 datePickerData =
                     DatePicker.initFromDate "my-datepicker-id" userDoB
             in
-            ( { today = userDoB
+            ( { today = Nothing
               , datePickerData = datePickerData
-              , selectedDate = userDoB
+              , selectedDate = Just userDoB
               , horoscopes = []
               , selectedHoroscope = defaultHoroscope
               , ascentMaster = AM.for_birthday userDoB
@@ -131,7 +131,19 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotToday today ->
-            ( { model | today = today }, Cmd.none )
+            let
+                updatedModel =
+                    { model | today = Just today }
+
+                effectiveDate =
+                    selectedDateOrToday updatedModel
+            in
+            ( { updatedModel
+                | selectedHoroscope = horoscopeFromMaybeDate effectiveDate updatedModel.horoscopes
+                , ascentMaster = Maybe.andThen AM.for_birthday effectiveDate
+              }
+            , Cmd.none
+            )
 
         DatePickerMsg datePickerMsg ->
             DatePicker.update datePickerMsg model.datePickerData
@@ -139,17 +151,27 @@ update msg model =
                 |> (\( data, cmd ) ->
                         let
                             newBirthday =
-                                Maybe.withDefault model.today data.selectedDate
+                                case data.selectedDate of
+                                    Just date ->
+                                        Just date
+
+                                    Nothing ->
+                                        model.today
                         in
                         ( { model
-                            | selectedHoroscope = horoscopeFromDate newBirthday model.horoscopes
+                            | selectedHoroscope = horoscopeFromMaybeDate newBirthday model.horoscopes
                             , datePickerData = data
                             , selectedDate = newBirthday
-                            , ascentMaster = AM.for_birthday newBirthday
+                            , ascentMaster = Maybe.andThen AM.for_birthday newBirthday
                           }
                         , Cmd.batch
                             [ Cmd.map DatePickerMsg cmd
-                            , saveDoB newBirthday
+                            , case data.selectedDate of
+                                Just birthday ->
+                                    saveDoB birthday
+
+                                Nothing ->
+                                    Cmd.none
                             ]
                         )
                    )
@@ -162,13 +184,31 @@ update msg model =
                 Ok horoscopes ->
                     ( { model
                         | horoscopes = horoscopes
-                        , selectedHoroscope = horoscopeFromDate model.selectedDate horoscopes
+                        , selectedHoroscope = horoscopeFromMaybeDate (selectedDateOrToday model) horoscopes
                       }
                     , Cmd.none
                     )
 
         SelectHoroscope index ->
-            ( { model | selectedHoroscope = horoscopeOrDefault index model.horoscopes }, Cmd.none )
+            ( { model | selectedHoroscope = horoscopeOrDefault index model.horoscopes }
+            , Cmd.none
+            )
+
+
+selectedDateOrToday : Model -> Maybe Date
+selectedDateOrToday model =
+    case model.selectedDate of
+        Just date ->
+            Just date
+
+        Nothing ->
+            model.today
+
+
+horoscopeFromMaybeDate : Maybe Date -> List Horoscope -> Horoscope
+horoscopeFromMaybeDate maybeDate horoscopes =
+    Maybe.map (\date -> horoscopeFromDate date horoscopes) maybeDate
+        |> Maybe.withDefault defaultHoroscope
 
 
 horoscopeFromDate : Date -> List Horoscope -> Horoscope
@@ -256,7 +296,12 @@ view model =
                     ]
                     [ H.i [ class "fab fa-twitter fa-xl" ] [] ]
                 ]
-            , div [] [ H.p [] [ H.text (String.fromInt (Date.year model.today) ++ " - "), H.b [] [ H.text "MeuAstral.com" ] ] ]
+            , div []
+                [ H.p []
+                    [ H.text (footerYear model.today ++ " - ")
+                    , H.b [] [ H.text "MeuAstral.com" ]
+                    ]
+                ]
             ]
         ]
 
@@ -307,12 +352,15 @@ daysSince model =
 
 ageInDays : Model -> Int
 ageInDays model =
-    Date.diff Date.Days model.selectedDate model.today
+    Maybe.map2 (Date.diff Date.Days) (selectedDateOrToday model) model.today
+        |> Maybe.withDefault 0
 
 
 formatDob : Model -> Html Msg
 formatDob model =
-    Date.format "d/M/y" model.selectedDate
+    selectedDateOrToday model
+        |> Maybe.map (Date.format "d/M/y")
+        |> Maybe.withDefault "--"
         |> H.text
 
 
@@ -478,6 +526,12 @@ sectionAttributes =
 sectionTitle : String -> Html Msg
 sectionTitle title =
     H.h2 [ class "text-xl" ] [ H.text title ]
+
+
+footerYear : Maybe Date -> String
+footerYear maybeDate =
+    Maybe.map (Date.year >> String.fromInt) maybeDate
+        |> Maybe.withDefault "--"
 
 
 
