@@ -4,20 +4,19 @@
 module Main exposing (main)
 
 import Array
+import AscentMasterView
 import AscentMasters as AM exposing (CosmicRay)
+import BiorhythmView
 import Browser
-import Chart as C
-import Chart.Attributes as CA
 import Date exposing (..)
 import DatePicker exposing (Msg(..))
 import DatePickerProps exposing (pickerProps)
+import HoroscopeView
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
-import Html.Events as HE
 import Http
 import Json.Decode as D
 import Ports
-import Round as R
 import Task
 import Time exposing (Month(..), Weekday(..))
 
@@ -36,12 +35,6 @@ type alias Horoscope =
 defaultHoroscope : Horoscope
 defaultHoroscope =
     Horoscope "" "" ""
-
-
-type alias Datum =
-    { x : Float
-    , y : Float
-    }
 
 
 type alias Model =
@@ -369,34 +362,8 @@ horoscope model =
     H.section sectionAttributes
         [ sectionTitle "Horóscopo"
         , H.hr [] []
-        , div [ class "place-self-center pt-3 box-content" ]
-            [ horoscopeCard model.selectedHoroscope
-            , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ]
-                (horoscopeSymbols model.horoscopes)
-            ]
+        , HoroscopeView.content SelectHoroscope model.selectedHoroscope model.horoscopes
         ]
-
-
-horoscopeCard : Horoscope -> Html Msg
-horoscopeCard horoscopeData =
-    div [ class "card lg:w-96 bg-base-100 shadow-xl" ]
-        [ H.article [ class "card-body" ]
-            [ H.h2 [ class "card-title" ] [ H.text horoscopeData.name ]
-            , H.p [] [ H.text horoscopeData.resume ]
-            ]
-        ]
-
-
-horoscopeSymbols : List Horoscope -> List (Html Msg)
-horoscopeSymbols horoscopes =
-    horoscopes
-        |> List.indexedMap horoscopeSymbol
-
-
-horoscopeSymbol : Int -> Horoscope -> Html Msg
-horoscopeSymbol index horoscopeData =
-    H.a [ HE.onClick (SelectHoroscope index), HA.href "#" ]
-        [ H.i [ class ("ai " ++ horoscopeData.id) ] [] ]
 
 
 ascent_master : Model -> Html Msg
@@ -404,56 +371,7 @@ ascent_master model =
     H.section sectionAttributes
         [ sectionTitle "Mestre Ascencionado"
         , H.hr [] []
-        , div [ class "place-self-center pt-3 box-content" ]
-            [ ascentMasterView model.ascentMaster ]
-        ]
-
-
-ascentMasterView : Maybe CosmicRay -> Html Msg
-ascentMasterView maybeMaster =
-    case maybeMaster of
-        Nothing ->
-            div [] []
-
-        Just master ->
-            div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
-                [ ascentMasterCard master
-                , archangelCard master
-                ]
-
-
-ascentMasterCard : CosmicRay -> Html Msg
-ascentMasterCard master =
-    div [ class "indicator card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
-        [ H.span
-            [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold"
-            , HA.style "background" (AM.color_name master)
-            ]
-            [ H.text (AM.number master) ]
-        , H.figure [ class "flex-col w-full" ]
-            [ H.img [ class "rounded ring", HA.src (AM.master_image master) ] []
-            , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ]
-                [ H.text (AM.master_name master) ]
-            ]
-        , H.hr [] []
-        , div [ class "card-body" ]
-            [ H.p [ class "prose w-fit" ] [ H.text (AM.master_details master) ]
-            ]
-        ]
-
-
-archangelCard : CosmicRay -> Html Msg
-archangelCard master =
-    div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
-        [ H.figure [ class "flex-col w-full" ]
-            [ H.img [ class "rounded ring", HA.src (AM.archangel_image master) ] []
-            , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ]
-                [ H.text ("Arcanjo " ++ AM.archangel_name master) ]
-            ]
-        , H.hr [] []
-        , div [ class "card-body" ]
-            [ H.p [ class "prose w-fit" ] [ H.text (AM.ray_details master) ]
-            ]
+        , AscentMasterView.content model.ascentMaster
         ]
 
 
@@ -462,76 +380,8 @@ bio model =
     H.section sectionAttributes
         [ sectionTitle "Biorritmo"
         , H.hr [] []
-        , div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
-            [ bioCard 23 "hsl(var(--in))" "Físico" "fa-person-running" model
-            , bioCard 28 "hsl(var(--er))" "Emocional" "fa-heart" model
-            , bioCard 33 "hsl(var(--su))" "Intelectual" "fa-brain" model
-            ]
+        , BiorhythmView.content (ageInDays model)
         ]
-
-
-bioCard : Float -> String -> String -> String -> Model -> Html Msg
-bioCard period color label icon model =
-    div [ class "indicator" ]
-        [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ]
-            [ H.text (bioValue period model ++ "%") ]
-        , div [ class "card card-compact w-80 lg:w-96 bg-base-100 shadow-xl" ]
-            [ bioChart period color model
-            , div [ class "card-body" ]
-                [ H.p [ class "text-center prose" ]
-                    [ H.i [ class ("fa-solid " ++ icon ++ " fa-xl"), HA.style "color" color ] []
-                    , H.span [] [ H.text " " ]
-                    , H.text label
-                    ]
-                ]
-            ]
-        ]
-
-
-bioChart : Float -> String -> Model -> Html Msg
-bioChart period color model =
-    C.chart
-        [ CA.height 50
-        , CA.width 200
-        , CA.htmlAttrs [ HA.style "background" color ]
-        , CA.range [ CA.lowest -30 CA.exactly, CA.highest 0 CA.exactly ]
-        , CA.domain [ CA.lowest -1 CA.exactly, CA.highest 1 CA.exactly, CA.pad 2 2 ]
-        ]
-        [ C.series .x
-            [ C.interpolated .y
-                [ CA.monotone
-                , CA.width 1.5
-                , CA.color "white"
-                ]
-                []
-            ]
-            (bioSeries period model)
-        ]
-
-
-bioValue : Float -> Model -> String
-bioValue period model =
-    R.round 2 (100 * sin (2.0 * pi * toFloat (ageInDays model) / period))
-
-
-bioSeries : Float -> Model -> List { x : Float, y : Float }
-bioSeries period model =
-    let
-        interval =
-            30
-
-        aid =
-            ageInDays model
-
-        bioDay : Float -> { x : Float, y : Float }
-        bioDay n =
-            { x = n - toFloat aid
-            , y = sin (2.0 * pi * n / period)
-            }
-    in
-    List.range (aid - interval) aid
-        |> List.map toFloat
-        |> List.map bioDay
 
 
 comments : Model -> Html Msg
