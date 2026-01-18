@@ -366,119 +366,152 @@ formatDob model =
 
 horoscope : Model -> Html Msg
 horoscope model =
-    let
-        horoscopeView =
-            div [ class "card lg:w-96 bg-base-100 shadow-xl" ]
-                [ H.article [ class "card-body" ]
-                    [ H.h2 [ class "card-title" ] [ H.text model.selectedHoroscope.name ]
-                    , H.p [] [ H.text model.selectedHoroscope.resume ]
-                    ]
-                ]
-
-        symbolsView =
-            model.horoscopes
-                |> List.indexedMap
-                    (\index h ->
-                        H.a [ HE.onClick (SelectHoroscope index), HA.href "#" ]
-                            [ H.i [ class ("ai " ++ h.id) ] [] ]
-                    )
-    in
     H.section sectionAttributes
         [ sectionTitle "Horóscopo"
         , H.hr [] []
         , div [ class "place-self-center pt-3 box-content" ]
-            [ horoscopeView
-            , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ] symbolsView
+            [ horoscopeCard model.selectedHoroscope
+            , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ]
+                (horoscopeSymbols model.horoscopes)
             ]
         ]
 
 
+horoscopeCard : Horoscope -> Html Msg
+horoscopeCard horoscopeData =
+    div [ class "card lg:w-96 bg-base-100 shadow-xl" ]
+        [ H.article [ class "card-body" ]
+            [ H.h2 [ class "card-title" ] [ H.text horoscopeData.name ]
+            , H.p [] [ H.text horoscopeData.resume ]
+            ]
+        ]
+
+
+horoscopeSymbols : List Horoscope -> List (Html Msg)
+horoscopeSymbols horoscopes =
+    horoscopes
+        |> List.indexedMap horoscopeSymbol
+
+
+horoscopeSymbol : Int -> Horoscope -> Html Msg
+horoscopeSymbol index horoscopeData =
+    H.a [ HE.onClick (SelectHoroscope index), HA.href "#" ]
+        [ H.i [ class ("ai " ++ horoscopeData.id) ] [] ]
+
+
 ascent_master : Model -> Html Msg
 ascent_master model =
-    let
-        ascent_master_view =
-            case model.ascentMaster of
-                Nothing ->
-                    div [] []
-
-                Just m ->
-                    div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
-                        [ div [ class "indicator card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
-                            [ H.span [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold", HA.style "background" (AM.color_name m) ] [ H.text (AM.number m) ]
-                            , H.figure [ class "flex-col w-full" ]
-                                [ H.img [ class "rounded ring", HA.src (AM.master_image m) ] []
-                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text (AM.master_name m) ]
-                                ]
-                            , H.hr [] []
-                            , div [ class "card-body" ]
-                                [ H.p [ class "prose w-fit" ] [ H.text (AM.master_details m) ]
-                                ]
-                            ]
-                        , div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
-                            [ H.figure [ class "flex-col w-full" ]
-                                [ H.img [ class "rounded ring", HA.src (AM.archangel_image m) ] []
-                                , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ] [ H.text ("Arcanjo " ++ AM.archangel_name m) ]
-                                ]
-                            , H.hr [] []
-                            , div [ class "card-body" ]
-                                [ H.p [ class "prose w-fit" ] [ H.text (AM.ray_details m) ]
-                                ]
-                            ]
-                        ]
-    in
     H.section sectionAttributes
         [ sectionTitle "Mestre Ascencionado"
         , H.hr [] []
-        , div [ class "place-self-center pt-3 box-content" ] [ ascent_master_view ]
+        , div [ class "place-self-center pt-3 box-content" ]
+            [ ascentMasterView model.ascentMaster ]
+        ]
+
+
+ascentMasterView : Maybe CosmicRay -> Html Msg
+ascentMasterView maybeMaster =
+    case maybeMaster of
+        Nothing ->
+            div [] []
+
+        Just master ->
+            div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
+                [ ascentMasterCard master
+                , archangelCard master
+                ]
+
+
+ascentMasterCard : CosmicRay -> Html Msg
+ascentMasterCard master =
+    div [ class "indicator card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
+        [ H.span
+            [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold"
+            , HA.style "background" (AM.color_name master)
+            ]
+            [ H.text (AM.number master) ]
+        , H.figure [ class "flex-col w-full" ]
+            [ H.img [ class "rounded ring", HA.src (AM.master_image master) ] []
+            , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ]
+                [ H.text (AM.master_name master) ]
+            ]
+        , H.hr [] []
+        , div [ class "card-body" ]
+            [ H.p [ class "prose w-fit" ] [ H.text (AM.master_details master) ]
+            ]
+        ]
+
+
+archangelCard : CosmicRay -> Html Msg
+archangelCard master =
+    div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
+        [ H.figure [ class "flex-col w-full" ]
+            [ H.img [ class "rounded ring", HA.src (AM.archangel_image master) ] []
+            , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ]
+                [ H.text ("Arcanjo " ++ AM.archangel_name master) ]
+            ]
+        , H.hr [] []
+        , div [ class "card-body" ]
+            [ H.p [ class "prose w-fit" ] [ H.text (AM.ray_details master) ]
+            ]
         ]
 
 
 bio : Model -> Html Msg
 bio model =
-    let
-        val period =
-            R.round 2 (100 * sin (2.0 * pi * toFloat (ageInDays model) / period))
-
-        card period color label icon =
-            div [ class "indicator" ]
-                [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ] [ H.text <| val period ++ "%" ]
-                , div [ class "card card-compact w-80 lg:w-96 bg-base-100 shadow-xl" ]
-                    [ C.chart
-                        [ CA.height 50
-                        , CA.width 200
-                        , CA.htmlAttrs [ HA.style "background" color ]
-                        , CA.range [ CA.lowest -30 CA.exactly, CA.highest 0 CA.exactly ]
-                        , CA.domain [ CA.lowest -1 CA.exactly, CA.highest 1 CA.exactly, CA.pad 2 2 ]
-                        ]
-                        [ C.series .x
-                            [ C.interpolated .y
-                                [ CA.monotone
-                                , CA.width 1.5
-                                , CA.color "white"
-                                ]
-                                []
-                            ]
-                            (bioSeries period model)
-                        ]
-                    , div [ class "card-body" ]
-                        [ H.p [ class "text-center prose" ]
-                            [ H.i [ class <| "fa-solid " ++ icon ++ " fa-xl", HA.style "color" color ] []
-                            , H.span [] [ H.text " " ]
-                            , H.text label
-                            ]
-                        ]
-                    ]
-                ]
-    in
     H.section sectionAttributes
         [ sectionTitle "Biorritmo"
         , H.hr [] []
         , div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
-            [ card 23 "hsl(var(--in))" "Físico" "fa-person-running"
-            , card 28 "hsl(var(--er))" "Emocional" "fa-heart"
-            , card 33 "hsl(var(--su))" "Intelectual" "fa-brain"
+            [ bioCard 23 "hsl(var(--in))" "Físico" "fa-person-running" model
+            , bioCard 28 "hsl(var(--er))" "Emocional" "fa-heart" model
+            , bioCard 33 "hsl(var(--su))" "Intelectual" "fa-brain" model
             ]
         ]
+
+
+bioCard : Float -> String -> String -> String -> Model -> Html Msg
+bioCard period color label icon model =
+    div [ class "indicator" ]
+        [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ]
+            [ H.text (bioValue period model ++ "%") ]
+        , div [ class "card card-compact w-80 lg:w-96 bg-base-100 shadow-xl" ]
+            [ bioChart period color model
+            , div [ class "card-body" ]
+                [ H.p [ class "text-center prose" ]
+                    [ H.i [ class ("fa-solid " ++ icon ++ " fa-xl"), HA.style "color" color ] []
+                    , H.span [] [ H.text " " ]
+                    , H.text label
+                    ]
+                ]
+            ]
+        ]
+
+
+bioChart : Float -> String -> Model -> Html Msg
+bioChart period color model =
+    C.chart
+        [ CA.height 50
+        , CA.width 200
+        , CA.htmlAttrs [ HA.style "background" color ]
+        , CA.range [ CA.lowest -30 CA.exactly, CA.highest 0 CA.exactly ]
+        , CA.domain [ CA.lowest -1 CA.exactly, CA.highest 1 CA.exactly, CA.pad 2 2 ]
+        ]
+        [ C.series .x
+            [ C.interpolated .y
+                [ CA.monotone
+                , CA.width 1.5
+                , CA.color "white"
+                ]
+                []
+            ]
+            (bioSeries period model)
+        ]
+
+
+bioValue : Float -> Model -> String
+bioValue period model =
+    R.round 2 (100 * sin (2.0 * pi * toFloat (ageInDays model) / period))
 
 
 bioSeries : Float -> Model -> List { x : Float, y : Float }
