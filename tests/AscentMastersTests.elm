@@ -1,4 +1,4 @@
-module AscentMastersTests exposing (all_attributes, for_birthday)
+module AscentMastersTests exposing (all, all_attributes, for_birthday, ray_number_edge_cases)
 
 import Array exposing (..)
 import AscentMasters as AM
@@ -42,4 +42,35 @@ for_birthday =
 
                     Nothing ->
                         Expect.fail "Should not be Nothing"
+        ]
+
+
+ray_number_edge_cases : Test
+ray_number_edge_cases =
+    describe "Ray number edge cases"
+        [ test "sum digits that exceeds 7" <|
+            \_ ->
+                case Date.fromCalendarDate 1999 Dec 31 |> AM.for_birthday of
+                    Just c ->
+                        AM.number c |> Expect.equal "1"
+
+                    Nothing ->
+                        Expect.fail "Should not be Nothing"
+        , test "date that reduces to 1" <|
+            \_ ->
+                case Date.fromCalendarDate 2000 Jan 1 |> AM.for_birthday of
+                    Just c ->
+                        AM.number c |> Expect.equal "4"
+
+                    Nothing ->
+                        Expect.fail "Should not be Nothing"
+        ]
+
+
+all : Test
+all =
+    describe "AscentMasters"
+        [ all_attributes
+        , for_birthday
+        , ray_number_edge_cases
         ]
