@@ -6,8 +6,8 @@ module Main exposing (main)
 import AscentMasterView
 import AscentMasters as AM exposing (CosmicRay)
 import BiorhythmView
-import Browser
-import Date exposing (Date, Unit(..), diff, format, fromCalendarDate, fromIsoString, isBetween, toIsoString, today, year)
+import Browser exposing (element)
+import Date exposing (Date, Unit(..))
 import DatePicker exposing (Msg(..))
 import DatePickerProps exposing (pickerProps)
 import Dict
@@ -91,7 +91,7 @@ init userBirthday =
 
 main : Program (Maybe String) Model Msg
 main =
-    Browser.element
+    element
         { view = view
         , init = \flags -> init flags
         , update = update
@@ -115,13 +115,13 @@ update msg model =
     case msg of
         GotToday today ->
             let
-                updatedModel =
+                newModel =
                     { model | today = Just today }
 
                 effectiveDate =
-                    selectedDateOrToday updatedModel
+                    selectedDateOrToday newModel
             in
-            ( { updatedModel
+            ( { newModel
                 | selectedHoroscopeId = horoscopeIdForDate effectiveDate
                 , ascentMaster = Maybe.andThen AM.for_birthday effectiveDate
               }
@@ -173,9 +173,7 @@ update msg model =
                     )
 
         SelectHoroscopeId horoscopeId ->
-            ( { model | selectedHoroscopeId = Just horoscopeId }
-            , Cmd.none
-            )
+            ( { model | selectedHoroscopeId = Just horoscopeId }, Cmd.none )
 
 
 selectedDateOrToday : Model -> Maybe Date
@@ -205,26 +203,16 @@ horoscopeIdFromDate date =
         horoscopeName tuple =
             Maybe.map Tuple.first tuple
     in
-    horoscopeRanges (Date.year date)
+    HoroscopeRanges.ranges (Date.year date)
         |> List.filter (\e -> Date.isBetween (from e) (to e) date)
         |> List.head
         |> horoscopeName
 
 
-horoscopeRanges : Int -> List ( String, ( Date, Date ) )
-horoscopeRanges =
-    HoroscopeRanges.ranges
-
-
 selectedHoroscope : Model -> Horoscope
 selectedHoroscope model =
-    horoscopeById model.selectedHoroscopeId model.horoscopes
-
-
-horoscopeById : Maybe HoroscopeId -> List Horoscope -> Horoscope
-horoscopeById maybeId horoscopes =
-    maybeId
-        |> Maybe.andThen (\id -> Dict.get id (horoscopeIndex horoscopes))
+    model.selectedHoroscopeId
+        |> Maybe.andThen (\id -> Dict.get id (horoscopeIndex model.horoscopes))
         |> Maybe.withDefault defaultHoroscope
 
 
@@ -361,21 +349,22 @@ bio model =
         ]
 
 
-comments : Model -> Html Msg
-comments _ =
-    H.section sectionAttributes
-        [ H.hr [] []
-        , H.h2 [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 text-xl" ] [ H.text "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!" ]
-        , H.div [ class "flex justify-center" ]
-            [ H.div
-                [ class "fb-comments"
-                , HA.attribute "data-href" "https://developers.facebook.com/docs/plugins/comments#configurator"
-                , HA.attribute "data-numposts" "5"
-                , HA.attribute "data-lazy" "true"
-                ]
-                []
-            ]
-        ]
+
+-- comments : Model -> Html Msg
+-- comments _ =
+--     H.section sectionAttributes
+--         [ H.hr [] []
+--         , H.h2 [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 text-xl" ] [ H.text "Curtiu o MeuAstral.com? Deixe um recado, dúvida ou sugestão!" ]
+--         , H.div [ class "flex justify-center" ]
+--             [ H.div
+--                 [ class "fb-comments"
+--                 , HA.attribute "data-href" "https://developers.facebook.com/docs/plugins/comments#configurator"
+--                 , HA.attribute "data-numposts" "5"
+--                 , HA.attribute "data-lazy" "true"
+--                 ]
+--                 []
+--             ]
+--         ]
 
 
 sectionAttributes : List (H.Attribute Msg)
