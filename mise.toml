@@ -1,2 +1,5 @@
 [tools]
 node = "16"
+
+[tasks]
+w = "mise x node@latest -- npx wrangler"
