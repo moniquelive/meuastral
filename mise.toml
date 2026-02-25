@@ -1,5 +1,8 @@
 [tools]
 node = "16"
 
-[tasks]
+# [tasks]
+# w = "mise x node@latest -- npx wrangler"
+
+[shell_alias]
 w = "mise x node@latest -- npx wrangler"
