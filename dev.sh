@@ -1,1 +1,1 @@
-ELM_HOME=.elm-home elm-app start --no-browser
+ELM_HOME=.elm-home npx wrangler dev

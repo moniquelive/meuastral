@@ -2,11 +2,11 @@
   "name": "meuastral",
   "version": "1.0.0",
   "description": "MeuAstral.com",
-  "main": "elmapp.config.js",
   "scripts": {
-    "start": "cross-env ELM_HOME=.elm-home elm-app start",
-    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider ELM_HOME=.elm-home elm-app build",
-    "test": "cross-env ELM_HOME=.elm-home CI=true elm-app test",
+    "start": "cross-env ELM_HOME=.elm-home wrangler dev",
+    "build": "cross-env ELM_HOME=.elm-home node scripts/build.mjs",
+    "test": "cross-env ELM_HOME=.elm-home CI=true elm-test",
+    "test:watch": "cross-env ELM_HOME=.elm-home elm-test --watch",
     "dev:worker": "wrangler dev",
     "deploy": "wrangler deploy"
   },
@@ -19,8 +19,9 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "create-elm-app": "^5.22.0",
     "cross-env": "^10.1.0",
-    "wrangler": "^4.59.2"
+    "elm": "^0.19.1-6",
+    "elm-test": "^0.19.1-revision17",
+    "wrangler": "^4.68.1"
   }
 }

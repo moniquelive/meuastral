@@ -1,5 +1,5 @@
 [tools]
-node = "16"
+node = "20"
 
 # [tasks]
 # w = "mise x node@latest -- npx wrangler"
