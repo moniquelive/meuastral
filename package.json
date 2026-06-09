@@ -22,6 +22,9 @@
     "cross-env": "^10.1.0",
     "elm": "^0.19.1-6",
     "elm-test": "^0.19.1-revision17",
-    "wrangler": "^4.68.1"
+    "wrangler": "^4.80.0"
+  },
+  "overrides": {
+    "ws": "8.20.1"
   }
 }
