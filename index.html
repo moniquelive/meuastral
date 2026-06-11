@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="aqua">
+<html lang="pt-BR" data-theme="aqua">
 
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description"
+    content="MeuAstral combina horoscopo diario, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento." />
+  <meta name="google-adsense-account" content="ca-pub-7232537493483974" />
+  <link rel="canonical" href="https://meuastral.com/" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/favicon.ico" />
   <title>MeuAstral.com</title>
@@ -21,8 +25,39 @@
   <meta property="og:url" content="https://meuastral.com/" />
   <meta property="og:image" content="https://meuastral.com/meuastral-marca.png" />
   <meta property="og:site_name" content="MeuAstral" />
-  <meta property="og:description" content="Confira diariamente como está seu astral gratuitamente!" />
+  <meta property="og:description"
+    content="MeuAstral combina horoscopo diario, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento." />
   <meta property="fb:admins" content="506596308" />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://meuastral.com/#organization",
+          "name": "MeuAstral",
+          "url": "https://meuastral.com/",
+          "logo": "https://meuastral.com/meuastral-marca.png",
+          "sameAs": [
+            "https://www.facebook.com/meuastral/",
+            "https://twitter.com/MeuAstral_Com"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://meuastral.com/#website",
+          "name": "MeuAstral",
+          "url": "https://meuastral.com/",
+          "description": "MeuAstral combina horoscopo diario, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento.",
+          "publisher": {
+            "@id": "https://meuastral.com/#organization"
+          },
+          "inLanguage": "pt-BR"
+        }
+      ]
+    }
+  </script>
 
   <link rel="preconnect" href="https://www.google-analytics.com" />
   <link rel="preconnect" href="https://cdn.syndication.twimg.com" />
@@ -41,8 +76,32 @@
 
 <body class="subpixel-antialiased">
   <div id="fb-root"></div>
-  <noscript> You need to enable JavaScript to run this app. </noscript>
-  <div id="root"></div>
+  <noscript>
+    O MeuAstral funciona melhor com JavaScript ativado. Mesmo assim, voce pode acessar as paginas institucionais e voltar
+    depois para consultar horoscopo, biorritmo e mestres ascensionados.
+  </noscript>
+  <div id="root">
+    <main>
+      <header>
+        <img src="/logo.png" alt="MeuAstral" width="220" height="112" />
+        <h1>MeuAstral: horoscopo, biorritmo e mestres ascensionados</h1>
+      </header>
+      <p>
+        O MeuAstral oferece uma consulta gratuita de autoconhecimento com horoscopo diario, calculo de biorritmo e
+        correspondencia com mestres ascensionados a partir da data de nascimento.
+      </p>
+      <p>
+        A experiencia interativa carrega no navegador e permite escolher uma data para ver signo, dias de vida,
+        ciclos fisico, emocional e intelectual, alem do raio espiritual associado.
+      </p>
+      <nav aria-label="Paginas do MeuAstral">
+        <a href="/sobre/">Sobre o MeuAstral</a>
+        <a href="/politica-de-privacidade/">Politica de privacidade</a>
+        <a href="/termos-de-uso/">Termos de uso</a>
+        <a href="/como-o-meuastral-se-financia/">Como o MeuAstral se financia</a>
+      </nav>
+    </main>
+  </div>
 
   <script src="/elm.js" defer></script>
   <script src="/bootstrap.js" defer></script>

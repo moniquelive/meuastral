@@ -8,11 +8,19 @@
 
 ## Build, Test, and Development Commands
 - `mise install` – installs the pinned Node 20 runtime from `mise.toml` so Wrangler and Elm tooling resolve consistently.
-- `npm install` – installs the local CLI dependencies (`elm`, `elm-test`, `wrangler`) used by all scripts; run once per clone (CI can use `npm ci`).
-- `npm run start` (or `./dev.sh`) – runs `wrangler dev` with `ELM_HOME=.elm-home`; Wrangler executes the configured custom build before serving assets.
-- `npm run build` – runs `scripts/build.mjs`, which rebuilds `build/`, copies static assets/CSS/bootstrap files, and compiles `src/Main.elm` to `build/elm.js` with `--optimize`.
-- `npm test` – runs `elm-test` once in CI mode so it exits immediately; use `npm run test:watch` for local reruns.
- - Always run `npm run build` and `npm test` before returning results to the user, and report any failures.
+- `mise run install` – installs local CLI dependencies (`elm`, `elm-test`, `wrangler`) with `npm ci`.
+- `mise run dev` (or `./dev.sh`) – runs `wrangler dev` with `ELM_HOME=.elm-home`; Wrangler executes the configured custom build before serving assets.
+- `mise run build` – runs `scripts/build.mjs`, which rebuilds `build/`, copies static assets/CSS/bootstrap files, and compiles `src/Main.elm` to `build/elm.js` with `--optimize`.
+- `mise run test` – runs `elm-test` once in CI mode so it exits immediately; use `npm run test:watch` for local reruns.
+- `mise run ci` – runs the test and production build tasks; prefer this before commits and PRs.
+- Always run `mise run build` and `mise run test` before returning results to the user, and report any failures.
+
+## Tooling (Mise Preferred)
+- Run development tools through `mise` when a task exists.
+- Prefer `mise run <task>` over direct `npm` commands for repeated repo workflows.
+- Use one-off commands directly only when there is no matching `mise.toml` task.
+- Keep local and CI workflows aligned by adding or updating `mise.toml` tasks when a repeated command is needed.
+- Keep active CLI tools pinned in `mise.toml`; this project currently uses `elm`, `elm-test`, and `wrangler` directly rather than the older `elm-app` wrapper referenced in historical README text.
 
 ## Coding Style & Naming Conventions
 - Format Elm files with `elm-format` before committing; it enforces 4-space indentation, trailing newline, and alphabetical import grouping.
@@ -23,7 +31,7 @@
 ## Testing Guidelines
 - Tests rely on `elm-explorations/test`; place new suites under `tests/ModuleNameTests.elm` and expose a top-level `all` value for aggregation.
 - Aim to cover every `AscentMasters.CosmicRay` branch: validate parsing, formatting, and date handling with `Date.fromCalendarDate`.
-- Run `npm test` locally and in CI before pushing; failures print descriptive diffs for `Expect.equal`.
+- Run `mise run test` locally and in CI before pushing; failures print descriptive diffs for `Expect.equal`.
 
 ## Commit & Pull Request Guidelines
 - Follow the existing conventional style (`fix: upgrade elm-charts`, `chore: format`). Use a short type prefix, then a concise subject describing the change.
@@ -31,7 +39,7 @@
 - Reference tracking issues in the PR body and note any configuration updates (`scripts/build.mjs`, `wrangler.toml`, `mise.toml`) so reviewers can verify deployments.
 
 ## Cloudflare Worker Deployment
-- Install JS dependencies via `npm install` (CI can call `npm ci` first); this makes local `elm`, `elm-test`, and `wrangler` binaries available for all scripts.
-- Build assets with `npm run build`; the script keeps Elm caches inside `.elm-home`, compiles optimized Elm output, and writes the deployable static bundle consumed by the worker via `STATIC_CONTENT`.
-- Preview the worker locally with `npm run dev:worker`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
+- Install JS dependencies via `mise run install`; this makes local `elm`, `elm-test`, and `wrangler` binaries available for all scripts.
+- Build assets with `mise run build`; the script keeps Elm caches inside `.elm-home`, compiles optimized Elm output, and writes the deployable static bundle consumed by the worker via `STATIC_CONTENT`.
+- Preview the worker locally with `mise run dev`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
 - Deploy via `npm run deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.
