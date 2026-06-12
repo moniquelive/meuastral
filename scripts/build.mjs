@@ -67,6 +67,7 @@ function shouldCopyPublicAsset(fileName) {
   return [
     '.ico',
     '.png',
+    '.webp',
     '.json'
   ].some(ext => fileName.endsWith(ext));
 }

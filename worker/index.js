@@ -4,6 +4,7 @@ import {
 } from "./horoscope.mjs";
 import {
   redirectPathForHomeLocale,
+  withStaticCacheHeaders,
 } from "./routing.mjs";
 
 export default {
@@ -35,6 +36,6 @@ export default {
 
     const response = await env.STATIC_CONTENT.fetch(request);
 
-    return response;
+    return withStaticCacheHeaders(response, url.pathname);
   },
 };

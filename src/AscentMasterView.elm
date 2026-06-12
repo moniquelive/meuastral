@@ -31,10 +31,20 @@ ascentMasterCard locale master =
         [ H.span
             [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold"
             , HA.style "background" (AM.color_name master)
+            , HA.style "color" (badgeTextColor master)
             ]
             [ H.text (AM.number master) ]
         , H.figure [ class "flex-col w-full" ]
-            [ H.img [ class "rounded ring", HA.src (AM.master_image master) ] []
+            [ H.img
+                [ class "rounded ring"
+                , HA.src (AM.master_image master)
+                , HA.alt (AM.master_name_for locale master)
+                , HA.width 512
+                , HA.height 512
+                , HA.attribute "loading" "lazy"
+                , HA.attribute "decoding" "async"
+                ]
+                []
             , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ]
                 [ H.text (AM.master_name_for locale master) ]
             ]
@@ -45,6 +55,22 @@ ascentMasterCard locale master =
         ]
 
 
+badgeTextColor : CosmicRay -> String
+badgeTextColor master =
+    case AM.color_name master of
+        "gold" ->
+            "#1f2937"
+
+        "pink" ->
+            "#1f2937"
+
+        "whitesmoke" ->
+            "#1f2937"
+
+        _ ->
+            "#ffffff"
+
+
 archangelCard : Locale.Locale -> CosmicRay -> Html msg
 archangelCard locale master =
     let
@@ -53,7 +79,16 @@ archangelCard locale master =
     in
     div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
         [ H.figure [ class "flex-col w-full" ]
-            [ H.img [ class "rounded ring", HA.src (AM.archangel_image master) ] []
+            [ H.img
+                [ class "rounded ring"
+                , HA.src (AM.archangel_image master)
+                , HA.alt (localizedCopy.archangelPrefix ++ AM.archangel_name_for locale master)
+                , HA.width 512
+                , HA.height 512
+                , HA.attribute "loading" "lazy"
+                , HA.attribute "decoding" "async"
+                ]
+                []
             , H.figcaption [ class "prose my-2 text-center text-lg font-medium" ]
                 [ H.text (localizedCopy.archangelPrefix ++ AM.archangel_name_for locale master) ]
             ]

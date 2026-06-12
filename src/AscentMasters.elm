@@ -265,12 +265,21 @@ rayNumber ds =
 
 master_image : CosmicRay -> String
 master_image r =
-    publicAssetPath (attributeOrDefault .masterImage r)
+    publicAssetPath (webpPath (attributeOrDefault .masterImage r))
 
 
 archangel_image : CosmicRay -> String
 archangel_image r =
-    publicAssetPath (attributeOrDefault .archangelImage r)
+    publicAssetPath (webpPath (attributeOrDefault .archangelImage r))
+
+
+webpPath : String -> String
+webpPath path =
+    if String.endsWith ".png" path then
+        String.dropRight 4 path ++ ".webp"
+
+    else
+        path
 
 
 publicAssetPath : String -> String

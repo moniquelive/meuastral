@@ -255,7 +255,15 @@ view : Model -> Html Msg
 view model =
     div [ class "flex flex-col h-screen overflow-hidden" ]
         [ H.header [ class "app-header w-full flex justify-center items-center border-b border-grey p-3" ]
-            [ H.img [ class "h-28", HA.src "/logo.png", HA.alt "logo" ] [] ]
+            [ H.img
+                [ class "h-28"
+                , HA.src "/logo.png"
+                , HA.alt "MeuAstral"
+                , HA.width 220
+                , HA.height 112
+                ]
+                []
+            ]
         , H.main_ [ class "flex-1 overflow-y-scroll p-4 content-center", HA.attribute "data-theme" "light" ]
             [ dob model
             , userInfo model
@@ -271,14 +279,18 @@ view model =
                     [ class "btn btn-circle mx-2"
                     , HA.href "https://www.facebook.com/meuastral/"
                     , HA.target "_blank"
+                    , HA.rel "noopener noreferrer"
+                    , HA.attribute "aria-label" "Facebook"
                     ]
-                    [ H.i [ class "fab fa-facebook-f fa-xl" ] [] ]
+                    [ H.span [ class "social-icon", HA.attribute "aria-hidden" "true" ] [ H.text "f" ] ]
                 , H.a
                     [ class "btn btn-circle mx-2"
                     , HA.href "https://twitter.com/MeuAstral_Com"
                     , HA.target "_blank"
+                    , HA.rel "noopener noreferrer"
+                    , HA.attribute "aria-label" "X"
                     ]
-                    [ H.i [ class "fab fa-twitter fa-xl" ] [] ]
+                    [ H.span [ class "social-icon", HA.attribute "aria-hidden" "true" ] [ H.text "X" ] ]
                 ]
             , div []
                 [ H.p []

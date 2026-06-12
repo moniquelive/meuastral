@@ -22,8 +22,8 @@ all_attributes =
         , test "Archangel name" <| \_ -> AM.archangel_name subject |> Expect.equal "Rafael"
         , test "English master name" <| \_ -> AM.master_name_for (Locale.fromString "en-US") subject |> Expect.equal "Master Hilarion"
         , test "English archangel name" <| \_ -> AM.archangel_name_for (Locale.fromString "en-US") subject |> Expect.equal "Raphael"
-        , test "Master image path is root-relative" <| \_ -> AM.master_image subject |> Expect.equal "/5-hilarion.png"
-        , test "Archangel image path is root-relative" <| \_ -> AM.archangel_image subject |> Expect.equal "/5-arcanjo-rafael.png"
+        , test "Master image path is root-relative WebP" <| \_ -> AM.master_image subject |> Expect.equal "/5-hilarion.webp"
+        , test "Archangel image path is root-relative WebP" <| \_ -> AM.archangel_image subject |> Expect.equal "/5-arcanjo-rafael.webp"
         , test "English master details" <| \_ -> AM.master_details_for (Locale.fromString "en-US") subject |> Expect.equal "Master Hilarion is associated with truth, healing, and clear investigation. In tradition he is linked with the Apostle Paul and with a spiritual sanctuary over the island of Crete."
         , test "English ray details" <| \_ -> AM.ray_details_for (Locale.fromString "en-US") subject |> Expect.equal "The Green Ray represents truth, abundance, and healing. People connected with this ray often feel drawn to research, science, health, medicine, nursing, and healing work."
         ]

@@ -11,3 +11,32 @@ export function redirectPathForHomeLocale(request, locale) {
 
   return locale === "en-US" ? "/en/" : null;
 }
+
+export function cacheControlForStaticPath(pathname) {
+  if (/\.(avif|ico|png|webp)$/i.test(pathname)) {
+    return "public, max-age=31536000, immutable";
+  }
+
+  if (/\.(css|js|json)$/i.test(pathname)) {
+    return "public, max-age=86400, stale-while-revalidate=604800";
+  }
+
+  return null;
+}
+
+export function withStaticCacheHeaders(response, pathname) {
+  const cacheControl = cacheControlForStaticPath(pathname);
+
+  if (!cacheControl || !response.ok) {
+    return response;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", cacheControl);
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}

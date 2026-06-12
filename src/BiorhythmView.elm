@@ -15,9 +15,9 @@ content locale ageInDays =
             Locale.copy locale
     in
     div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
-        [ bioCard 23 "hsl(var(--in))" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "fa-person-running" ageInDays
-        , bioCard 28 "hsl(var(--er))" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "fa-heart" ageInDays
-        , bioCard 33 "hsl(var(--su))" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "fa-brain" ageInDays
+        [ bioCard 23 "hsl(var(--in))" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "🏃" ageInDays
+        , bioCard 28 "hsl(var(--er))" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "♥" ageInDays
+        , bioCard 33 "hsl(var(--su))" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "🧠" ageInDays
         ]
 
 
@@ -34,7 +34,12 @@ bioCard period color label tooltip icon ageInDays =
             [ bioChart period color ageInDays
             , div [ class "card-body" ]
                 [ H.p [ class "text-center prose" ]
-                    [ H.i [ class ("fa-solid " ++ icon ++ " fa-xl"), HA.style "color" color ] []
+                    [ H.span
+                        [ class "biorhythm-icon"
+                        , HA.style "color" color
+                        , HA.attribute "aria-hidden" "true"
+                        ]
+                        [ H.text icon ]
                     , H.span [] [ H.text " " ]
                     , H.text label
                     ]
