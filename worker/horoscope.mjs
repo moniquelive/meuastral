@@ -228,36 +228,6 @@ export async function handleHoroscopeRequest(request, env, ctx) {
   return response;
 }
 
-export function injectLocaleIntoHtml(html, locale) {
-  const resolvedLocale = resolveLocale(locale);
-  const localeScript = `<script>window.__MEUASTRAL_LOCALE__ = ${JSON.stringify(
-    resolvedLocale,
-  )};</script>`;
-  const withLang = html.replace(
-    /<html([^>]*)\slang="[^"]*"/i,
-    `<html$1 lang="${resolvedLocale}"`,
-  );
-
-  if (withLang.includes("window.__MEUASTRAL_LOCALE__")) {
-    return withLang;
-  }
-
-  return withLang.replace("</head>", `  ${localeScript}\n</head>`);
-}
-
-export async function responseWithInjectedLocale(response, locale) {
-  const html = await response.text();
-  const headers = new Headers(response.headers);
-
-  headers.set("content-type", "text/html; charset=utf-8");
-
-  return new Response(injectLocaleIntoHtml(html, locale), {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
-}
-
 async function fetchTerraHoroscope() {
   const response = await fetch(TERRA_URL);
 

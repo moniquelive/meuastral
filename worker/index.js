@@ -1,12 +1,16 @@
 import {
   handleHoroscopeRequest,
   resolveLocaleFromAcceptLanguage,
-  responseWithInjectedLocale,
 } from "./horoscope.mjs";
+import { localeForPath, responseWithPageMetadata } from "./page-meta.mjs";
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    if (url.pathname === "/en") {
+      return Response.redirect(new URL("/en/", url.origin).toString(), 301);
+    }
 
     if (url.pathname === "/api/horoscope") {
       return handleHoroscopeRequest(request, env, ctx);
@@ -15,8 +19,8 @@ export default {
     const response = await env.STATIC_CONTENT.fetch(request);
 
     if (response.status !== 404) {
-      if (shouldInjectLocale(request, response)) {
-        return responseWithInjectedLocale(response, htmlLocale(request));
+      if (shouldInjectMetadata(request)) {
+        return responseWithPageMetadata(response, htmlLocale(request));
       }
 
       return response;
@@ -40,26 +44,27 @@ async function handleSpaFallback(request, env) {
       }),
     );
 
-    return responseWithInjectedLocale(response, htmlLocale(request));
+    return responseWithPageMetadata(response, htmlLocale(request));
   }
 
   return new Response("Not Found", { status: 404 });
 }
 
-function shouldInjectLocale(request, response) {
+function shouldInjectMetadata(request) {
   if (request.method !== "GET") {
     return false;
   }
 
   const url = new URL(request.url);
 
-  if (url.pathname !== "/" && url.pathname !== "/index.html") {
-    return false;
-  }
-
-  return true;
+  return localeForPath(url.pathname) !== null;
 }
 
 function htmlLocale(request) {
-  return resolveLocaleFromAcceptLanguage(request.headers.get("accept-language"));
+  const url = new URL(request.url);
+
+  return (
+    localeForPath(url.pathname) ??
+    resolveLocaleFromAcceptLanguage(request.headers.get("accept-language"))
+  );
 }
