@@ -6,6 +6,7 @@ import {
   localeForPath,
   redirectPathForHomeLocale,
   responseWithPageMetadata,
+  shouldServeAppShellFallback,
 } from "./page-meta.mjs";
 
 export default {
@@ -51,10 +52,8 @@ export default {
 
 async function handleSpaFallback(request, env) {
   const url = new URL(request.url);
-  const isAssetRequest =
-    url.pathname.includes(".") && !url.pathname.endsWith(".html");
 
-  if (!isAssetRequest && request.method === "GET") {
+  if (shouldServeAppShellFallback(request)) {
     const indexUrl = new URL("/index.html", url.origin);
     const response = await env.STATIC_CONTENT.fetch(
       new Request(indexUrl.toString(), {
@@ -62,8 +61,20 @@ async function handleSpaFallback(request, env) {
         method: "GET",
       }),
     );
+    const metadataResponse = await responseWithPageMetadata(
+      response,
+      htmlLocale(request),
+    );
 
-    return responseWithPageMetadata(response, htmlLocale(request));
+    if (request.method === "HEAD") {
+      return new Response(null, {
+        status: metadataResponse.status,
+        statusText: metadataResponse.statusText,
+        headers: metadataResponse.headers,
+      });
+    }
+
+    return metadataResponse;
   }
 
   return new Response("Not Found", { status: 404 });

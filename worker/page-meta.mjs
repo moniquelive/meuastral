@@ -75,6 +75,18 @@ export function redirectPathForHomeLocale(request, locale) {
   return locale === "en-US" ? "/en/" : null;
 }
 
+export function shouldServeAppShellFallback(request) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return false;
+  }
+
+  const url = new URL(request.url);
+  const isAssetRequest =
+    url.pathname.includes(".") && !url.pathname.endsWith(".html");
+
+  return !isAssetRequest;
+}
+
 export function injectPageMetadata(html, locale) {
   const copy = PAGE_COPY[locale] ?? PAGE_COPY["pt-BR"];
 

@@ -6,6 +6,7 @@ import {
   injectPageMetadata,
   localeForPath,
   redirectPathForHomeLocale,
+  shouldServeAppShellFallback,
 } from "../../worker/page-meta.mjs";
 
 const INDEX_HTML = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
@@ -48,6 +49,23 @@ describe("Worker page metadata", () => {
         "en-US",
       ),
       null,
+    );
+  });
+
+  it("serves app-shell fallback for GET and HEAD localized routes", () => {
+    assert.equal(
+      shouldServeAppShellFallback(new Request("https://meuastral.com/en/")),
+      true,
+    );
+    assert.equal(
+      shouldServeAppShellFallback(
+        new Request("https://meuastral.com/en/", { method: "HEAD" }),
+      ),
+      true,
+    );
+    assert.equal(
+      shouldServeAppShellFallback(new Request("https://meuastral.com/en/logo.png")),
+      false,
     );
   });
 
