@@ -28,14 +28,13 @@
   <link rel="manifest" href="{{ "/manifest.json" | relURL }}">
   <link rel="icon" href="{{ "/favicon.ico" | relURL }}">
   {{ partial "hreflang.html" . }}
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/dist/full.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="{{ "/app.css" | relURL }}">
   <link rel="stylesheet" href="{{ "/site.css" | relURL }}">
   <link rel="stylesheet" href="{{ "/main.css" | relURL }}">
   <link rel="stylesheet" href="{{ "/datepicker.css" | relURL }}">
   <link rel="stylesheet" href="{{ "/zodiac.css" | relURL }}">
   {{ partial "structured-data.html" . }}
   <script>window.__MEUASTRAL_LOCALE__ = {{ $locale | jsonify | safeJS }};</script>
-  <script async defer src="https://cdn.tailwindcss.com"></script>
   {{ with .Site.Params.adsenseAccount }}
   <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ . }}" crossorigin="anonymous"></script>
   {{ end }}

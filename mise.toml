@@ -4,6 +4,7 @@ node = "26.3.0"
 "npm:elm" = "0.19.1-6"
 "npm:elm-format" = "0.8.8"
 "npm:elm-test" = "0.19.1-revision17"
+"npm:tailwindcss" = "3.4.17"
 "npm:wrangler" = "4.100.0"
 
 [env]

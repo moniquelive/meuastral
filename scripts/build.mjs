@@ -13,6 +13,7 @@ await mkdir(buildDir, { recursive: true });
 
 await runHugo(rootDir, buildDir);
 await writeSitemap(buildDir);
+await runTailwind(rootDir, buildDir);
 await copyPublicAssets(publicDir, buildDir);
 await copyElmAssets(rootDir, buildDir);
 await runElmMake(rootDir, buildDir);
@@ -39,6 +40,35 @@ function runHugo(root, outDir) {
       }
 
       rejectPromise(new Error(`hugo failed with exit code ${code}`));
+    });
+  });
+}
+
+function runTailwind(root, outDir) {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const command = spawn('tailwindcss', [
+      '--config',
+      resolve(root, 'tailwind.config.cjs'),
+      '--input',
+      resolve(root, 'src', 'tailwind.css'),
+      '--output',
+      resolve(outDir, 'app.css'),
+      '--minify'
+    ], {
+      cwd: root,
+      env: process.env,
+      stdio: 'inherit'
+    });
+
+    command.on('error', rejectPromise);
+
+    command.on('exit', code => {
+      if (code === 0) {
+        resolvePromise();
+        return;
+      }
+
+      rejectPromise(new Error(`tailwindcss failed with exit code ${code}`));
     });
   });
 }
