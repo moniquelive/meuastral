@@ -7,12 +7,27 @@ import Html.Events as HE
 import Json.Decode as D
 
 
-content : (HoroscopeId -> msg) -> Horoscope -> List Horoscope -> Html msg
-content onSelect selectedHoroscope horoscopes =
+content : (HoroscopeId -> msg) -> Maybe String -> Horoscope -> List Horoscope -> Html msg
+content onSelect statusMessage selectedHoroscope horoscopes =
     div [ class "place-self-center pt-3 box-content" ]
-        [ horoscopeCard selectedHoroscope
-        , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ]
-            (horoscopeSymbols onSelect horoscopes)
+        (case statusMessage of
+            Just message ->
+                [ statusCard message ]
+
+            Nothing ->
+                [ horoscopeCard selectedHoroscope
+                , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2" ]
+                    (horoscopeSymbols onSelect horoscopes)
+                ]
+        )
+
+
+statusCard : String -> Html msg
+statusCard message =
+    div [ class "card lg:w-96 bg-base-100 shadow-xl" ]
+        [ H.article [ class "card-body" ]
+            [ H.p [] [ H.text message ]
+            ]
         ]
 
 

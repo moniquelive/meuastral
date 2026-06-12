@@ -12,12 +12,13 @@ import DatePicker exposing (Msg(..))
 import DatePickerProps exposing (pickerProps)
 import Dict
 import Horoscope exposing (Horoscope, HoroscopeId, defaultHoroscope)
+import HoroscopeApi
 import HoroscopeRanges
 import HoroscopeView
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
 import Http
-import Json.Decode as D
+import Locale
 import Ports
 import Task
 import Time exposing (Month(..), Weekday(..))
@@ -32,24 +33,38 @@ type alias Model =
     , datePickerData : DatePicker.Model
     , selectedDate : Maybe Date
     , horoscopes : List Horoscope
+    , horoscopeStatus : HoroscopeStatus
     , selectedHoroscopeId : Maybe HoroscopeId
     , ascentMaster : Maybe CosmicRay
+    , locale : Locale.Locale
     }
 
 
-init : Maybe String -> ( Model, Cmd Msg )
-init userBirthday =
+type HoroscopeStatus
+    = LoadingHoroscope
+    | HoroscopeReady
+    | HoroscopeUnavailable
+
+
+type alias Flags =
+    { userBirthday : Maybe String
+    , locale : String
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     let
+        locale =
+            Locale.fromString flags.locale
+
         defaultCmds =
             [ Date.today |> Task.perform GotToday
-            , Http.get
-                { url = "https://www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false"
-                , expect = Http.expectJson GotHoroscope horoscopeDecoder
-                }
+            , HoroscopeApi.request locale GotHoroscope
             ]
 
         userBirthdayResult =
-            Maybe.map Date.fromIsoString userBirthday
+            Maybe.map Date.fromIsoString flags.userBirthday
                 |> Maybe.andThen Result.toMaybe
     in
     case userBirthdayResult of
@@ -62,8 +77,10 @@ init userBirthday =
               , datePickerData = datePickerData
               , selectedDate = Nothing
               , horoscopes = []
+              , horoscopeStatus = LoadingHoroscope
               , selectedHoroscopeId = Nothing
               , ascentMaster = Nothing
+              , locale = locale
               }
             , Cmd.batch
                 (Cmd.map DatePickerMsg datePickerInitCmd :: defaultCmds)
@@ -78,8 +95,10 @@ init userBirthday =
               , datePickerData = datePickerData
               , selectedDate = Just userDoB
               , horoscopes = []
+              , horoscopeStatus = LoadingHoroscope
               , selectedHoroscopeId = Nothing
               , ascentMaster = AM.for_birthday userDoB
+              , locale = locale
               }
             , Cmd.batch defaultCmds
             )
@@ -89,7 +108,7 @@ init userBirthday =
 ---- PROGRAM ----
 
 
-main : Program (Maybe String) Model Msg
+main : Program Flags Model Msg
 main =
     element
         { view = view
@@ -162,11 +181,17 @@ update msg model =
         GotHoroscope result ->
             case result of
                 Err _ ->
-                    ( model, Cmd.none )
+                    ( { model | horoscopeStatus = HoroscopeUnavailable }, Cmd.none )
 
                 Ok horoscopes ->
                     ( { model
                         | horoscopes = horoscopes
+                        , horoscopeStatus =
+                            if List.isEmpty horoscopes then
+                                HoroscopeUnavailable
+
+                            else
+                                HoroscopeReady
                         , selectedHoroscopeId = horoscopeIdForDate (selectedDateOrToday model)
                       }
                     , Cmd.none
@@ -270,13 +295,17 @@ view model =
 
 dob : Model -> Html Msg
 dob model =
+    let
+        localizedCopy =
+            Locale.copy model.locale
+    in
     H.section sectionAttributes
-        [ sectionTitle "Data do meu Aniversário"
+        [ sectionTitle localizedCopy.birthdayTitle
         , H.hr [] []
         , div [ class "flex place-content-center pt-4" ]
             [ DatePicker.view
                 model.datePickerData
-                pickerProps
+                (pickerProps model.locale)
                 |> H.map DatePickerMsg
             ]
         ]
@@ -284,16 +313,20 @@ dob model =
 
 userInfo : Model -> Html Msg
 userInfo model =
+    let
+        localizedCopy =
+            Locale.copy model.locale
+    in
     H.section sectionAttributes
         [ div [ class "flex place-content-center" ]
             [ div [ class "card lg:w-96 bg-neutral shadow-xl" ]
                 [ div [ class "card-body text-neutral-content" ]
                     [ H.p []
-                        [ H.text "As pessoas nascidas em "
+                        [ H.text localizedCopy.bornOnPrefix
                         , H.span [ class "font-bold" ] [ formatDob model ]
-                        , H.text " possuem mais ou menos "
+                        , H.text localizedCopy.daysMiddle
                         , H.span [ class "font-bold" ] [ daysSince model ]
-                        , H.text " dias de vida."
+                        , H.text localizedCopy.daysSuffix
                         ]
                     ]
                 ]
@@ -324,17 +357,28 @@ formatDob model =
 
 horoscope : Model -> Html Msg
 horoscope model =
+    let
+        localizedCopy =
+            Locale.copy model.locale
+    in
     H.section sectionAttributes
-        [ sectionTitle "Horóscopo"
+        [ sectionTitle localizedCopy.horoscopeTitle
         , H.hr [] []
-        , HoroscopeView.content SelectHoroscopeId (selectedHoroscope model) model.horoscopes
+        , HoroscopeView.content SelectHoroscopeId
+            (horoscopeStatusMessage localizedCopy model.horoscopeStatus)
+            (selectedHoroscope model)
+            model.horoscopes
         ]
 
 
 ascent_master : Model -> Html Msg
 ascent_master model =
+    let
+        localizedCopy =
+            Locale.copy model.locale
+    in
     H.section sectionAttributes
-        [ sectionTitle "Mestre Ascencionado"
+        [ sectionTitle localizedCopy.ascentMasterTitle
         , H.hr [] []
         , AscentMasterView.content model.ascentMaster
         ]
@@ -342,8 +386,12 @@ ascent_master model =
 
 bio : Model -> Html Msg
 bio model =
+    let
+        localizedCopy =
+            Locale.copy model.locale
+    in
     H.section sectionAttributes
-        [ sectionTitle "Biorritmo"
+        [ sectionTitle localizedCopy.biorhythmTitle
         , H.hr [] []
         , BiorhythmView.content (ageInDays model)
         ]
@@ -377,26 +425,23 @@ sectionTitle title =
     H.h2 [ class "text-xl" ] [ H.text title ]
 
 
+horoscopeStatusMessage : Locale.Copy -> HoroscopeStatus -> Maybe String
+horoscopeStatusMessage localizedCopy status =
+    case status of
+        LoadingHoroscope ->
+            Just localizedCopy.horoscopeLoading
+
+        HoroscopeReady ->
+            Nothing
+
+        HoroscopeUnavailable ->
+            Just localizedCopy.horoscopeUnavailable
+
+
 footerYear : Maybe Date -> String
 footerYear maybeDate =
     Maybe.map (Date.year >> String.fromInt) maybeDate
         |> Maybe.withDefault "--"
-
-
-
----- JSON Processing ----
-
-
-horoscopeDecoder : D.Decoder (List Horoscope)
-horoscopeDecoder =
-    D.field "signs_list"
-        (D.list
-            (D.map3 Horoscope
-                (D.field "id" D.string)
-                (D.field "name" D.string)
-                (D.field "resume" D.string)
-            )
-        )
 
 
 saveDoB : Date -> Cmd msg

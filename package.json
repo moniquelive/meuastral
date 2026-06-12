@@ -5,7 +5,9 @@
   "scripts": {
     "start": "cross-env ELM_HOME=.elm-home wrangler dev",
     "build": "cross-env ELM_HOME=.elm-home node scripts/build.mjs",
-    "test": "cross-env ELM_HOME=.elm-home CI=true elm-test",
+    "test": "npm run test:elm && npm run test:worker",
+    "test:elm": "cross-env ELM_HOME=.elm-home CI=true elm-test",
+    "test:worker": "node --test tests/worker/*.test.mjs",
     "test:watch": "cross-env ELM_HOME=.elm-home elm-test --watch",
     "dev:worker": "wrangler dev",
     "deploy": "wrangler deploy"

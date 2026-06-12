@@ -22,7 +22,7 @@ depends = ["install"]
 run = "npm run start"
 
 [tasks.test]
-description = "Run Elm tests"
+description = "Run Elm and Worker tests"
 depends = ["install"]
 run = "npm test"
 
