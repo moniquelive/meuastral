@@ -40,6 +40,7 @@
 - Reference tracking issues in the PR body and note any configuration updates (`scripts/build.mjs`, `wrangler.toml`, `mise.toml`) so reviewers can verify deployments.
 
 ## Cloudflare Worker Deployment
+- Cloudflare runs `bash build.sh`, which installs the pinned Hugo version when needed and delegates to `mise run build`.
 - Install JS dependencies via `mise run install`; this makes local `elm`, `elm-test`, and `wrangler` binaries available for all scripts.
 - Build assets with `mise run build`; the script keeps Elm caches inside `.elm-home`, compiles optimized Elm output, and writes the deployable static bundle consumed by the worker via `STATIC_CONTENT`.
 - Preview the worker locally with `mise run dev`, which stitches the Worker runtime with the built static assets so you can test SPA routing.

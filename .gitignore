@@ -12,6 +12,8 @@ repl-temp-*
 
 # Dependency directories
 node_modules/
+.mise-ci/
+.npm/
 
 # Local environment and Worker state
 .env

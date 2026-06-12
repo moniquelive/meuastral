@@ -1,6 +1,6 @@
 [tools]
-hugo-extended = "0.163.1"
-node = "26"
+hugo-extended = "0.162.1"
+node = "26.3.0"
 "npm:elm" = "0.19.1-6"
 "npm:elm-format" = "0.8.8"
 "npm:elm-test" = "0.19.1-revision17"
