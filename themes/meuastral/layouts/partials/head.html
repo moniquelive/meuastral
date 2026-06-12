@@ -29,10 +29,6 @@
   <link rel="icon" href="{{ "/favicon.ico" | relURL }}">
   {{ partial "hreflang.html" . }}
   <link rel="stylesheet" href="{{ "/app.css" | relURL }}">
-  <link rel="stylesheet" href="{{ "/site.css" | relURL }}">
-  <link rel="stylesheet" href="{{ "/main.css" | relURL }}">
-  <link rel="stylesheet" href="{{ "/datepicker.css" | relURL }}">
-  <link rel="stylesheet" href="{{ "/zodiac.css" | relURL }}">
   {{ partial "structured-data.html" . }}
   <script>window.__MEUASTRAL_LOCALE__ = {{ $locale | jsonify | safeJS }};</script>
   {{ with .Site.Params.adsenseAccount }}

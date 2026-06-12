@@ -77,6 +77,41 @@
   width: auto;
 }
 
+.home-app-shell {
+  background: var(--ma-surface);
+}
+
+.home-app-shell__main {
+  background: var(--ma-surface);
+}
+
+.home-date-placeholder {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(31, 41, 55, 0.35);
+  height: 420px;
+  overflow: hidden;
+  width: 300px;
+}
+
+.home-date-placeholder__top {
+  background: #68b7c9;
+  height: 108px;
+}
+
+.home-date-placeholder__body {
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 38px,
+      rgba(31, 41, 55, 0.08) 39px
+    );
+  height: 312px;
+}
+
 .content-eyebrow {
   color: var(--ma-purple);
   font-size: 0.78rem;

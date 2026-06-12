@@ -17,6 +17,10 @@ export function cacheControlForStaticPath(pathname) {
     return "public, max-age=31536000, immutable";
   }
 
+  if (/\.[a-f0-9]{10}\.(css|js)$/i.test(pathname)) {
+    return "public, max-age=31536000, immutable";
+  }
+
   if (/\.(css|js|json)$/i.test(pathname)) {
     return "public, max-age=86400, stale-while-revalidate=604800";
   }

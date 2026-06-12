@@ -257,7 +257,7 @@ view model =
         [ H.header [ class "app-header w-full flex justify-center items-center border-b border-grey p-3" ]
             [ H.img
                 [ class "h-28"
-                , HA.src "/logo.png"
+                , HA.src "/logo-390.png"
                 , HA.alt "MeuAstral"
                 , HA.width 220
                 , HA.height 112

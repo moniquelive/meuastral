@@ -1,25 +1,66 @@
 {{ define "main" }}
+{{- $isEnglish := eq .Site.Language.Lang "en" -}}
+{{- $birthdayTitle := cond $isEnglish "My Birthday" "Data do meu Aniversário" -}}
+{{- $bornText := cond $isEnglish "Choose your birthday to calculate your days of life." "Escolha sua data de nascimento para calcular seus dias de vida." -}}
+{{- $facebookLabel := "Facebook" -}}
+{{- $twitterLabel := "X" -}}
 <noscript>
   {{ .Site.Language.Params.noscript }}
 </noscript>
 <div id="root">
-  <main class="home-fallback">
-    <header class="home-fallback__header">
-      <img src="{{ "/logo.png" | relURL }}" alt="MeuAstral" width="220" height="112">
-      <h1>{{ .Params.heroTitle | default .Title }}</h1>
+  <div class="home-app-shell flex flex-col h-screen overflow-hidden">
+    <header class="app-header w-full flex justify-center items-center border-b border-grey p-3">
+      <img class="h-28" src="{{ "/logo-390.png" | relURL }}" alt="MeuAstral" width="220" height="112" fetchpriority="high">
     </header>
-    <p>{{ .Params.heroIntro }}</p>
-    <p>{{ .Params.heroSupport }}</p>
-    <nav aria-label="{{ .Site.Language.Params.navLabel }}" class="home-fallback__links">
-      {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
-      {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
-      {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
-      {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-      {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-      {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
-      {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
-    </nav>
-  </main>
+    <main class="flex-1 overflow-y-scroll p-4 content-center home-app-shell__main" data-theme="light">
+      <section class="p-4 grid">
+        <h2 class="text-xl">{{ $birthdayTitle }}</h2>
+        <hr>
+        <div class="flex place-content-center pt-4">
+          <div class="home-date-placeholder" aria-hidden="true">
+            <div class="home-date-placeholder__top"></div>
+            <div class="home-date-placeholder__body"></div>
+          </div>
+        </div>
+      </section>
+      <section class="p-4 grid">
+        <div class="flex place-content-center">
+          <div class="card lg:w-96 bg-neutral shadow-xl">
+            <div class="card-body text-neutral-content">
+              <p>{{ $bornText }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="home-fallback" aria-label="{{ .Params.heroTitle | default .Title }}">
+        <h1>{{ .Params.heroTitle | default .Title }}</h1>
+        <p>{{ .Params.heroIntro }}</p>
+        <p>{{ .Params.heroSupport }}</p>
+        <nav aria-label="{{ .Site.Language.Params.navLabel }}" class="home-fallback__links">
+          {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+          {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+          {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+          {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+          {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+          {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
+          {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
+        </nav>
+      </section>
+    </main>
+    <footer class="app-footer w-full border-t border-grey p-4 justify-between items-center flex">
+      <div>
+        <a class="btn btn-circle mx-2" href="https://www.facebook.com/meuastral/" target="_blank" rel="noopener noreferrer" aria-label="{{ $facebookLabel }}">
+          <span class="social-icon" aria-hidden="true">f</span>
+        </a>
+        <a class="btn btn-circle mx-2" href="https://twitter.com/MeuAstral_Com" target="_blank" rel="noopener noreferrer" aria-label="{{ $twitterLabel }}">
+          <span class="social-icon" aria-hidden="true">X</span>
+        </a>
+      </div>
+      <div>
+        <p>{{ now.Format "2006" }} - <b>MeuAstral.com</b></p>
+      </div>
+    </footer>
+  </div>
 </div>
 <script src="{{ "/elm.js" | relURL }}" defer></script>
 <script src="{{ "/bootstrap.js" | relURL }}" defer></script>

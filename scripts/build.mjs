@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
-import { copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,9 +15,12 @@ await mkdir(buildDir, { recursive: true });
 await runHugo(rootDir, buildDir);
 await writeSitemap(buildDir);
 await runTailwind(rootDir, buildDir);
+await writeCssBundle(rootDir, buildDir);
 await copyPublicAssets(publicDir, buildDir);
-await copyElmAssets(rootDir, buildDir);
+await copyBootstrap(rootDir, buildDir);
 await runElmMake(rootDir, buildDir);
+await minifyJavaScript(rootDir, buildDir, 'elm.js');
+await fingerprintBuildAssets(buildDir);
 
 function runHugo(root, outDir) {
   return new Promise((resolvePromise, rejectPromise) => {
@@ -52,7 +56,7 @@ function runTailwind(root, outDir) {
       '--input',
       resolve(root, 'src', 'tailwind.css'),
       '--output',
-      resolve(outDir, 'app.css'),
+      resolve(outDir, 'app.tailwind.css'),
       '--minify'
     ], {
       cwd: root,
@@ -71,6 +75,27 @@ function runTailwind(root, outDir) {
       rejectPromise(new Error(`tailwindcss failed with exit code ${code}`));
     });
   });
+}
+
+async function writeCssBundle(root, outDir) {
+  const cssSources = [
+    resolve(outDir, 'app.tailwind.css'),
+    resolve(root, 'themes', 'meuastral', 'static', 'site.css'),
+    resolve(root, 'src', 'main.css'),
+    resolve(root, 'src', 'datepicker.css'),
+    resolve(root, 'src', 'zodiac.css')
+  ];
+
+  const bundle = await Promise.all(cssSources.map(async source => {
+    const css = await readFile(source, 'utf8');
+    return `/* ${relative(root, source).split(sep).join('/')} */\n${css.trim()}\n`;
+  }));
+
+  await writeFile(resolve(outDir, 'app.css'), bundle.join('\n'));
+  await Promise.all([
+    rm(resolve(outDir, 'app.tailwind.css'), { force: true }),
+    rm(resolve(outDir, 'site.css'), { force: true })
+  ]);
 }
 
 async function copyPublicAssets(sourceDir, outDir) {
@@ -102,13 +127,8 @@ function shouldCopyPublicAsset(fileName) {
   ].some(ext => fileName.endsWith(ext));
 }
 
-async function copyElmAssets(root, outDir) {
-  await Promise.all([
-    copyFile(resolve(root, 'src', 'main.css'), resolve(outDir, 'main.css')),
-    copyFile(resolve(root, 'src', 'datepicker.css'), resolve(outDir, 'datepicker.css')),
-    copyFile(resolve(root, 'src', 'zodiac.css'), resolve(outDir, 'zodiac.css')),
-    copyFile(resolve(root, 'src', 'bootstrap.js'), resolve(outDir, 'bootstrap.js'))
-  ]);
+async function copyBootstrap(root, outDir) {
+  await copyFile(resolve(root, 'src', 'bootstrap.js'), resolve(outDir, 'bootstrap.js'));
 }
 
 async function writeSitemap(outDir) {
@@ -241,4 +261,85 @@ function runElmMake(root, outDir) {
       rejectPromise(new Error(`elm make failed with exit code ${code}`));
     });
   });
+}
+
+function minifyJavaScript(root, outDir, fileName) {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const filePath = resolve(outDir, fileName);
+    const command = spawn('terser', [
+      filePath,
+      '--compress',
+      '--mangle',
+      '--output',
+      filePath
+    ], {
+      cwd: root,
+      env: process.env,
+      stdio: 'inherit'
+    });
+
+    command.on('error', rejectPromise);
+
+    command.on('exit', code => {
+      if (code === 0) {
+        resolvePromise();
+        return;
+      }
+
+      rejectPromise(new Error(`terser failed with exit code ${code}`));
+    });
+  });
+}
+
+async function fingerprintBuildAssets(outDir) {
+  const replacements = new Map();
+
+  for (const fileName of ['app.css', 'elm.js', 'bootstrap.js']) {
+    const hashedFileName = await fingerprintFile(outDir, fileName);
+    replacements.set(`/${fileName}`, `/${hashedFileName}`);
+  }
+
+  const htmlFiles = await collectHtmlFiles(outDir);
+
+  await Promise.all(htmlFiles.map(async filePath => {
+    let html = await readFile(filePath, 'utf8');
+
+    for (const [from, to] of replacements.entries()) {
+      html = html.replaceAll(from, to);
+    }
+
+    await writeFile(filePath, html);
+  }));
+}
+
+async function fingerprintFile(outDir, fileName) {
+  const filePath = resolve(outDir, fileName);
+  const contents = await readFile(filePath);
+  const hash = createHash('sha256').update(contents).digest('hex').slice(0, 10);
+  const dotIndex = fileName.lastIndexOf('.');
+  const hashedFileName = `${fileName.slice(0, dotIndex)}.${hash}${fileName.slice(dotIndex)}`;
+
+  await writeFile(resolve(outDir, hashedFileName), contents);
+  await rm(filePath, { force: true });
+
+  return hashedFileName;
+}
+
+async function collectHtmlFiles(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const nestedFiles = await Promise.all(entries.map(async entry => {
+    const entryPath = resolve(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      return collectHtmlFiles(entryPath);
+    }
+
+    if (entry.isFile() && entry.name.endsWith('.html')) {
+      return [entryPath];
+    }
+
+    return [];
+  }));
+
+  return nestedFiles.flat();
 }

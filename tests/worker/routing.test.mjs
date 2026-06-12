@@ -51,13 +51,24 @@ describe("Worker localized routing", () => {
     );
   });
 
-  it("uses revalidating cache lifetimes for static app assets", () => {
+  it("uses long immutable cache lifetimes for fingerprinted app assets", () => {
     assert.equal(
-      cacheControlForStaticPath("/elm.js"),
+      cacheControlForStaticPath("/elm.1234abcd99.js"),
+      "public, max-age=31536000, immutable",
+    );
+    assert.equal(
+      cacheControlForStaticPath("/app.1234abcd99.css"),
+      "public, max-age=31536000, immutable",
+    );
+  });
+
+  it("uses revalidating cache lifetimes for non-fingerprinted static app assets", () => {
+    assert.equal(
+      cacheControlForStaticPath("/bootstrap.js"),
       "public, max-age=86400, stale-while-revalidate=604800",
     );
     assert.equal(
-      cacheControlForStaticPath("/main.css"),
+      cacheControlForStaticPath("/manifest.json"),
       "public, max-age=86400, stale-while-revalidate=604800",
     );
   });
