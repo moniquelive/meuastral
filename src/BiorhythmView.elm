@@ -4,15 +4,20 @@ import Chart as C
 import Chart.Attributes as CA
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
+import Locale
 import Round as R
 
 
-content : Int -> Html msg
-content ageInDays =
+content : Locale.Locale -> Int -> Html msg
+content locale ageInDays =
+    let
+        localizedCopy =
+            Locale.copy locale
+    in
     div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
-        [ bioCard 23 "hsl(var(--in))" "Físico" "fa-person-running" ageInDays
-        , bioCard 28 "hsl(var(--er))" "Emocional" "fa-heart" ageInDays
-        , bioCard 33 "hsl(var(--su))" "Intelectual" "fa-brain" ageInDays
+        [ bioCard 23 "hsl(var(--in))" localizedCopy.biorhythmPhysical "fa-person-running" ageInDays
+        , bioCard 28 "hsl(var(--er))" localizedCopy.biorhythmEmotional "fa-heart" ageInDays
+        , bioCard 33 "hsl(var(--su))" localizedCopy.biorhythmIntellectual "fa-brain" ageInDays
         ]
 
 

@@ -393,7 +393,7 @@ bio model =
     H.section sectionAttributes
         [ sectionTitle localizedCopy.biorhythmTitle
         , H.hr [] []
-        , BiorhythmView.content (ageInDays model)
+        , BiorhythmView.content model.locale (ageInDays model)
         ]
 
 

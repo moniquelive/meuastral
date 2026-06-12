@@ -17,6 +17,9 @@ type alias Copy =
     , ascentMasterTitle : String
     , archangelPrefix : String
     , biorhythmTitle : String
+    , biorhythmPhysical : String
+    , biorhythmEmotional : String
+    , biorhythmIntellectual : String
     }
 
 
@@ -57,6 +60,9 @@ copy locale =
             , ascentMasterTitle = "Mestre Ascencionado"
             , archangelPrefix = "Arcanjo "
             , biorhythmTitle = "Biorritmo"
+            , biorhythmPhysical = "Físico"
+            , biorhythmEmotional = "Emocional"
+            , biorhythmIntellectual = "Intelectual"
             }
 
         EnUS ->
@@ -70,4 +76,7 @@ copy locale =
             , ascentMasterTitle = "Ascended Master"
             , archangelPrefix = "Archangel "
             , biorhythmTitle = "Biorhythm"
+            , biorhythmPhysical = "Physical"
+            , biorhythmEmotional = "Emotional"
+            , biorhythmIntellectual = "Intellectual"
             }
