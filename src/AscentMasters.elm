@@ -265,12 +265,21 @@ rayNumber ds =
 
 master_image : CosmicRay -> String
 master_image r =
-    attributeOrDefault .masterImage r
+    publicAssetPath (attributeOrDefault .masterImage r)
 
 
 archangel_image : CosmicRay -> String
 archangel_image r =
-    attributeOrDefault .archangelImage r
+    publicAssetPath (attributeOrDefault .archangelImage r)
+
+
+publicAssetPath : String -> String
+publicAssetPath path =
+    if String.isEmpty path || String.startsWith "/" path then
+        path
+
+    else
+        "/" ++ path
 
 
 master_details : CosmicRay -> String

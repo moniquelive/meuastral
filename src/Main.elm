@@ -255,7 +255,7 @@ view : Model -> Html Msg
 view model =
     div [ class "flex flex-col h-screen overflow-hidden" ]
         [ H.header [ class "w-full flex justify-center items-center border-b border-grey p-3" ]
-            [ H.img [ class "h-28", HA.src "logo.png", HA.alt "logo" ] [] ]
+            [ H.img [ class "h-28", HA.src "/logo.png", HA.alt "logo" ] [] ]
         , H.main_ [ class "flex-1 overflow-y-scroll p-4 content-center", HA.attribute "data-theme" "light" ]
             [ dob model
             , userInfo model
