@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "MeuAstral.com",
   "scripts": {
-    "start": "cross-env ELM_HOME=.elm-home wrangler dev",
+    "start": "node scripts/dev.mjs",
     "build": "cross-env ELM_HOME=.elm-home node scripts/build.mjs",
     "test": "npm run test:elm && npm run test:worker",
     "test:elm": "cross-env ELM_HOME=.elm-home CI=true elm-test",
     "test:worker": "node --test tests/worker/*.test.mjs",
     "test:watch": "cross-env ELM_HOME=.elm-home elm-test --watch",
-    "dev:worker": "wrangler dev",
+    "dev:worker": "node scripts/dev.mjs",
     "deploy": "wrangler deploy"
   },
   "repository": {

@@ -2,18 +2,23 @@ module AscentMasters exposing
     ( CosmicRay
     , archangel_image
     , archangel_name
+    , archangel_name_for
     , color_name
     , for_birthday
     , master_details
+    , master_details_for
     , master_image
     , master_name
+    , master_name_for
     , number
     , ray_details
+    , ray_details_for
     , test_subject
     )
 
 import Array exposing (Array)
 import Date exposing (Date)
+import Locale
 
 
 test_subject : CosmicRay
@@ -39,6 +44,14 @@ type alias CosmicRayAttributes =
     , masterImage : String
     , archangelName : String
     , archangelImage : String
+    , rayDetails : String
+    }
+
+
+type alias CosmicRayCopy =
+    { masterName : String
+    , masterDetails : String
+    , archangelName : String
     , rayDetails : String
     }
 
@@ -128,9 +141,55 @@ attributes =
         ]
 
 
+englishCopies : Array CosmicRayCopy
+englishCopies =
+    Array.fromList
+        [ { masterName = "Master El Morya"
+          , masterDetails = "Master El Morya is associated with will, faith, and right action. In spiritual tradition he is remembered as a teacher of discipline, leadership, and service, helping people use strength with clarity and responsibility."
+          , archangelName = "Michael"
+          , rayDetails = "The Blue Ray represents faith, power, and action. People connected with this ray tend to carry strong energy, initiative, and a natural ability to lead, build, and move plans forward."
+          }
+        , { masterName = "Master Lanto"
+          , masterDetails = "Master Lanto is connected with wisdom, learning, and illumination. His path emphasizes patience, study, discernment, and the generous use of knowledge in service to others."
+          , archangelName = "Jophiel"
+          , rayDetails = "The Golden Ray represents wisdom, elevation, and illumination. It is linked with teachers, students, mentors, and anyone seeking clearer understanding."
+          }
+        , { masterName = "Lady Master Rowena"
+          , masterDetails = "Lady Master Rowena is associated with love, beauty, encouragement, and protection for those who are growing spiritually. Her ray invites compassion, refinement, and devotion to freedom."
+          , archangelName = "Samuel"
+          , rayDetails = "The Pink Ray represents unconditional love, adoration, and beauty. People connected with this ray often value harmony, kindness, affection, and beauty in many forms."
+          }
+        , { masterName = "Master Serapis Bey"
+          , masterDetails = "Master Serapis Bey is invoked for harmony, purity, and ascension. His teaching points to discipline, spiritual refinement, and the effort to bring order and elevation into daily life."
+          , archangelName = "Gabriel"
+          , rayDetails = "The White Ray represents harmony, purity, and ascension. It is often associated with artistic sensitivity, spiritual strength, music, dance, painting, sculpture, architecture, and clear inner perception."
+          }
+        , { masterName = "Master Hilarion"
+          , masterDetails = "Master Hilarion is associated with truth, healing, and clear investigation. In tradition he is linked with the Apostle Paul and with a spiritual sanctuary over the island of Crete."
+          , archangelName = "Raphael"
+          , rayDetails = "The Green Ray represents truth, abundance, and healing. People connected with this ray often feel drawn to research, science, health, medicine, nursing, and healing work."
+          }
+        , { masterName = "Lady Master Nada"
+          , masterDetails = "Lady Master Nada is associated with devotion, service, cooperation, and compassionate work for peace and healing. Her path emphasizes humble service and care for humanity."
+          , archangelName = "Uriel"
+          , rayDetails = "The Ruby Ray represents devotion, cooperation, service, healing, and peace. People connected with this ray often serve others quietly, sometimes without public recognition."
+          }
+        , { masterName = "Master Saint Germain"
+          , masterDetails = "Master Saint Germain is associated with transformation, freedom, and the Violet Flame. His teaching emphasizes renewal, purification, responsibility, and the choice to begin again with greater awareness."
+          , archangelName = "Ezekiel"
+          , rayDetails = "The Violet Ray represents transmutation, purification, and magnetization. People connected with this ray often have many talents and a strong love of freedom."
+          }
+        ]
+
+
 getAttributes : CosmicRay -> Maybe CosmicRayAttributes
 getAttributes r =
     Array.get (index r) attributes
+
+
+getEnglishCopy : CosmicRay -> Maybe CosmicRayCopy
+getEnglishCopy r =
+    Array.get (index r) englishCopies
 
 
 defaultAttributes : CosmicRayAttributes
@@ -146,10 +205,41 @@ defaultAttributes =
     }
 
 
+defaultCopy : CosmicRayCopy
+defaultCopy =
+    { masterName = ""
+    , masterDetails = ""
+    , archangelName = ""
+    , rayDetails = ""
+    }
+
+
+ptBRCopy : CosmicRay -> CosmicRayCopy
+ptBRCopy ray =
+    { masterName = master_name ray
+    , masterDetails = master_details ray
+    , archangelName = archangel_name ray
+    , rayDetails = ray_details ray
+    }
+
+
 attributeOrDefault : (CosmicRayAttributes -> String) -> CosmicRay -> String
 attributeOrDefault getter ray =
     getAttributes ray
         |> Maybe.withDefault defaultAttributes
+        |> getter
+
+
+localizedCopyOrDefault : Locale.Locale -> (CosmicRayCopy -> String) -> CosmicRay -> String
+localizedCopyOrDefault locale getter ray =
+    (case Locale.toQueryParam locale of
+        "en-US" ->
+            getEnglishCopy ray
+
+        _ ->
+            Just (ptBRCopy ray)
+    )
+        |> Maybe.withDefault defaultCopy
         |> getter
 
 
@@ -188,9 +278,19 @@ master_details r =
     attributeOrDefault .masterDetails r
 
 
+master_details_for : Locale.Locale -> CosmicRay -> String
+master_details_for locale r =
+    localizedCopyOrDefault locale .masterDetails r
+
+
 ray_details : CosmicRay -> String
 ray_details r =
     attributeOrDefault .rayDetails r
+
+
+ray_details_for : Locale.Locale -> CosmicRay -> String
+ray_details_for locale r =
+    localizedCopyOrDefault locale .rayDetails r
 
 
 number : CosmicRay -> String
@@ -203,9 +303,19 @@ master_name r =
     attributeOrDefault .masterName r
 
 
+master_name_for : Locale.Locale -> CosmicRay -> String
+master_name_for locale r =
+    localizedCopyOrDefault locale .masterName r
+
+
 archangel_name : CosmicRay -> String
 archangel_name r =
     attributeOrDefault .archangelName r
+
+
+archangel_name_for : Locale.Locale -> CosmicRay -> String
+archangel_name_for locale r =
+    localizedCopyOrDefault locale .archangelName r
 
 
 color_name : CosmicRay -> String

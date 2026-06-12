@@ -3,6 +3,7 @@ module AscentMastersTests exposing (all, all_attributes, for_birthday, ray_numbe
 import AscentMasters as AM
 import Date exposing (fromCalendarDate)
 import Expect
+import Locale
 import Test exposing (Test, describe, test)
 import Time exposing (Month(..))
 
@@ -19,6 +20,10 @@ all_attributes =
         , test "Color name" <| \_ -> AM.color_name subject |> Expect.equal "green"
         , test "Master name" <| \_ -> (AM.master_name <| subject) |> Expect.equal "Mestre Hilarion"
         , test "Archangel name" <| \_ -> AM.archangel_name subject |> Expect.equal "Rafael"
+        , test "English master name" <| \_ -> AM.master_name_for (Locale.fromString "en-US") subject |> Expect.equal "Master Hilarion"
+        , test "English archangel name" <| \_ -> AM.archangel_name_for (Locale.fromString "en-US") subject |> Expect.equal "Raphael"
+        , test "English master details" <| \_ -> AM.master_details_for (Locale.fromString "en-US") subject |> Expect.equal "Master Hilarion is associated with truth, healing, and clear investigation. In tradition he is linked with the Apostle Paul and with a spiritual sanctuary over the island of Crete."
+        , test "English ray details" <| \_ -> AM.ray_details_for (Locale.fromString "en-US") subject |> Expect.equal "The Green Ray represents truth, abundance, and healing. People connected with this ray often feel drawn to research, science, health, medicine, nursing, and healing work."
         ]
 
 

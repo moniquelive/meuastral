@@ -380,7 +380,7 @@ ascent_master model =
     H.section sectionAttributes
         [ sectionTitle localizedCopy.ascentMasterTitle
         , H.hr [] []
-        , AscentMasterView.content model.ascentMaster
+        , AscentMasterView.content model.locale model.ascentMaster
         ]
 
 

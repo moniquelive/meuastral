@@ -15,6 +15,7 @@ type alias Copy =
     , horoscopeLoading : String
     , horoscopeUnavailable : String
     , ascentMasterTitle : String
+    , archangelPrefix : String
     , biorhythmTitle : String
     }
 
@@ -54,6 +55,7 @@ copy locale =
             , horoscopeLoading = "Carregando horóscopo diário..."
             , horoscopeUnavailable = "O horóscopo diário não está disponível agora. Tente novamente em instantes."
             , ascentMasterTitle = "Mestre Ascencionado"
+            , archangelPrefix = "Arcanjo "
             , biorhythmTitle = "Biorritmo"
             }
 
@@ -66,5 +68,6 @@ copy locale =
             , horoscopeLoading = "Loading daily horoscope..."
             , horoscopeUnavailable = "The daily horoscope is unavailable right now. Please try again shortly."
             , ascentMasterTitle = "Ascended Master"
+            , archangelPrefix = "Archangel "
             , biorhythmTitle = "Biorhythm"
             }
