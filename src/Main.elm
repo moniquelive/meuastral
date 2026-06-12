@@ -19,6 +19,7 @@ import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
 import Http
 import Locale
+import LocalizedDate
 import Ports
 import Task
 import Time exposing (Month(..), Weekday(..))
@@ -350,7 +351,7 @@ ageInDays model =
 formatDob : Model -> Html Msg
 formatDob model =
     selectedDateOrToday model
-        |> Maybe.map (Date.format "d/M/y")
+        |> Maybe.map (LocalizedDate.numeric model.locale)
         |> Maybe.withDefault "--"
         |> H.text
 

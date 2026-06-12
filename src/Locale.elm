@@ -18,8 +18,11 @@ type alias Copy =
     , archangelPrefix : String
     , biorhythmTitle : String
     , biorhythmPhysical : String
+    , biorhythmPhysicalTooltip : String
     , biorhythmEmotional : String
+    , biorhythmEmotionalTooltip : String
     , biorhythmIntellectual : String
+    , biorhythmIntellectualTooltip : String
     }
 
 
@@ -61,8 +64,11 @@ copy locale =
             , archangelPrefix = "Arcanjo "
             , biorhythmTitle = "Biorritmo"
             , biorhythmPhysical = "Físico"
+            , biorhythmPhysicalTooltip = "Indica energia vital, disposição e ritmos do corpo."
             , biorhythmEmotional = "Emocional"
+            , biorhythmEmotionalTooltip = "Indica sensibilidade, humor e equilíbrio afetivo."
             , biorhythmIntellectual = "Intelectual"
+            , biorhythmIntellectualTooltip = "Indica clareza mental, foco e raciocínio."
             }
 
         EnUS ->
@@ -77,6 +83,9 @@ copy locale =
             , archangelPrefix = "Archangel "
             , biorhythmTitle = "Biorhythm"
             , biorhythmPhysical = "Physical"
+            , biorhythmPhysicalTooltip = "Shows physical energy, vitality, and body rhythms."
             , biorhythmEmotional = "Emotional"
+            , biorhythmEmotionalTooltip = "Shows sensitivity, mood, and emotional balance."
             , biorhythmIntellectual = "Intellectual"
+            , biorhythmIntellectualTooltip = "Shows mental clarity, focus, and reasoning."
             }
