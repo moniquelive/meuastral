@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
-import { injectPageMetadata, localeForPath } from "../../worker/page-meta.mjs";
+import {
+  injectPageMetadata,
+  localeForPath,
+  redirectPathForHomeLocale,
+} from "../../worker/page-meta.mjs";
 
 const INDEX_HTML = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 
@@ -13,6 +17,38 @@ describe("Worker page metadata", () => {
     assert.equal(localeForPath("/en/"), "en-US");
     assert.equal(localeForPath("/en/index.html"), "en-US");
     assert.equal(localeForPath("/sobre/"), null);
+  });
+
+  it("redirects English browser home requests to the English URL", () => {
+    assert.equal(
+      redirectPathForHomeLocale(new Request("https://meuastral.com/"), "en-US"),
+      "/en/",
+    );
+    assert.equal(
+      redirectPathForHomeLocale(
+        new Request("https://meuastral.com/index.html", { method: "HEAD" }),
+        "en-US",
+      ),
+      "/en/",
+    );
+  });
+
+  it("keeps Portuguese and non-home requests on their current path", () => {
+    assert.equal(
+      redirectPathForHomeLocale(new Request("https://meuastral.com/"), "pt-BR"),
+      null,
+    );
+    assert.equal(
+      redirectPathForHomeLocale(new Request("https://meuastral.com/en/"), "en-US"),
+      null,
+    );
+    assert.equal(
+      redirectPathForHomeLocale(
+        new Request("https://meuastral.com/", { method: "POST" }),
+        "en-US",
+      ),
+      null,
+    );
   });
 
   it("renders Portuguese canonical, social, and hreflang metadata", () => {
