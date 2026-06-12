@@ -1,0 +1,4 @@
+interface:
+  display_name: "MeuAstral JavaScript Style"
+  short_description: "Project JS style for MeuAstral"
+  default_prompt: "Use $meuastral-javascript-style when editing MeuAstral Worker, bootstrap, or Node test JavaScript."
