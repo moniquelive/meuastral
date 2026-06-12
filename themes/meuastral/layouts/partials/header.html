@@ -1,0 +1,13 @@
+<header class="site-header">
+  <a class="brand-link" href="{{ "/" | relLangURL }}" aria-label="MeuAstral">
+    <img src="{{ "/logo.png" | relURL }}" alt="MeuAstral" width="150" height="76">
+  </a>
+  <nav class="site-nav" aria-label="{{ .Site.Language.Params.navLabel }}">
+    <a href="{{ "/" | relLangURL }}">{{ .Site.Language.Params.homeLabel }}</a>
+    {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+  </nav>
+</header>

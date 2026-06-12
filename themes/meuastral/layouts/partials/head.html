@@ -1,0 +1,48 @@
+{{- $description := .Params.description | default (.Summary | plainify) | default .Site.Params.description | default .Site.Title -}}
+{{- $locale := .Site.Language.Params.locale | default .Site.Language.Locale -}}
+{{- $ogLocale := .Site.Language.Params.ogLocale | default $locale -}}
+{{- $title := .Title | default .Site.Title -}}
+{{- if not .IsHome -}}
+  {{- $title = printf "%s | %s" .Title .Site.Title -}}
+{{- end -}}
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="{{ $description | plainify | truncate 170 }}">
+  {{ with .Site.Params.adsenseAccount }}<meta name="google-adsense-account" content="{{ . }}">{{ end }}
+  {{ with .Site.Params.fbAdmins }}<meta property="fb:admins" content="{{ . }}">{{ end }}
+  <meta property="og:title" content="{{ .Params.ogTitle | default .Title | default .Site.Title }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:image" content="{{ .Site.Params.logo | absURL }}">
+  <meta property="og:site_name" content="MeuAstral">
+  <meta property="og:description" content="{{ $description | plainify | truncate 200 }}">
+  <meta property="og:locale" content="{{ $ogLocale }}">
+  {{ range .Translations }}<meta property="og:locale:alternate" content="{{ .Site.Language.Params.ogLocale }}">{{ end }}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Params.ogTitle | default .Title | default .Site.Title }}">
+  <meta name="twitter:description" content="{{ $description | plainify | truncate 200 }}">
+  <meta name="twitter:image" content="{{ .Site.Params.logo | absURL }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+  <link rel="manifest" href="{{ "/manifest.json" | relURL }}">
+  <link rel="icon" href="{{ "/favicon.ico" | relURL }}">
+  {{ partial "hreflang.html" . }}
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/dist/full.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="{{ "/site.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "/main.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "/datepicker.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "/zodiac.css" | relURL }}">
+  {{ partial "structured-data.html" . }}
+  <script>window.__MEUASTRAL_LOCALE__ = {{ $locale | jsonify | safeJS }};</script>
+  <script async defer src="https://cdn.tailwindcss.com"></script>
+  <script async defer src="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/src/index.min.js"></script>
+  <script async defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.9/src/index.min.js"></script>
+  {{ with .Site.Params.adsenseAccount }}
+  <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ . }}" crossorigin="anonymous"></script>
+  {{ end }}
+  <title>{{ $title }}</title>
+</head>

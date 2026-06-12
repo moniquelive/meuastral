@@ -254,7 +254,7 @@ horoscopeIndex horoscopes =
 view : Model -> Html Msg
 view model =
     div [ class "flex flex-col h-screen overflow-hidden" ]
-        [ H.header [ class "w-full flex justify-center items-center border-b border-grey p-3" ]
+        [ H.header [ class "app-header w-full flex justify-center items-center border-b border-grey p-3" ]
             [ H.img [ class "h-28", HA.src "/logo.png", HA.alt "logo" ] [] ]
         , H.main_ [ class "flex-1 overflow-y-scroll p-4 content-center", HA.attribute "data-theme" "light" ]
             [ dob model
@@ -265,7 +265,7 @@ view model =
 
             -- , comments model -- ninho de spam :(
             ]
-        , H.footer [ class "w-full border-t border-grey p-4 justify-between items-center flex" ]
+        , H.footer [ class "app-footer w-full border-t border-grey p-4 justify-between items-center flex" ]
             [ div []
                 [ H.a
                     [ class "btn btn-circle mx-2"

@@ -1,0 +1,31 @@
+{{ define "main" }}
+{{ $sign := index hugo.Data.zodiac.en.signs .Params.sign }}
+<main class="content-page">
+  <article class="content-card">
+    <p class="content-eyebrow">Daily horoscope</p>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.description }}<p class="lead">{{ . }}</p>{{ end }}
+    {{ with $sign }}
+    <dl class="sign-facts">
+      <div><dt>Dates</dt><dd>{{ .dates }}</dd></div>
+      <div><dt>Element</dt><dd>{{ .element }}</dd></div>
+      <div><dt>Modality</dt><dd>{{ .modality }}</dd></div>
+      <div><dt>Ruling planet</dt><dd>{{ .rulingPlanet }}</dd></div>
+    </dl>
+    <div class="prose content-prose">
+      <p>{{ .summary }}</p>
+      <p>{{ .focus }}</p>
+    </div>
+    {{ end }}
+    <div class="prose content-prose">
+      {{ .Content }}
+    </div>
+    <div class="resource-links">
+      <a href="{{ "/en/" | relURL }}">Open the interactive reading</a>
+      <a href="{{ "/en/biorhythm-calculator/" | relURL }}">Check your biorhythm</a>
+      <a href="{{ "/en/ascended-masters/" | relURL }}">Find your ascended master</a>
+      <a href="{{ "/en/horoscope/" | relURL }}">See all signs</a>
+    </div>
+  </article>
+</main>
+{{ end }}

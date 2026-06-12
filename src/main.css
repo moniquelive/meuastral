@@ -9,3 +9,20 @@
   height: inherit;
 }
 
+.app-header,
+.app-footer {
+  background-color: #3361ad;
+  color: #ffffff;
+}
+
+.app-footer .btn {
+  background-color: #2d5597;
+  border-color: #2d5597;
+  color: #ffffff;
+}
+
+.app-footer .btn:hover,
+.app-footer .btn:focus-visible {
+  background-color: #254a86;
+  border-color: #254a86;
+}

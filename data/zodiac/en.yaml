@@ -1,0 +1,97 @@
+signs:
+  aries:
+    name: Aries
+    dates: March 21 to April 19
+    element: Fire
+    modality: Cardinal
+    rulingPlanet: Mars
+    summary: Aries energy is direct, initiating, fast-moving, and motivated by challenge.
+    focus: Use today's horoscope as a prompt to choose one clear action instead of chasing every impulse.
+  taurus:
+    name: Taurus
+    dates: April 20 to May 20
+    element: Earth
+    modality: Fixed
+    rulingPlanet: Venus
+    summary: Taurus energy is steady, sensual, practical, and motivated by comfort, value, and trust.
+    focus: Use today's horoscope to notice where patience helps and where comfort has become avoidance.
+  gemini:
+    name: Gemini
+    dates: May 21 to June 20
+    element: Air
+    modality: Mutable
+    rulingPlanet: Mercury
+    summary: Gemini energy is curious, verbal, adaptable, and motivated by connection and ideas.
+    focus: Use today's horoscope to sort useful information from distraction.
+  cancer:
+    name: Cancer
+    dates: June 21 to July 22
+    element: Water
+    modality: Cardinal
+    rulingPlanet: Moon
+    summary: Cancer energy is protective, intuitive, memory-rich, and motivated by belonging.
+    focus: Use today's horoscope to understand what needs care without carrying every emotion as a duty.
+  leo:
+    name: Leo
+    dates: July 23 to August 22
+    element: Fire
+    modality: Fixed
+    rulingPlanet: Sun
+    summary: Leo energy is expressive, loyal, creative, and motivated by recognition and heart.
+    focus: Use today's horoscope to share warmth without turning every moment into a performance.
+  virgo:
+    name: Virgo
+    dates: August 23 to September 22
+    element: Earth
+    modality: Mutable
+    rulingPlanet: Mercury
+    summary: Virgo energy is precise, useful, analytical, and motivated by improvement.
+    focus: Use today's horoscope to improve one thing without letting perfection delay progress.
+  libra:
+    name: Libra
+    dates: September 23 to October 22
+    element: Air
+    modality: Cardinal
+    rulingPlanet: Venus
+    summary: Libra energy is relational, aesthetic, diplomatic, and motivated by balance.
+    focus: Use today's horoscope to choose harmony without abandoning your own position.
+  scorpio:
+    name: Scorpio
+    dates: October 23 to November 21
+    element: Water
+    modality: Fixed
+    rulingPlanet: Pluto
+    summary: Scorpio energy is intense, private, transformative, and motivated by truth.
+    focus: Use today's horoscope to notice what deserves depth and what only asks for release.
+  sagittarius:
+    name: Sagittarius
+    dates: November 22 to December 21
+    element: Fire
+    modality: Mutable
+    rulingPlanet: Jupiter
+    summary: Sagittarius energy is expansive, candid, restless, and motivated by meaning.
+    focus: Use today's horoscope to turn big perspective into a grounded next step.
+  capricorn:
+    name: Capricorn
+    dates: December 22 to January 19
+    element: Earth
+    modality: Cardinal
+    rulingPlanet: Saturn
+    summary: Capricorn energy is disciplined, strategic, resilient, and motivated by structure.
+    focus: Use today's horoscope to distinguish real responsibility from unnecessary pressure.
+  aquarius:
+    name: Aquarius
+    dates: January 20 to February 18
+    element: Air
+    modality: Fixed
+    rulingPlanet: Uranus
+    summary: Aquarius energy is inventive, independent, future-minded, and motivated by systems.
+    focus: Use today's horoscope to connect your original ideas with practical human needs.
+  pisces:
+    name: Pisces
+    dates: February 19 to March 20
+    element: Water
+    modality: Mutable
+    rulingPlanet: Neptune
+    summary: Pisces energy is imaginative, compassionate, porous, and motivated by feeling and meaning.
+    focus: Use today's horoscope to keep inspiration flowing while protecting your boundaries.

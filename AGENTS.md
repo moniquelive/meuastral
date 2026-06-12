@@ -3,15 +3,16 @@
 ## Project Structure & Module Organization
 - `src/` contains all Elm modules (`Main.elm`, `AscentMasters.elm`, `Ports.elm`) plus supporting assets such as `main.css`, `datepicker.css`, and `zodiac.css`. Keep feature-specific helpers in their own `ModuleName.elm` files to match Elm’s module-per-file convention.
 - `src/bootstrap.js` is the JavaScript bootstrap that wires localStorage and Elm ports after `elm.js` loads.
-- `index.html` is the app shell template copied into `build/`; `public/` hosts passthrough static assets (icons, manifest, images).
+- `config.yaml`, `content/`, `data/`, and `themes/meuastral/` define the Hugo-generated site shell, localized content pages, metadata, sitemap, and robots output.
+- `public/` hosts passthrough static assets (icons, manifest, images, `ads.txt`) copied into `build/`.
 - `tests/` holds Elm test modules (currently `AscentMastersTests.elm`). Mirror source filenames with a `Tests` suffix for quick discovery.
 
 ## Build, Test, and Development Commands
-- `mise install` – installs the pinned Node 20 runtime from `mise.toml` so Wrangler and Elm tooling resolve consistently.
+- `mise install` – installs the pinned Node and Hugo runtimes from `mise.toml` so Wrangler, Hugo, and Elm tooling resolve consistently.
 - `mise run install` – installs local CLI dependencies (`elm`, `elm-test`, `wrangler`) with `npm ci`.
-- `mise run dev` (or `./dev.sh`) – runs `wrangler dev` with `ELM_HOME=.elm-home`; Wrangler executes the configured custom build before serving assets.
-- `mise run build` – runs `scripts/build.mjs`, which rebuilds `build/`, copies static assets/CSS/bootstrap files, and compiles `src/Main.elm` to `build/elm.js` with `--optimize`.
-- `mise run test` – runs `elm-test` once in CI mode so it exits immediately; use `npm run test:watch` for local reruns.
+- `mise run dev` – runs `wrangler dev` with `ELM_HOME=.elm-home`; Wrangler executes the configured custom build before serving assets.
+- `mise run build` – runs `scripts/build.mjs`, which rebuilds `build/`, runs Hugo, writes the root sitemap, copies static assets/CSS/bootstrap files, and compiles `src/Main.elm` to `build/elm.js` with `--optimize`.
+- `mise run test` – runs Elm and Worker tests; use `npm run test:watch` for local Elm reruns.
 - `mise run ci` – runs the test and production build tasks; prefer this before commits and PRs.
 - Always run `mise run build` and `mise run test` before returning results to the user, and report any failures.
 
@@ -20,12 +21,12 @@
 - Prefer `mise run <task>` over direct `npm` commands for repeated repo workflows.
 - Use one-off commands directly only when there is no matching `mise.toml` task.
 - Keep local and CI workflows aligned by adding or updating `mise.toml` tasks when a repeated command is needed.
-- Keep active CLI tools pinned in `mise.toml`; this project currently uses `elm`, `elm-test`, and `wrangler` directly rather than the older `elm-app` wrapper referenced in historical README text.
+- Keep active CLI tools pinned in `mise.toml`; this project currently uses Hugo, `elm`, `elm-format`, `elm-test`, and `wrangler` directly rather than the older `elm-app` wrapper referenced in historical README text.
 
 ## Coding Style & Naming Conventions
 - Format Elm files with `elm-format` before committing; it enforces 4-space indentation, trailing newline, and alphabetical import grouping.
 - Use PascalCase for module names (`CosmicRay.elm`) and snake_case for functions/values, matching existing modules like `AscentMasters.elm`.
-- Keep CSS modules scoped and load them through `index.html`; name selectors with BEM-like clarity (`.chart__axis-label`).
+- Keep CSS modules scoped and load them through Hugo templates; name selectors with BEM-like clarity (`.chart__axis-label`).
 - Prefer pure functions and explicit type annotations on public functions, especially when exposing helpers via `Ports.elm`.
 
 ## Testing Guidelines

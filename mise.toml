@@ -1,8 +1,10 @@
 [tools]
-node = "20"
+hugo-extended = "0.163.1"
+node = "26"
 "npm:elm" = "0.19.1-6"
+"npm:elm-format" = "0.8.8"
 "npm:elm-test" = "0.19.1-revision17"
-"npm:wrangler" = "4.80.0"
+"npm:wrangler" = "4.100.0"
 
 [env]
 TZ = "America/Sao_Paulo"
@@ -12,23 +14,41 @@ description = "Install Node.js dependencies"
 run = "npm ci --prefer-offline --no-audit --fund=false"
 
 [tasks.build]
-description = "Build the production Elm app"
+description = "Build the production Hugo site and Elm app"
 depends = ["install"]
-run = "npm run build"
+run = "PATH=./node_modules/.bin:$PATH ELM_HOME=.elm-home node scripts/build.mjs"
 
 [tasks.dev]
 description = "Run the local Cloudflare Worker development server"
 depends = ["install"]
-run = "npm run start"
+run = "PATH=./node_modules/.bin:$PATH ELM_HOME=.elm-home node scripts/dev.mjs"
 
 [tasks.test]
 description = "Run Elm and Worker tests"
+depends = ["test:elm", "test:worker"]
+
+[tasks."test:elm"]
+description = "Run Elm tests once"
 depends = ["install"]
-run = "npm test"
+run = "PATH=./node_modules/.bin:$PATH ELM_HOME=.elm-home CI=true elm-test"
+
+[tasks."test:worker"]
+description = "Run Worker unit tests"
+depends = ["install"]
+run = "node --test tests/worker/*.test.mjs"
+
+[tasks."format:check"]
+description = "Validate Elm formatting"
+depends = ["install"]
+run = "elm-format src tests --validate"
+
+[tasks.clean]
+description = "Remove generated output and transient files"
+run = "rm -rf build .hugo_build.lock .elm-home"
 
 [tasks.ci]
 description = "Run tests and production build"
-depends = ["test", "build"]
+depends = ["format:check", "test", "build"]
 
 [shell_alias]
 w = "mise x node@latest -- npx wrangler"

@@ -1,0 +1,20 @@
+{{ define "main" }}
+<main class="content-page">
+  <article class="content-card">
+    <p class="content-eyebrow">MeuAstral</p>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.description }}<p class="lead">{{ . }}</p>{{ end }}
+    <div class="prose content-prose">
+      {{ .Content }}
+    </div>
+    <div class="content-grid">
+      {{ range .Pages.ByWeight }}
+      <article class="content-link-card">
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+    </div>
+  </article>
+</main>
+{{ end }}

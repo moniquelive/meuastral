@@ -1,0 +1,26 @@
+{{ define "main" }}
+<noscript>
+  {{ .Site.Language.Params.noscript }}
+</noscript>
+<div id="root">
+  <main class="home-fallback">
+    <header class="home-fallback__header">
+      <img src="{{ "/logo.png" | relURL }}" alt="MeuAstral" width="220" height="112">
+      <h1>{{ .Params.heroTitle | default .Title }}</h1>
+    </header>
+    <p>{{ .Params.heroIntro }}</p>
+    <p>{{ .Params.heroSupport }}</p>
+    <nav aria-label="{{ .Site.Language.Params.navLabel }}" class="home-fallback__links">
+      {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
+    </nav>
+  </main>
+</div>
+<script src="{{ "/elm.js" | relURL }}" defer></script>
+<script src="{{ "/bootstrap.js" | relURL }}" defer></script>
+{{ end }}

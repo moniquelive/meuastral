@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Locale | default .Site.Language.Lang }}" data-theme="aqua">
+{{ partial "head.html" . }}
+<body class="site-body">
+  {{ if not .IsHome }}{{ partial "header.html" . }}{{ end }}
+  <div id="content">
+    {{ block "main" . }}{{ end }}
+  </div>
+  {{ if not .IsHome }}{{ partial "footer.html" . }}{{ end }}
+  {{ partial "analytics.html" . }}
+</body>
+</html>

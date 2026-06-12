@@ -1,0 +1,69 @@
+baseURL: https://meuastral.com/
+theme: meuastral
+publishDir: build
+timeZone: America/Sao_Paulo
+defaultContentLanguage: pt-br
+defaultContentLanguageInSubdir: false
+enableRobotsTXT: true
+disableKinds:
+  - taxonomy
+  - term
+
+params:
+  adsenseAccount: ca-pub-7232537493483974
+  fbAdmins: 506596308
+  logo: /meuastral-marca.png
+  publisher:
+    name: MeuAstral
+    email: contato@meuastral.com
+  social:
+    facebook: https://www.facebook.com/meuastral/
+    twitter: https://twitter.com/MeuAstral_Com
+
+languages:
+  pt-br:
+    locale: pt-BR
+    label: Portugues (Brasil)
+    contentDir: content/pt-br
+    title: MeuAstral
+    weight: 1
+    params:
+      locale: pt-BR
+      ogLocale: pt_BR
+      description: MeuAstral combina horoscopo diario, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento.
+      navLabel: Paginas do MeuAstral
+      homeLabel: Inicio
+      horoscopeLabel: Horoscopo
+      biorhythmLabel: Biorritmo
+      ascendedMastersLabel: Mestres ascensionados
+      aboutLabel: Sobre
+      privacyLabel: Politica de privacidade
+      termsLabel: Termos de uso
+      fundingLabel: Como o site se financia
+      editorialLabel: Politica editorial
+      methodologyLabel: Metodologia
+      footerNote: Conteudo gratuito de autoconhecimento, mantido com publicidade.
+      noscript: O MeuAstral funciona melhor com JavaScript ativado. Mesmo assim, voce pode acessar as paginas institucionais e voltar depois para consultar horoscopo, biorritmo e mestres ascensionados.
+  en:
+    locale: en-US
+    label: English
+    contentDir: content/en
+    title: MeuAstral
+    weight: 2
+    params:
+      locale: en-US
+      ogLocale: en_US
+      description: MeuAstral combines daily horoscope, biorhythm cycles, and ascended master insights for free self-knowledge readings.
+      navLabel: MeuAstral pages
+      homeLabel: Home
+      horoscopeLabel: Horoscope
+      biorhythmLabel: Biorhythm
+      ascendedMastersLabel: Ascended masters
+      aboutLabel: About
+      privacyLabel: Privacy policy
+      termsLabel: Terms
+      fundingLabel: How the site is funded
+      editorialLabel: Editorial policy
+      methodologyLabel: Methodology
+      footerNote: Free self-knowledge content supported by advertising.
+      noscript: MeuAstral works best with JavaScript enabled. You can still access the institutional pages and return later to check the horoscope, biorhythm, and ascended masters.
