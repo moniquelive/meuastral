@@ -45,7 +45,9 @@
     <div class="resource-links">
       <a href="{{ "/" | relLangURL }}#consulta-interativa">{{ $interactiveLabel }}</a>
       {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $biorhythmLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/biorritmo" }}<a href="{{ .RelPermalink }}">{{ $biorhythmLabel }}</a>{{ end }}
       {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $mastersLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ $mastersLabel }}</a>{{ end }}
       {{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ $allSignsLabel }}</a>{{ end }}
     </div>
     {{- $related := where (where .Site.RegularPages "Section" .Section) "Permalink" "ne" .Permalink -}}

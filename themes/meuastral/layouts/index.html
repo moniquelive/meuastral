@@ -29,7 +29,9 @@
         {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/biorritmo" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
       </nav>
@@ -92,7 +94,19 @@
         {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
       </article>
       {{ end }}
+      {{ with .Site.GetPage "/biorritmo" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
       {{ with .Site.GetPage "/ascended-masters" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+      {{ with .Site.GetPage "/mestres-ascensionados" }}
       <article class="content-link-card">
         <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
         {{ with .Params.description }}<p>{{ . }}</p>{{ end }}

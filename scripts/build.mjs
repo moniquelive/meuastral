@@ -221,6 +221,8 @@ function translatedPaths() {
     { pt: '/como-o-meuastral-se-financia/', en: '/en/how-meuastral-is-funded/' },
     { pt: '/politica-editorial/', en: '/en/editorial-policy/' },
     { pt: '/metodologia/', en: '/en/methodology/' },
+    { pt: '/biorritmo/', en: '/en/biorhythm-calculator/' },
+    { pt: '/mestres-ascensionados/', en: '/en/ascended-masters/' },
     { pt: '/horoscopo/', en: '/en/horoscope/' },
     { pt: '/horoscopo/aries/', en: '/en/horoscope/aries/' },
     { pt: '/horoscopo/touro/', en: '/en/horoscope/taurus/' },
