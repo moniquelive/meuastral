@@ -1,17 +1,17 @@
 {{ define "main" }}
 {{- $isEnglish := eq .Site.Language.Lang "en" -}}
 {{- $appTitle := cond $isEnglish "Open your interactive reading" "Abra sua consulta interativa" -}}
-{{- $appIntro := cond $isEnglish "Choose a birth date to combine today's horoscope, biorhythm cycles, and ascended master correspondence in one free reading." "Escolha uma data de nascimento para combinar horoscopo do dia, ciclos de biorritmo e correspondencia com mestres ascensionados em uma consulta gratuita." -}}
+{{- $appIntro := cond $isEnglish "Choose a birth date to combine today's horoscope, biorhythm cycles, and ascended master correspondence in one free reading." "Escolha uma data de nascimento para combinar horóscopo do dia, ciclos de biorritmo e correspondência com mestres ascensionados em uma consulta gratuita." -}}
 {{- $howTitle := cond $isEnglish "How MeuAstral helps" "Como o MeuAstral ajuda" -}}
 {{- $contentTitle := cond $isEnglish "Start with a topic" "Comece por um tema" -}}
-{{- $trustTitle := cond $isEnglish "Transparency and limits" "Transparencia e limites" -}}
+{{- $trustTitle := cond $isEnglish "Transparency and limits" "Transparência e limites" -}}
 {{- $faqTitle := cond $isEnglish "Frequently asked questions" "Perguntas frequentes" -}}
-{{- $featureHoroscopeTitle := cond $isEnglish "Daily horoscope" "Horoscopo diario" -}}
-{{- $featureHoroscopeText := cond $isEnglish "Read your sign as a symbolic prompt for attention, timing, and practical choices during the day." "Leia seu signo como um convite simbolico para observar atencao, tempo e escolhas praticas durante o dia." -}}
+{{- $featureHoroscopeTitle := cond $isEnglish "Daily horoscope" "Horóscopo diário" -}}
+{{- $featureHoroscopeText := cond $isEnglish "Read your sign as a symbolic prompt for attention, timing, and practical choices during the day." "Leia seu signo como um convite simbólico para observar atenção, tempo e escolhas práticas durante o dia." -}}
 {{- $featureBiorhythmTitle := cond $isEnglish "Biorhythm cycles" "Ciclos de biorritmo" -}}
-{{- $featureBiorhythmText := cond $isEnglish "Compare physical, emotional, and intellectual cycles from a birth date without creating an account." "Compare ciclos fisico, emocional e intelectual a partir da data de nascimento, sem criar conta." -}}
+{{- $featureBiorhythmText := cond $isEnglish "Compare physical, emotional, and intellectual cycles from a birth date without creating an account." "Compare ciclos físico, emocional e intelectual a partir da data de nascimento, sem criar conta." -}}
 {{- $featureMastersTitle := cond $isEnglish "Ascended masters" "Mestres ascensionados" -}}
-{{- $featureMastersText := cond $isEnglish "Explore the symbolic ray connected with the date and use it as reflective language, not prediction." "Explore o raio simbolico ligado a data e use a leitura como linguagem de reflexao, nao como previsao absoluta." -}}
+{{- $featureMastersText := cond $isEnglish "Explore the symbolic ray connected with the date and use it as reflective language, not prediction." "Explore o raio simbólico ligado à data e use a leitura como linguagem de reflexão, não como previsão absoluta." -}}
 <noscript>
   {{ .Site.Language.Params.noscript }}
 </noscript>
@@ -25,6 +25,7 @@
       <nav aria-label="{{ .Site.Language.Params.navLabel }}" class="resource-links">
         <a href="#consulta-interativa">{{ $appTitle }}</a>
         {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/horoscopo" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
@@ -60,6 +61,12 @@
     <h2 id="home-content-title">{{ $contentTitle }}</h2>
     <div class="content-grid">
       {{ with .Site.GetPage "/horoscope" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+      {{ with .Site.GetPage "/horoscopo" }}
       <article class="content-link-card">
         <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
         {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
@@ -118,7 +125,7 @@
   <section class="content-card home-section" aria-labelledby="home-trust-title">
     <p class="content-eyebrow">{{ $trustTitle }}</p>
     <h2 id="home-trust-title">{{ $trustTitle }}</h2>
-    <p>{{ cond $isEnglish "MeuAstral is free, supported by advertising, and written as symbolic self-knowledge content. It does not replace medical, psychological, legal, financial, or professional advice." "O MeuAstral e gratuito, mantido com publicidade e escrito como conteudo simbolico de autoconhecimento. Ele nao substitui aconselhamento medico, psicologico, juridico, financeiro ou profissional." }}</p>
+    <p>{{ cond $isEnglish "MeuAstral is free, supported by advertising, and written as symbolic self-knowledge content. It does not replace medical, psychological, legal, financial, or professional advice." "O MeuAstral é gratuito, mantido com publicidade e escrito como conteúdo simbólico de autoconhecimento. Ele não substitui aconselhamento médico, psicológico, jurídico, financeiro ou profissional." }}</p>
     <nav aria-label="{{ $trustTitle }}" class="resource-links">
       {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
@@ -136,16 +143,16 @@
     <h2 id="home-faq-title">{{ $faqTitle }}</h2>
     <div class="faq-list">
       <details open>
-        <summary>{{ cond $isEnglish "Is MeuAstral a prediction service?" "O MeuAstral e um servico de previsao?" }}</summary>
-        <p>{{ cond $isEnglish "No. The readings are symbolic prompts for reflection and entertainment, designed to help you observe themes of the day without treating them as certainty." "Nao. As leituras sao convites simbolicos para reflexao e entretenimento, pensados para ajudar voce a observar temas do dia sem trata-los como certeza." }}</p>
+        <summary>{{ cond $isEnglish "Is MeuAstral a prediction service?" "O MeuAstral é um serviço de previsão?" }}</summary>
+        <p>{{ cond $isEnglish "No. The readings are symbolic prompts for reflection and entertainment, designed to help you observe themes of the day without treating them as certainty." "Não. As leituras são convites simbólicos para reflexão e entretenimento, pensados para ajudar você a observar temas do dia sem tratá-los como certeza." }}</p>
       </details>
       <details>
         <summary>{{ cond $isEnglish "Do I need an account?" "Preciso criar conta?" }}</summary>
-        <p>{{ cond $isEnglish "No. The interactive reading runs in the browser, and the birth date can be saved locally on your own device." "Nao. A consulta interativa roda no navegador, e a data de nascimento pode ser salva localmente no seu proprio dispositivo." }}</p>
+        <p>{{ cond $isEnglish "No. The interactive reading runs in the browser, and the birth date can be saved locally on your own device." "Não. A consulta interativa roda no navegador, e a data de nascimento pode ser salva localmente no seu próprio dispositivo." }}</p>
       </details>
       <details>
         <summary>{{ cond $isEnglish "How is the site funded?" "Como o site se financia?" }}</summary>
-        <p>{{ cond $isEnglish "MeuAstral is free for readers and may be supported by advertising. Editorial pages explain the funding model and privacy practices." "O MeuAstral e gratuito para leitores e pode ser mantido com publicidade. As paginas editoriais explicam o modelo de financiamento e as praticas de privacidade." }}</p>
+        <p>{{ cond $isEnglish "MeuAstral is free for readers and may be supported by advertising. Editorial pages explain the funding model and privacy practices." "O MeuAstral é gratuito para leitores e pode ser mantido com publicidade. As páginas editoriais explicam o modelo de financiamento e as práticas de privacidade." }}</p>
       </details>
     </div>
   </section>

@@ -1,11 +1,11 @@
 ---
-title: "Politica de privacidade"
+title: "Política de privacidade"
 translationKey: privacy
 description: "Como o MeuAstral trata dados, cookies, publicidade e armazenamento local."
 ---
 
-O MeuAstral usa armazenamento local do navegador para lembrar a data de nascimento escolhida pelo usuario. Essa informacao fica no dispositivo e e usada para montar a experiencia interativa.
+O MeuAstral usa armazenamento local do navegador para lembrar a data de nascimento escolhida pelo usuário. Essa informação fica no dispositivo e é usada para montar a experiência interativa.
 
-O site pode exibir publicidade por meio do Google AdSense e pode usar ferramentas de medicao de audiencia. Esses servicos podem utilizar cookies ou identificadores conforme suas proprias politicas.
+O site pode exibir publicidade por meio do Google AdSense e pode usar ferramentas de medição de audiência. Esses serviços podem utilizar cookies ou identificadores conforme suas próprias políticas.
 
-Nao vendemos leituras pessoais, nao solicitamos dados sensiveis e nao pedimos informacoes financeiras para uso das consultas gratuitas.
+Não vendemos leituras pessoais, não solicitamos dados sensíveis e não pedimos informações financeiras para uso das consultas gratuitas.

@@ -1,16 +1,30 @@
 {{ define "main" }}
-{{ $sign := index hugo.Data.zodiac.en.signs .Params.sign }}
+{{- $isEnglish := eq .Site.Language.Lang "en" -}}
+{{- $zodiac := index hugo.Data.zodiac .Site.Language.Lang -}}
+{{- if not $zodiac -}}
+  {{- $zodiac = hugo.Data.zodiac.en -}}
+{{- end -}}
+{{- $sign := index $zodiac.signs .Params.sign -}}
+{{- $eyebrow := cond $isEnglish "Daily horoscope" "Horóscopo diário" -}}
+{{- $datesLabel := cond $isEnglish "Dates" "Periodo" -}}
+{{- $elementLabel := cond $isEnglish "Element" "Elemento" -}}
+{{- $modalityLabel := cond $isEnglish "Modality" "Modalidade" -}}
+{{- $planetLabel := cond $isEnglish "Ruling planet" "Planeta regente" -}}
+{{- $interactiveLabel := cond $isEnglish "Open the interactive reading" "Abrir a consulta interativa" -}}
+{{- $biorhythmLabel := cond $isEnglish "Check your biorhythm" "Consultar biorritmo" -}}
+{{- $mastersLabel := cond $isEnglish "Find your ascended master" "Ver mestres ascensionados" -}}
+{{- $allSignsLabel := cond $isEnglish "See all signs" "Ver todos os signos" -}}
 <main class="content-page">
   <article class="content-card">
-    <p class="content-eyebrow">Daily horoscope</p>
+    <p class="content-eyebrow">{{ $eyebrow }}</p>
     <h1>{{ .Title }}</h1>
     {{ with .Params.description }}<p class="lead">{{ . }}</p>{{ end }}
     {{ with $sign }}
     <dl class="sign-facts">
-      <div><dt>Dates</dt><dd>{{ .dates }}</dd></div>
-      <div><dt>Element</dt><dd>{{ .element }}</dd></div>
-      <div><dt>Modality</dt><dd>{{ .modality }}</dd></div>
-      <div><dt>Ruling planet</dt><dd>{{ .rulingPlanet }}</dd></div>
+      <div><dt>{{ $datesLabel }}</dt><dd>{{ .dates }}</dd></div>
+      <div><dt>{{ $elementLabel }}</dt><dd>{{ .element }}</dd></div>
+      <div><dt>{{ $modalityLabel }}</dt><dd>{{ .modality }}</dd></div>
+      <div><dt>{{ $planetLabel }}</dt><dd>{{ .rulingPlanet }}</dd></div>
     </dl>
     <div class="prose content-prose">
       <p>{{ .summary }}</p>
@@ -21,10 +35,10 @@
       {{ .Content }}
     </div>
     <div class="resource-links">
-      <a href="{{ "/en/" | relURL }}">Open the interactive reading</a>
-      <a href="{{ "/en/biorhythm-calculator/" | relURL }}">Check your biorhythm</a>
-      <a href="{{ "/en/ascended-masters/" | relURL }}">Find your ascended master</a>
-      <a href="{{ "/en/horoscope/" | relURL }}">See all signs</a>
+      <a href="{{ "/" | relLangURL }}#consulta-interativa">{{ $interactiveLabel }}</a>
+      {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $biorhythmLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $mastersLabel }}</a>{{ end }}
+      {{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ $allSignsLabel }}</a>{{ end }}
     </div>
   </article>
 </main>

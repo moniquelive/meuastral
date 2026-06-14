@@ -1,8 +1,13 @@
 {{ define "main" }}
-{{ $signs := hugo.Data.zodiac.en.signs }}
+{{- $zodiac := index hugo.Data.zodiac .Site.Language.Lang -}}
+{{- if not $zodiac -}}
+  {{- $zodiac = hugo.Data.zodiac.en -}}
+{{- end -}}
+{{- $signs := $zodiac.signs -}}
+{{- $eyebrow := cond (eq .Site.Language.Lang "en") "Daily horoscope" "Horóscopo diário" -}}
 <main class="content-page">
   <article class="content-card">
-    <p class="content-eyebrow">Daily horoscope</p>
+    <p class="content-eyebrow">{{ $eyebrow }}</p>
     <h1>{{ .Title }}</h1>
     {{ with .Params.description }}<p class="lead">{{ . }}</p>{{ end }}
     <div class="prose content-prose">

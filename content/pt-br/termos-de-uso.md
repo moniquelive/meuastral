@@ -1,11 +1,11 @@
 ---
 title: "Termos de uso"
 translationKey: terms
-description: "Termos de uso do MeuAstral e limites do conteudo de autoconhecimento."
+description: "Termos de uso do MeuAstral e limites do conteúdo de autoconhecimento."
 ---
 
-Ao usar o MeuAstral, voce entende que o conteudo e oferecido para entretenimento, reflexao e autoconhecimento.
+Ao usar o MeuAstral, você entende que o conteúdo é oferecido para entretenimento, reflexão e autoconhecimento.
 
-As leituras de horoscopo, biorritmo e mestres ascensionados nao devem ser interpretadas como aconselhamento profissional. Decisoes importantes devem considerar informacoes concretas e profissionais qualificados.
+As leituras de horóscopo, biorritmo e mestres ascensionados não devem ser interpretadas como aconselhamento profissional. Decisões importantes devem considerar informações concretas e profissionais qualificados.
 
-Podemos alterar textos, funcionalidades e provedores de dados para melhorar a experiencia, preservar a seguranca e manter o site funcionando.
+Podemos alterar textos, funcionalidades e provedores de dados para melhorar a experiência, preservar a segurança e manter o site funcionando.

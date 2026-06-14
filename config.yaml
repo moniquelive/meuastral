@@ -23,27 +23,27 @@ params:
 languages:
   pt-br:
     locale: pt-BR
-    label: Portugues (Brasil)
+    label: Português (Brasil)
     contentDir: content/pt-br
     title: MeuAstral
     weight: 1
     params:
       locale: pt-BR
       ogLocale: pt_BR
-      description: MeuAstral combina horoscopo diario, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento.
-      navLabel: Paginas do MeuAstral
-      homeLabel: Inicio
-      horoscopeLabel: Horoscopo
+      description: MeuAstral combina horóscopo diário, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento.
+      navLabel: Páginas do MeuAstral
+      homeLabel: Início
+      horoscopeLabel: Horóscopo
       biorhythmLabel: Biorritmo
       ascendedMastersLabel: Mestres ascensionados
       aboutLabel: Sobre
-      privacyLabel: Politica de privacidade
+      privacyLabel: Política de privacidade
       termsLabel: Termos de uso
       fundingLabel: Como o site se financia
-      editorialLabel: Politica editorial
+      editorialLabel: Política editorial
       methodologyLabel: Metodologia
-      footerNote: Conteudo gratuito de autoconhecimento, mantido com publicidade.
-      noscript: O MeuAstral funciona melhor com JavaScript ativado. Mesmo assim, voce pode acessar as paginas institucionais e voltar depois para consultar horoscopo, biorritmo e mestres ascensionados.
+      footerNote: Conteúdo gratuito de autoconhecimento, mantido com publicidade.
+      noscript: O MeuAstral funciona melhor com JavaScript ativado. Mesmo assim, você pode acessar as páginas institucionais e voltar depois para consultar horóscopo, biorritmo e mestres ascensionados.
   en:
     locale: en-US
     label: English

@@ -28,6 +28,7 @@
 - Use PascalCase for module names (`CosmicRay.elm`) and snake_case for functions/values, matching existing modules like `AscentMasters.elm`.
 - Keep CSS modules scoped and load them through Hugo templates; name selectors with BEM-like clarity (`.chart__axis-label`).
 - Prefer pure functions and explicit type annotations on public functions, especially when exposing helpers via `Ports.elm`.
+- Keep user-facing Portuguese and English spelling correct, including accents and diacritics in Brazilian Portuguese copy; use ASCII only for code identifiers, file names, URL slugs, or protocol-required values.
 
 ## Testing Guidelines
 - Tests rely on `elm-explorations/test`; place new suites under `tests/ModuleNameTests.elm` and expose a top-level `all` value for aggregation.

@@ -1,0 +1,97 @@
+signs:
+  aries:
+    name: Áries
+    dates: 21 de março a 19 de abril
+    element: Fogo
+    modality: Cardinal
+    rulingPlanet: Marte
+    summary: A energia de Áries é direta, iniciadora, rápida e motivada por desafio.
+    focus: Use o horóscopo de hoje para escolher uma ação clara em vez de seguir todos os impulsos ao mesmo tempo.
+  taurus:
+    name: Touro
+    dates: 20 de abril a 20 de maio
+    element: Terra
+    modality: Fixo
+    rulingPlanet: Vênus
+    summary: A energia de Touro é estável, sensorial, prática e motivada por conforto, valor e confiança.
+    focus: Use o horóscopo de hoje para perceber onde a paciência ajuda e onde o conforto virou adiamento.
+  gemini:
+    name: Gêmeos
+    dates: 21 de maio a 20 de junho
+    element: Ar
+    modality: Mutável
+    rulingPlanet: Mercúrio
+    summary: A energia de Gêmeos é curiosa, verbal, adaptável e motivada por conexão e ideias.
+    focus: Use o horóscopo de hoje para separar informação útil de distração.
+  cancer:
+    name: Câncer
+    dates: 21 de junho a 22 de julho
+    element: Água
+    modality: Cardinal
+    rulingPlanet: Lua
+    summary: A energia de Câncer é protetora, intuitiva, ligada à memória e motivada por pertencimento.
+    focus: Use o horóscopo de hoje para entender o que precisa de cuidado sem carregar toda emoção como dever.
+  leo:
+    name: Leão
+    dates: 23 de julho a 22 de agosto
+    element: Fogo
+    modality: Fixo
+    rulingPlanet: Sol
+    summary: A energia de Leão é expressiva, leal, criativa e motivada por reconhecimento e coração.
+    focus: Use o horóscopo de hoje para compartilhar calor sem transformar cada momento em performance.
+  virgo:
+    name: Virgem
+    dates: 23 de agosto a 22 de setembro
+    element: Terra
+    modality: Mutável
+    rulingPlanet: Mercúrio
+    summary: A energia de Virgem é precisa, útil, analítica e motivada por melhoria.
+    focus: Use o horóscopo de hoje para melhorar uma coisa sem deixar que o perfeccionismo atrase o progresso.
+  libra:
+    name: Libra
+    dates: 23 de setembro a 22 de outubro
+    element: Ar
+    modality: Cardinal
+    rulingPlanet: Vênus
+    summary: A energia de Libra é relacional, estética, diplomática e motivada por equilíbrio.
+    focus: Use o horóscopo de hoje para escolher harmonia sem abandonar sua própria posição.
+  scorpio:
+    name: Escorpião
+    dates: 23 de outubro a 21 de novembro
+    element: Água
+    modality: Fixo
+    rulingPlanet: Plutão
+    summary: A energia de Escorpião é intensa, reservada, transformadora e motivada por verdade.
+    focus: Use o horóscopo de hoje para perceber o que merece profundidade e o que pede apenas liberação.
+  sagittarius:
+    name: Sagitário
+    dates: 22 de novembro a 21 de dezembro
+    element: Fogo
+    modality: Mutável
+    rulingPlanet: Jupiter
+    summary: A energia de Sagitário é expansiva, franca, inquieta e motivada por sentido.
+    focus: Use o horóscopo de hoje para transformar uma visão ampla em um próximo passo concreto.
+  capricorn:
+    name: Capricórnio
+    dates: 22 de dezembro a 19 de janeiro
+    element: Terra
+    modality: Cardinal
+    rulingPlanet: Saturno
+    summary: A energia de Capricórnio é disciplinada, estratégica, resiliente e motivada por estrutura.
+    focus: Use o horóscopo de hoje para diferenciar responsabilidade real de pressão desnecessária.
+  aquarius:
+    name: Aquário
+    dates: 20 de janeiro a 18 de fevereiro
+    element: Ar
+    modality: Fixo
+    rulingPlanet: Urano
+    summary: A energia de Aquário é inventiva, independente, voltada ao futuro e motivada por sistemas.
+    focus: Use o horóscopo de hoje para conectar ideias originais com necessidades humanas práticas.
+  pisces:
+    name: Peixes
+    dates: 19 de fevereiro a 20 de março
+    element: Água
+    modality: Mutável
+    rulingPlanet: Netuno
+    summary: A energia de Peixes é imaginativa, compassiva, sensível e motivada por sentimento e significado.
+    focus: Use o horóscopo de hoje para manter a inspiração em movimento sem perder seus limites.

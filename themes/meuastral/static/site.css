@@ -208,6 +208,24 @@
   line-height: 1.75;
 }
 
+.content-prose h2,
+.content-prose h3 {
+  color: var(--ma-blue);
+}
+
+.content-prose a {
+  color: var(--ma-blue);
+  font-weight: 800;
+  text-decoration-color: var(--ma-purple);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.18em;
+}
+
+.content-prose a:hover,
+.content-prose a:focus-visible {
+  color: var(--ma-purple);
+}
+
 .content-grid {
   display: grid;
   gap: 18px;
