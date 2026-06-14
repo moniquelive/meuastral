@@ -127,6 +127,8 @@
     </div>
   </section>
 
+  {{ partial "ad-slot.html" (dict "page" . "placement" "homeMid") }}
+
   <section class="content-card home-section" id="consulta-interativa" aria-labelledby="home-app-title">
     <p class="content-eyebrow">{{ $appTitle }}</p>
     <h2 id="home-app-title">{{ $appTitle }}</h2>

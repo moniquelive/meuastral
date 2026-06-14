@@ -1,0 +1,8 @@
+{{- $noindex := .Params.noindex | default false -}}
+{{- $allowedSections := slice "guides" "guias" "horoscope" "horoscopo" -}}
+{{- $allowedPaths := slice "/biorritmo/" "/en/biorhythm-calculator/" "/mestres-ascensionados/" "/en/ascended-masters/" -}}
+{{- $allowAds := and (not $noindex) (or .IsHome (in $allowedSections .Section) (in $allowedPaths .RelPermalink)) -}}
+{{- if isset .Params "ads" -}}
+  {{- $allowAds = and $allowAds .Params.ads -}}
+{{- end -}}
+{{- return $allowAds -}}

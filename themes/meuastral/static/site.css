@@ -275,6 +275,25 @@
   margin: 0;
 }
 
+.ad-slot {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--ma-border);
+  border-radius: 12px;
+  margin: 28px auto;
+  max-width: 900px;
+  min-height: 120px;
+  padding: 12px;
+}
+
+.ad-slot__label {
+  color: var(--ma-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .cookie-consent {
   bottom: 18px;
   left: 18px;

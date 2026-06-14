@@ -3,11 +3,8 @@
 {{- $ogLocale := .Site.Language.Params.ogLocale | default $locale -}}
 {{- $title := .Title | default .Site.Title -}}
 {{- $noindex := .Params.noindex | default false -}}
-{{- $allowAds := not $noindex -}}
+{{- $allowAds := partial "ads-allowed.html" . -}}
 {{- $enableDisplayAds := .Site.Params.enableDisplayAds | default false -}}
-{{- if isset .Params "ads" -}}
-  {{- $allowAds = and (not $noindex) .Params.ads -}}
-{{- end -}}
 {{- if not .IsHome -}}
   {{- $title = printf "%s | %s" .Title .Site.Title -}}
 {{- end -}}

@@ -17,6 +17,7 @@
     <div class="prose content-prose">
       {{ .Content }}
     </div>
+    {{ partial "ad-slot.html" (dict "page" . "placement" "contentEnd") }}
     {{ if $isGuide }}
     {{- $related := where (where .Site.RegularPages "Section" .Section) "Permalink" "ne" .Permalink -}}
     {{ with first 3 (sort $related "Weight" "asc") }}

@@ -12,6 +12,11 @@ disableKinds:
 params:
   adsenseAccount: ca-pub-7232537493483974
   enableDisplayAds: true
+  enableManualAds: true
+  # Fill these with numeric AdSense ad unit slot IDs to enable one labeled manual ad per eligible page.
+  adsenseSlots:
+    contentEnd: ""
+    homeMid: ""
   fbAdmins: 506596308
   logo: /meuastral-marca.png
   publisher:

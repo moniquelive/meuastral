@@ -50,6 +50,7 @@
       {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ $mastersLabel }}</a>{{ end }}
       {{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ $allSignsLabel }}</a>{{ end }}
     </div>
+    {{ partial "ad-slot.html" (dict "page" . "placement" "contentEnd") }}
     {{- $related := where (where .Site.RegularPages "Section" .Section) "Permalink" "ne" .Permalink -}}
     {{ with first 3 (sort $related "Weight" "asc") }}
     <section class="related-content">
