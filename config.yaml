@@ -11,6 +11,7 @@ disableKinds:
 
 params:
   adsenseAccount: ca-pub-7232537493483974
+  enableDisplayAds: true
   fbAdmins: 506596308
   logo: /meuastral-marca.png
   publisher:
@@ -40,6 +41,7 @@ languages:
       aboutLabel: Sobre
       contactLabel: Contato
       maintainerLabel: Quem mantém
+      cookiePreferencesLabel: Gerenciar cookies
       privacyLabel: Política de privacidade
       termsLabel: Termos de uso
       fundingLabel: Como o site se financia
@@ -66,6 +68,7 @@ languages:
       aboutLabel: About
       contactLabel: Contact
       maintainerLabel: Who maintains
+      cookiePreferencesLabel: Cookie preferences
       privacyLabel: Privacy policy
       termsLabel: Terms
       fundingLabel: How the site is funded

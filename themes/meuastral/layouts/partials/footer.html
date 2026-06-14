@@ -19,6 +19,7 @@
     {{ with .Site.GetPage "/como-o-meuastral-se-financia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.fundingLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
+    <a href="#" data-cookie-preferences>{{ .Site.Language.Params.cookiePreferencesLabel }}</a>
   </nav>
   <p>{{ .Site.Language.Params.footerNote }}</p>
 </footer>
