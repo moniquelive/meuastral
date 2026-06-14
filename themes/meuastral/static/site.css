@@ -203,6 +203,13 @@
   line-height: 1.7;
 }
 
+.content-meta {
+  color: var(--ma-muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0 0 24px;
+}
+
 .content-prose {
   color: var(--ma-ink);
   line-height: 1.75;
@@ -254,6 +261,18 @@
 .home-fallback__links a {
   color: var(--ma-blue);
   font-weight: 800;
+}
+
+.related-content {
+  border-top: 1px solid var(--ma-border);
+  margin-top: 34px;
+  padding-top: 28px;
+}
+
+.related-content h2 {
+  color: var(--ma-blue);
+  font-size: 1.35rem;
+  margin: 0;
 }
 
 .sign-facts {

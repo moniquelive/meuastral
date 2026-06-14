@@ -6,7 +6,7 @@
 {{- end -}}
 {{- $sign := index $zodiac.signs .Params.sign -}}
 {{- $eyebrow := cond $isEnglish "Daily horoscope" "Horóscopo diário" -}}
-{{- $datesLabel := cond $isEnglish "Dates" "Periodo" -}}
+{{- $datesLabel := cond $isEnglish "Dates" "Período" -}}
 {{- $elementLabel := cond $isEnglish "Element" "Elemento" -}}
 {{- $modalityLabel := cond $isEnglish "Modality" "Modalidade" -}}
 {{- $planetLabel := cond $isEnglish "Ruling planet" "Planeta regente" -}}
@@ -14,11 +14,19 @@
 {{- $biorhythmLabel := cond $isEnglish "Check your biorhythm" "Consultar biorritmo" -}}
 {{- $mastersLabel := cond $isEnglish "Find your ascended master" "Ver mestres ascensionados" -}}
 {{- $allSignsLabel := cond $isEnglish "See all signs" "Ver todos os signos" -}}
+{{- $author := .Params.author | default .Site.Params.publisher.name -}}
+{{- $byLabel := cond $isEnglish "By" "Por" -}}
+{{- $updatedLabel := cond $isEnglish "Updated" "Atualizado" -}}
+{{- $relatedHeading := cond $isEnglish "Other signs" "Outros signos" -}}
 <main class="content-page">
   <article class="content-card">
     <p class="content-eyebrow">{{ $eyebrow }}</p>
     <h1>{{ .Title }}</h1>
     {{ with .Params.description }}<p class="lead">{{ . }}</p>{{ end }}
+    <p class="content-meta">
+      {{ with $author }}{{ $byLabel }} {{ . }}{{ end }}
+      {{ if gt .Lastmod.Year 1 }}{{ with $author }} · {{ end }}{{ $updatedLabel }} {{ .Lastmod.Format "02/01/2006" }}{{ end }}
+    </p>
     {{ with $sign }}
     <dl class="sign-facts">
       <div><dt>{{ $datesLabel }}</dt><dd>{{ .dates }}</dd></div>
@@ -40,6 +48,20 @@
       {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $mastersLabel }}</a>{{ end }}
       {{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ $allSignsLabel }}</a>{{ end }}
     </div>
+    {{- $related := where (where .Site.RegularPages "Section" .Section) "Permalink" "ne" .Permalink -}}
+    {{ with first 3 (sort $related "Weight" "asc") }}
+    <section class="related-content">
+      <h2>{{ $relatedHeading }}</h2>
+      <div class="content-grid" role="list" aria-label="{{ $relatedHeading }}">
+        {{ range . }}
+        <article class="content-link-card" role="listitem">
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+        </article>
+        {{ end }}
+      </div>
+    </section>
+    {{ end }}
   </article>
 </main>
 {{ end }}

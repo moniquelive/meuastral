@@ -1,12 +1,38 @@
 {{ define "main" }}
+{{- $isEnglish := eq .Site.Language.Lang "en" -}}
+{{- $author := .Params.author | default .Site.Params.publisher.name -}}
+{{- $byLabel := cond $isEnglish "By" "Por" -}}
+{{- $updatedLabel := cond $isEnglish "Updated" "Atualizado" -}}
+{{- $relatedHeading := cond $isEnglish "Related reading" "Leituras relacionadas" -}}
+{{- $isGuide := or (eq .Section "guides") (eq .Section "guias") -}}
 <main class="content-page">
   <article class="content-card">
     <p class="content-eyebrow">MeuAstral</p>
     <h1>{{ .Title }}</h1>
     {{ with .Params.description }}<p class="lead">{{ . }}</p>{{ end }}
+    <p class="content-meta">
+      {{ with $author }}{{ $byLabel }} {{ . }}{{ end }}
+      {{ if gt .Lastmod.Year 1 }}{{ with $author }} · {{ end }}{{ $updatedLabel }} {{ .Lastmod.Format "02/01/2006" }}{{ end }}
+    </p>
     <div class="prose content-prose">
       {{ .Content }}
     </div>
+    {{ if $isGuide }}
+    {{- $related := where (where .Site.RegularPages "Section" .Section) "Permalink" "ne" .Permalink -}}
+    {{ with first 3 (sort $related "Weight" "asc") }}
+    <section class="related-content">
+      <h2>{{ $relatedHeading }}</h2>
+      <div class="content-grid" role="list" aria-label="{{ $relatedHeading }}">
+        {{ range . }}
+        <article class="content-link-card" role="listitem">
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+        </article>
+        {{ end }}
+      </div>
+    </section>
+    {{ end }}
+    {{ end }}
   </article>
 </main>
 {{ end }}

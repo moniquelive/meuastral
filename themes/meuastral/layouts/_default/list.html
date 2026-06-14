@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- $updatedLabel := cond (eq .Site.Language.Lang "en") "Updated" "Atualizado" -}}
 <main class="content-page">
   <article class="content-card">
     <p class="content-eyebrow">MeuAstral</p>
@@ -12,6 +13,7 @@
       <article class="content-link-card">
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
         {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+        {{ if gt .Lastmod.Year 1 }}<p class="content-meta">{{ $updatedLabel }} {{ .Lastmod.Format "02/01/2006" }}</p>{{ end }}
       </article>
       {{ end }}
     </div>
