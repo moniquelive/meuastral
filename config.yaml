@@ -34,6 +34,7 @@ languages:
       navLabel: Páginas do MeuAstral
       homeLabel: Início
       horoscopeLabel: Horóscopo
+      guidesLabel: Guias
       biorhythmLabel: Biorritmo
       ascendedMastersLabel: Mestres ascensionados
       aboutLabel: Sobre
@@ -57,6 +58,7 @@ languages:
       navLabel: MeuAstral pages
       homeLabel: Home
       horoscopeLabel: Horoscope
+      guidesLabel: Guides
       biorhythmLabel: Biorhythm
       ascendedMastersLabel: Ascended masters
       aboutLabel: About

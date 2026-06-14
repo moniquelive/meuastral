@@ -220,7 +220,12 @@ function translatedPaths() {
     { pt: '/termos-de-uso/', en: '/en/terms/' },
     { pt: '/como-o-meuastral-se-financia/', en: '/en/how-meuastral-is-funded/' },
     { pt: '/politica-editorial/', en: '/en/editorial-policy/' },
-    { pt: '/metodologia/', en: '/en/methodology/' }
+    { pt: '/metodologia/', en: '/en/methodology/' },
+    { pt: '/guias/', en: '/en/guides/' },
+    { pt: '/guias/como-usar-horoscopo-diario/', en: '/en/guides/how-to-use-daily-horoscope/' },
+    { pt: '/guias/como-interpretar-biorritmo/', en: '/en/guides/how-to-read-biorhythm-cycles/' },
+    { pt: '/guias/mestres-ascensionados-e-raios/', en: '/en/guides/ascended-masters-and-rays/' },
+    { pt: '/guias/combinar-signo-biorritmo-data-nascimento/', en: '/en/guides/combine-sign-biorhythm-birth-date/' }
   ];
 }
 
