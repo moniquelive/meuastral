@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Escorpião"
+translationKey: horoscope-scorpio
 description: "Horóscopo diário e guia de autoconhecimento para Escorpião, com foco em intensidade, verdade e transformação."
 type: horoscope
 sign: scorpio

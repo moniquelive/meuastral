@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Gêmeos"
+translationKey: horoscope-gemini
 description: "Horóscopo diário e guia de autoconhecimento para Gêmeos, com foco em comunicação, ideias e escolhas mentais."
 type: horoscope
 sign: gemini

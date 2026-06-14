@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Leão"
+translationKey: horoscope-leo
 description: "Horóscopo diário e guia de autoconhecimento para Leão, com foco em expressão, criatividade e presença."
 type: horoscope
 sign: leo

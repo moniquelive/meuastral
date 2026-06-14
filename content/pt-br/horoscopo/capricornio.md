@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Capricórnio"
+translationKey: horoscope-capricorn
 description: "Horóscopo diário e guia de autoconhecimento para Capricórnio, com foco em responsabilidade, estrutura e amadurecimento."
 type: horoscope
 sign: capricorn

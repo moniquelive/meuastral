@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Câncer"
+translationKey: horoscope-cancer
 description: "Horóscopo diário e guia de autoconhecimento para Câncer, com foco em cuidado, memória emocional e proteção."
 type: horoscope
 sign: cancer

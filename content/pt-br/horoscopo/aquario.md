@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Aquário"
+translationKey: horoscope-aquarius
 description: "Horóscopo diário e guia de autoconhecimento para Aquário, com foco em ideias, independência e visão coletiva."
 type: horoscope
 sign: aquarius

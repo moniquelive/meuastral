@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Virgem"
+translationKey: horoscope-virgo
 description: "Horóscopo diário e guia de autoconhecimento para Virgem, com foco em organização, melhoria e discernimento."
 type: horoscope
 sign: virgo

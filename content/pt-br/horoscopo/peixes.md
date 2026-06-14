@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Peixes"
+translationKey: horoscope-pisces
 description: "Horóscopo diário e guia de autoconhecimento para Peixes, com foco em sensibilidade, imaginação e limites."
 type: horoscope
 sign: pisces

@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Áries"
+translationKey: horoscope-aries
 description: "Horóscopo diário e guia de autoconhecimento para Áries, com foco em impulso, coragem e direção prática."
 type: horoscope
 sign: aries

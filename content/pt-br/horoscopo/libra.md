@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Libra"
+translationKey: horoscope-libra
 description: "Horóscopo diário e guia de autoconhecimento para Libra, com foco em equilíbrio, relações e escolhas justas."
 type: horoscope
 sign: libra

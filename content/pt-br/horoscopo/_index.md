@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário por signo"
+translationKey: horoscope
 description: "Leia páginas de horóscopo diário para Áries, Touro, Gêmeos, Câncer, Leão, Virgem, Libra, Escorpião, Sagitário, Capricórnio, Aquário e Peixes."
 type: horoscope
 date: 2026-06-14

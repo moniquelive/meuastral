@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Sagitário"
+translationKey: horoscope-sagittarius
 description: "Horóscopo diário e guia de autoconhecimento para Sagitário, com foco em expansão, sentido e liberdade responsável."
 type: horoscope
 sign: sagittarius

@@ -1,5 +1,6 @@
 ---
 title: "Horóscopo diário de Touro"
+translationKey: horoscope-taurus
 description: "Horóscopo diário e guia de autoconhecimento para Touro, com foco em estabilidade, conforto e escolhas consistentes."
 type: horoscope
 sign: taurus
