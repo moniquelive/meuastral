@@ -1,67 +1,156 @@
 {{ define "main" }}
 {{- $isEnglish := eq .Site.Language.Lang "en" -}}
-{{- $birthdayTitle := cond $isEnglish "My Birthday" "Data do meu Aniversário" -}}
-{{- $bornText := cond $isEnglish "Choose your birthday to calculate your days of life." "Escolha sua data de nascimento para calcular seus dias de vida." -}}
-{{- $facebookLabel := "Facebook" -}}
-{{- $twitterLabel := "X" -}}
+{{- $appTitle := cond $isEnglish "Open your interactive reading" "Abra sua consulta interativa" -}}
+{{- $appIntro := cond $isEnglish "Choose a birth date to combine today's horoscope, biorhythm cycles, and ascended master correspondence in one free reading." "Escolha uma data de nascimento para combinar horoscopo do dia, ciclos de biorritmo e correspondencia com mestres ascensionados em uma consulta gratuita." -}}
+{{- $howTitle := cond $isEnglish "How MeuAstral helps" "Como o MeuAstral ajuda" -}}
+{{- $contentTitle := cond $isEnglish "Start with a topic" "Comece por um tema" -}}
+{{- $trustTitle := cond $isEnglish "Transparency and limits" "Transparencia e limites" -}}
+{{- $faqTitle := cond $isEnglish "Frequently asked questions" "Perguntas frequentes" -}}
+{{- $featureHoroscopeTitle := cond $isEnglish "Daily horoscope" "Horoscopo diario" -}}
+{{- $featureHoroscopeText := cond $isEnglish "Read your sign as a symbolic prompt for attention, timing, and practical choices during the day." "Leia seu signo como um convite simbolico para observar atencao, tempo e escolhas praticas durante o dia." -}}
+{{- $featureBiorhythmTitle := cond $isEnglish "Biorhythm cycles" "Ciclos de biorritmo" -}}
+{{- $featureBiorhythmText := cond $isEnglish "Compare physical, emotional, and intellectual cycles from a birth date without creating an account." "Compare ciclos fisico, emocional e intelectual a partir da data de nascimento, sem criar conta." -}}
+{{- $featureMastersTitle := cond $isEnglish "Ascended masters" "Mestres ascensionados" -}}
+{{- $featureMastersText := cond $isEnglish "Explore the symbolic ray connected with the date and use it as reflective language, not prediction." "Explore o raio simbolico ligado a data e use a leitura como linguagem de reflexao, nao como previsao absoluta." -}}
 <noscript>
   {{ .Site.Language.Params.noscript }}
 </noscript>
-<div id="root">
-  <div class="home-app-shell flex flex-col h-screen overflow-hidden">
-    <header class="app-header w-full flex justify-center items-center border-b border-grey p-3">
-      <img class="h-28" src="{{ "/logo-390.png" | relURL }}" alt="MeuAstral" width="220" height="112" fetchpriority="high">
-    </header>
-    <main class="flex-1 overflow-y-scroll p-4 content-center home-app-shell__main" data-theme="light">
-      <section class="p-4 grid">
-        <h2 class="text-xl">{{ $birthdayTitle }}</h2>
-        <hr>
-        <div class="flex place-content-center pt-4">
-          <div class="home-date-placeholder" aria-hidden="true">
-            <div class="home-date-placeholder__top"></div>
-            <div class="home-date-placeholder__body"></div>
-          </div>
-        </div>
-      </section>
-      <section class="p-4 grid">
-        <div class="flex place-content-center">
-          <div class="card lg:w-96 bg-neutral shadow-xl">
-            <div class="card-body text-neutral-content">
-              <p>{{ $bornText }}</p>
+<main class="site-main home-hub">
+  <section class="home-hero content-card" aria-label="{{ .Params.heroTitle | default .Title }}">
+    <div class="home-hero__copy">
+      <p class="content-eyebrow">MeuAstral</p>
+      <h1>{{ .Params.heroTitle | default .Title }}</h1>
+      <p class="lead">{{ .Params.heroIntro }}</p>
+      <p>{{ .Params.heroSupport }}</p>
+      <nav aria-label="{{ .Site.Language.Params.navLabel }}" class="resource-links">
+        <a href="#consulta-interativa">{{ $appTitle }}</a>
+        {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+      </nav>
+    </div>
+    <div class="home-hero__brand" aria-hidden="true">
+      <img src="{{ "/logo-390.png" | relURL }}" alt="" width="220" height="112" fetchpriority="high">
+    </div>
+  </section>
+
+  <section class="content-card home-section" aria-labelledby="home-how-title">
+    <p class="content-eyebrow">{{ $howTitle }}</p>
+    <h2 id="home-how-title">{{ $howTitle }}</h2>
+    <div class="content-grid">
+      <article class="content-link-card">
+        <h3>{{ $featureHoroscopeTitle }}</h3>
+        <p>{{ $featureHoroscopeText }}</p>
+      </article>
+      <article class="content-link-card">
+        <h3>{{ $featureBiorhythmTitle }}</h3>
+        <p>{{ $featureBiorhythmText }}</p>
+      </article>
+      <article class="content-link-card">
+        <h3>{{ $featureMastersTitle }}</h3>
+        <p>{{ $featureMastersText }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="content-card home-section" aria-labelledby="home-content-title">
+    <p class="content-eyebrow">{{ $contentTitle }}</p>
+    <h2 id="home-content-title">{{ $contentTitle }}</h2>
+    <div class="content-grid">
+      {{ with .Site.GetPage "/horoscope" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+      {{ with .Site.GetPage "/biorhythm-calculator" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+      {{ with .Site.GetPage "/ascended-masters" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+      {{ with .Site.GetPage "/metodologia" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+      {{ with .Site.GetPage "/methodology" }}
+      <article class="content-link-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{ end }}
+    </div>
+  </section>
+
+  <section class="content-card home-section" id="consulta-interativa" aria-labelledby="home-app-title">
+    <p class="content-eyebrow">{{ $appTitle }}</p>
+    <h2 id="home-app-title">{{ $appTitle }}</h2>
+    <p>{{ $appIntro }}</p>
+    <div id="root" class="home-app-mount">
+      <div class="home-app-shell flex flex-col h-screen overflow-hidden">
+        <header class="app-header w-full flex justify-center items-center border-b border-grey p-3">
+          <img class="h-28" src="{{ "/logo-390.png" | relURL }}" alt="MeuAstral" width="220" height="112">
+        </header>
+        <main class="flex-1 overflow-y-scroll p-4 content-center home-app-shell__main" data-theme="light">
+          <section class="p-4 grid">
+            <div class="flex place-content-center pt-4">
+              <div class="home-date-placeholder" aria-hidden="true">
+                <div class="home-date-placeholder__top"></div>
+                <div class="home-date-placeholder__body"></div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-      <section class="home-fallback" aria-label="{{ .Params.heroTitle | default .Title }}">
-        <h1>{{ .Params.heroTitle | default .Title }}</h1>
-        <p>{{ .Params.heroIntro }}</p>
-        <p>{{ .Params.heroSupport }}</p>
-        <nav aria-label="{{ .Site.Language.Params.navLabel }}" class="home-fallback__links">
-          {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
-          {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
-          {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
-          {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-          {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-          {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
-          {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
-        </nav>
-      </section>
-    </main>
-    <footer class="app-footer w-full border-t border-grey p-4 justify-between items-center flex">
-      <div>
-        <a class="btn btn-circle mx-2" href="https://www.facebook.com/meuastral/" target="_blank" rel="noopener noreferrer" aria-label="{{ $facebookLabel }}">
-          <span class="social-icon" aria-hidden="true">f</span>
-        </a>
-        <a class="btn btn-circle mx-2" href="https://twitter.com/MeuAstral_Com" target="_blank" rel="noopener noreferrer" aria-label="{{ $twitterLabel }}">
-          <span class="social-icon" aria-hidden="true">X</span>
-        </a>
+          </section>
+        </main>
       </div>
-      <div>
-        <p>{{ now.Format "2006" }} - <b>MeuAstral.com</b></p>
-      </div>
-    </footer>
-  </div>
-</div>
+    </div>
+  </section>
+
+  <section class="content-card home-section" aria-labelledby="home-trust-title">
+    <p class="content-eyebrow">{{ $trustTitle }}</p>
+    <h2 id="home-trust-title">{{ $trustTitle }}</h2>
+    <p>{{ cond $isEnglish "MeuAstral is free, supported by advertising, and written as symbolic self-knowledge content. It does not replace medical, psychological, legal, financial, or professional advice." "O MeuAstral e gratuito, mantido com publicidade e escrito como conteudo simbolico de autoconhecimento. Ele nao substitui aconselhamento medico, psicologico, juridico, financeiro ou profissional." }}</p>
+    <nav aria-label="{{ $trustTitle }}" class="resource-links">
+      {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/politica-editorial" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/editorial-policy" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/como-o-meuastral-se-financia" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/how-meuastral-is-funded" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    </nav>
+  </section>
+
+  <section class="content-card home-section" aria-labelledby="home-faq-title">
+    <p class="content-eyebrow">FAQ</p>
+    <h2 id="home-faq-title">{{ $faqTitle }}</h2>
+    <div class="faq-list">
+      <details open>
+        <summary>{{ cond $isEnglish "Is MeuAstral a prediction service?" "O MeuAstral e um servico de previsao?" }}</summary>
+        <p>{{ cond $isEnglish "No. The readings are symbolic prompts for reflection and entertainment, designed to help you observe themes of the day without treating them as certainty." "Nao. As leituras sao convites simbolicos para reflexao e entretenimento, pensados para ajudar voce a observar temas do dia sem trata-los como certeza." }}</p>
+      </details>
+      <details>
+        <summary>{{ cond $isEnglish "Do I need an account?" "Preciso criar conta?" }}</summary>
+        <p>{{ cond $isEnglish "No. The interactive reading runs in the browser, and the birth date can be saved locally on your own device." "Nao. A consulta interativa roda no navegador, e a data de nascimento pode ser salva localmente no seu proprio dispositivo." }}</p>
+      </details>
+      <details>
+        <summary>{{ cond $isEnglish "How is the site funded?" "Como o site se financia?" }}</summary>
+        <p>{{ cond $isEnglish "MeuAstral is free for readers and may be supported by advertising. Editorial pages explain the funding model and privacy practices." "O MeuAstral e gratuito para leitores e pode ser mantido com publicidade. As paginas editoriais explicam o modelo de financiamento e as praticas de privacidade." }}</p>
+      </details>
+    </div>
+  </section>
+</main>
+{{ partial "footer.html" . }}
 <script src="{{ "/elm.js" | relURL }}" defer></script>
 <script src="{{ "/bootstrap.js" | relURL }}" defer></script>
 {{ end }}
