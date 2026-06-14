@@ -38,6 +38,8 @@ languages:
       biorhythmLabel: Biorritmo
       ascendedMastersLabel: Mestres ascensionados
       aboutLabel: Sobre
+      contactLabel: Contato
+      maintainerLabel: Quem mantém
       privacyLabel: Política de privacidade
       termsLabel: Termos de uso
       fundingLabel: Como o site se financia
@@ -62,6 +64,8 @@ languages:
       biorhythmLabel: Biorhythm
       ascendedMastersLabel: Ascended masters
       aboutLabel: About
+      contactLabel: Contact
+      maintainerLabel: Who maintains
       privacyLabel: Privacy policy
       termsLabel: Terms
       fundingLabel: How the site is funded

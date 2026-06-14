@@ -143,10 +143,14 @@
     <nav aria-label="{{ $trustTitle }}" class="resource-links">
       {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/quem-mantem-o-meuastral" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/who-maintains-meuastral" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/politica-editorial" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/editorial-policy" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/como-o-meuastral-se-financia" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/how-meuastral-is-funded" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
     </nav>

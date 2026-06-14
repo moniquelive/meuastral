@@ -12,5 +12,7 @@
     {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
   </nav>
 </header>

@@ -1,11 +1,24 @@
 <footer class="site-footer">
   <nav aria-label="{{ .Site.Language.Params.navLabel }}">
+    <a href="{{ "/" | relLangURL }}">{{ .Site.Language.Params.homeLabel }}</a>
+    {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/who-maintains-meuastral" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.maintainerLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/quem-mantem-o-meuastral" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.maintainerLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/editorial-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.editorialLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/politica-editorial" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.editorialLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/terms" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/termos-de-uso" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/how-meuastral-is-funded" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.fundingLabel }}</a>{{ end }}
     {{ with .Site.GetPage "/como-o-meuastral-se-financia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.fundingLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
+    {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
   </nav>
   <p>{{ .Site.Language.Params.footerNote }}</p>
 </footer>

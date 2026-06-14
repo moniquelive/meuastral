@@ -221,6 +221,8 @@ function translatedPaths() {
     { pt: '/como-o-meuastral-se-financia/', en: '/en/how-meuastral-is-funded/' },
     { pt: '/politica-editorial/', en: '/en/editorial-policy/' },
     { pt: '/metodologia/', en: '/en/methodology/' },
+    { pt: '/contato/', en: '/en/contact/' },
+    { pt: '/quem-mantem-o-meuastral/', en: '/en/who-maintains-meuastral/' },
     { pt: '/guias/', en: '/en/guides/' },
     { pt: '/guias/como-usar-horoscopo-diario/', en: '/en/guides/how-to-use-daily-horoscope/' },
     { pt: '/guias/como-interpretar-biorritmo/', en: '/en/guides/how-to-read-biorhythm-cycles/' },
