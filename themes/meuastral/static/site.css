@@ -9,6 +9,13 @@
   --ma-soft: #f7fafc;
 }
 
+html,
+body {
+  touch-action: pan-x pan-y;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 .site-body {
   margin: 0;
   background: var(--ma-soft);
