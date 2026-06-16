@@ -8,7 +8,7 @@ import Locale
 
 content : Locale.Locale -> Maybe CosmicRay -> Html msg
 content locale maybeMaster =
-    div [ class "place-self-center pt-3 box-content" ]
+    div [ class "place-self-center pt-3 box-content min-w-0 w-full" ]
         [ ascentMasterView locale maybeMaster ]
 
 
@@ -19,7 +19,7 @@ ascentMasterView locale maybeMaster =
             div [] []
 
         Just master ->
-            div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
+            div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 min-w-0" ]
                 [ ascentMasterCard locale master
                 , archangelCard locale master
                 ]
@@ -27,7 +27,7 @@ ascentMasterView locale maybeMaster =
 
 ascentMasterCard : Locale.Locale -> CosmicRay -> Html msg
 ascentMasterCard locale master =
-    div [ class "indicator card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
+    div [ class "indicator card w-full max-w-80 lg:max-w-none lg:w-2/5 bg-base-100 shadow-xl" ]
         [ H.span
             [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold"
             , HA.style "background" (AM.color_name master)
@@ -77,7 +77,7 @@ archangelCard locale master =
         localizedCopy =
             Locale.copy locale
     in
-    div [ class "card w-80 lg:w-2/5 bg-base-100 shadow-xl" ]
+    div [ class "card w-full max-w-80 lg:max-w-none lg:w-2/5 bg-base-100 shadow-xl" ]
         [ H.figure [ class "flex-col w-full" ]
             [ H.img
                 [ class "rounded ring"

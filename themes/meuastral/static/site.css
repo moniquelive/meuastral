@@ -9,6 +9,12 @@
   --ma-soft: #f7fafc;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   touch-action: pan-x pan-y;
@@ -412,5 +418,21 @@ body {
 
   .home-hero__brand {
     min-height: 160px;
+  }
+}
+
+@media (max-width: 430px) {
+  .site-main,
+  .content-page {
+    padding-inline: 12px;
+  }
+
+  .content-card,
+  .home-fallback {
+    padding: 16px;
+  }
+
+  .home-app-mount {
+    margin-inline: -4px;
   }
 }

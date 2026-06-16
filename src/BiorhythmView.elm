@@ -14,7 +14,7 @@ content locale ageInDays =
         localizedCopy =
             Locale.copy locale
     in
-    div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3" ]
+    div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 min-w-0" ]
         [ bioCard 23 "hsl(var(--in))" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "🏃" ageInDays
         , bioCard 28 "hsl(var(--er))" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "♥" ageInDays
         , bioCard 33 "hsl(var(--su))" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "🧠" ageInDays
@@ -30,7 +30,7 @@ bioCard period color label tooltip icon ageInDays =
         ]
         [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ]
             [ H.text (bioValue period ageInDays ++ "%") ]
-        , div [ class "card card-compact w-80 lg:w-96 bg-base-100 shadow-xl" ]
+        , div [ class "card card-compact w-full max-w-80 lg:max-w-none lg:w-96 bg-base-100 shadow-xl" ]
             [ bioChart period color ageInDays
             , div [ class "card-body" ]
                 [ H.p [ class "text-center prose" ]

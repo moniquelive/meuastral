@@ -253,7 +253,7 @@ horoscopeIndex horoscopes =
 
 view : Model -> Html Msg
 view model =
-    div [ class "flex flex-col h-screen overflow-hidden" ]
+    div [ class "flex flex-col h-screen min-w-0 overflow-hidden" ]
         [ H.header [ class "app-header w-full flex justify-center items-center border-b border-grey p-3" ]
             [ H.img
                 [ class "h-28"
@@ -264,7 +264,7 @@ view model =
                 ]
                 []
             ]
-        , H.main_ [ class "flex-1 overflow-y-scroll p-4 content-center", HA.attribute "data-theme" "light" ]
+        , H.main_ [ class "flex-1 min-w-0 overflow-y-scroll p-2 sm:p-4 content-center", HA.attribute "data-theme" "light" ]
             [ dob model
             , userInfo model
             , horoscope model
@@ -273,7 +273,7 @@ view model =
 
             -- , comments model -- ninho de spam :(
             ]
-        , H.footer [ class "app-footer w-full border-t border-grey p-4 justify-between items-center flex" ]
+        , H.footer [ class "app-footer w-full border-t border-grey p-3 sm:p-4 justify-between items-center flex flex-wrap gap-3" ]
             [ div []
                 [ H.a
                     [ class "btn btn-circle mx-2"
@@ -332,7 +332,7 @@ userInfo model =
     in
     H.section sectionAttributes
         [ div [ class "flex place-content-center" ]
-            [ div [ class "card lg:w-96 bg-neutral shadow-xl" ]
+            [ div [ class "card w-full lg:w-96 bg-neutral shadow-xl" ]
                 [ div [ class "card-body text-neutral-content" ]
                     [ H.p []
                         [ H.text localizedCopy.bornOnPrefix
@@ -430,7 +430,7 @@ bio model =
 
 sectionAttributes : List (H.Attribute Msg)
 sectionAttributes =
-    [ class "p-4 grid" ]
+    [ class "min-w-0 p-2 sm:p-4 grid" ]
 
 
 sectionTitle : String -> Html Msg
