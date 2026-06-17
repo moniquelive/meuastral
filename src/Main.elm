@@ -168,6 +168,14 @@ update msg model =
                 -- set the data returned from datePickerUpdate. Don't discard the command!
                 |> (\( data, cmd ) ->
                         let
+                            pickedCalendarDay =
+                                case datePickerMsg of
+                                    DateSelected _ _ ->
+                                        model.datePickerData.selectionMode == data.selectionMode
+
+                                    _ ->
+                                        False
+
                             newBirthday =
                                 case data.selectedDate of
                                     Just date ->
@@ -182,12 +190,11 @@ update msg model =
                             , selectedDate = newBirthday
                             , ascentMaster = Maybe.andThen AM.for_birthday newBirthday
                             , isDatePickerOpen =
-                                case data.selectedDate of
-                                    Just _ ->
-                                        False
+                                if pickedCalendarDay then
+                                    False
 
-                                    Nothing ->
-                                        model.isDatePickerOpen
+                                else
+                                    model.isDatePickerOpen
                           }
                         , Cmd.batch
                             [ Cmd.map DatePickerMsg cmd

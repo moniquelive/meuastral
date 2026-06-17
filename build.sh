@@ -94,7 +94,7 @@ command -v mise >/dev/null 2>&1 || {
 }
 
 echo "Installing Node dependencies..."
-HOME="${ORIGINAL_HOME}" npm ci --prefer-offline --no-audit --fund=false
+HOME="${ORIGINAL_HOME}" node scripts/install.mjs
 
 mise ls --current || true
 mise run --skip-tools --skip-deps build

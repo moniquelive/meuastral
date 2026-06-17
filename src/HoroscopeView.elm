@@ -9,7 +9,7 @@ import Json.Decode as D
 
 content : (HoroscopeId -> msg) -> Maybe String -> Horoscope -> List Horoscope -> Html msg
 content onSelect statusMessage selectedHoroscope horoscopes =
-    div [ class "place-self-center pt-3 box-content min-w-0 w-full" ]
+    div [ class "grid justify-items-center pt-3 box-content min-w-0 w-full" ]
         (case statusMessage of
             Just message ->
                 [ statusCard message ]
@@ -24,7 +24,7 @@ content onSelect statusMessage selectedHoroscope horoscopes =
 
 statusCard : String -> Html msg
 statusCard message =
-    div [ class "card w-full lg:w-96 bg-base-100 shadow-xl" ]
+    div [ class "card w-full max-w-96 bg-base-100 shadow-xl" ]
         [ H.article [ class "card-body" ]
             [ H.p [] [ H.text message ]
             ]
@@ -33,7 +33,7 @@ statusCard message =
 
 horoscopeCard : Horoscope -> Html msg
 horoscopeCard horoscopeData =
-    div [ class "card w-full lg:w-96 bg-base-100 shadow-xl" ]
+    div [ class "card w-full max-w-96 bg-base-100 shadow-xl" ]
         [ H.article [ class "card-body" ]
             [ H.h2 [ class "card-title" ] [ H.text horoscopeData.name ]
             , H.p [] [ H.text horoscopeData.resume ]

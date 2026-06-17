@@ -13,7 +13,7 @@ TZ = "America/Sao_Paulo"
 
 [tasks.install]
 description = "Install Node.js dependencies"
-run = "npm ci --prefer-offline --no-audit --fund=false"
+run = "node scripts/install.mjs"
 
 [tasks.build]
 description = "Build the production Hugo site and Elm app"
@@ -27,7 +27,8 @@ run = "PATH=./node_modules/.bin:$PATH ELM_HOME=.elm-home node scripts/dev.mjs"
 
 [tasks.test]
 description = "Run Elm and Worker tests"
-depends = ["test:elm", "test:worker"]
+depends = ["install"]
+run = "PATH=./node_modules/.bin:$PATH ELM_HOME=.elm-home CI=true elm-test && node --test tests/worker/*.test.mjs"
 
 [tasks."test:elm"]
 description = "Run Elm tests once"
