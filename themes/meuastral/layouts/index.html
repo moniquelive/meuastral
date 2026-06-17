@@ -12,6 +12,9 @@
 {{- $featureBiorhythmText := cond $isEnglish "Compare physical, emotional, and intellectual cycles from a birth date without creating an account." "Compare ciclos físico, emocional e intelectual a partir da data de nascimento, sem criar conta." -}}
 {{- $featureMastersTitle := cond $isEnglish "Ascended masters" "Mestres ascensionados" -}}
 {{- $featureMastersText := cond $isEnglish "Explore the symbolic ray connected with the date and use it as reflective language, not prediction." "Explore o raio simbólico ligado à data e use a leitura como linguagem de reflexão, não como previsão absoluta." -}}
+{{- $birthdayTitle := cond $isEnglish "My Birthday" "Data do meu Aniversário" -}}
+{{- $changeDate := cond $isEnglish "Change date" "Alterar data" -}}
+{{- $todayReading := cond $isEnglish "Today's reading" "Leitura de hoje" -}}
 <noscript>
   {{ .Site.Language.Params.noscript }}
 </noscript>
@@ -134,20 +137,28 @@
     <h2 id="home-app-title">{{ $appTitle }}</h2>
     <p>{{ $appIntro }}</p>
     <div id="root" class="home-app-mount">
-      <div class="home-app-shell flex flex-col h-screen overflow-hidden">
-        <header class="app-header w-full flex justify-center items-center border-b border-grey p-3">
-          <img class="h-28" src="{{ "/logo-390.png" | relURL }}" alt="MeuAstral" width="220" height="112">
-        </header>
-        <main class="flex-1 overflow-y-scroll p-4 content-center home-app-shell__main" data-theme="light">
-          <section class="p-4 grid">
-            <div class="flex place-content-center pt-4">
-              <div class="home-date-placeholder" aria-hidden="true">
-                <div class="home-date-placeholder__top"></div>
-                <div class="home-date-placeholder__body"></div>
-              </div>
-            </div>
-          </section>
-        </main>
+      <div class="meuastral-widget" data-theme="light">
+        <section class="meuastral-date-control min-w-0">
+          <button class="meuastral-date-toggle" type="button" aria-expanded="false">
+            <span class="meuastral-date-toggle__label">{{ $birthdayTitle }}</span>
+            <span class="meuastral-date-toggle__value">{{ $todayReading }}</span>
+            <span class="meuastral-date-toggle__meta">{{ $appIntro }}</span>
+            <span class="meuastral-date-toggle__action">{{ $changeDate }}</span>
+          </button>
+        </section>
+        <nav class="meuastral-tabs" role="tablist" aria-label="{{ .Site.Language.Params.navLabel }}">
+          <button class="meuastral-tab meuastral-tab--active" type="button" role="tab" aria-selected="true">{{ .Site.Language.Params.horoscopeLabel }}</button>
+          <button class="meuastral-tab" type="button" role="tab" aria-selected="false">{{ .Site.Language.Params.ascendedMastersLabel }}</button>
+          <button class="meuastral-tab" type="button" role="tab" aria-selected="false">{{ .Site.Language.Params.biorhythmLabel }}</button>
+        </nav>
+        <section class="meuastral-tab-panel min-w-0" role="tabpanel">
+          <div class="card w-full lg:w-96 bg-base-100 shadow-xl">
+            <article class="card-body">
+              <h2 class="card-title">{{ .Site.Language.Params.horoscopeLabel }}</h2>
+              <p>{{ cond $isEnglish "The interactive horoscope loads here when JavaScript is available." "O horóscopo interativo carrega aqui quando o JavaScript está disponível." }}</p>
+            </article>
+          </div>
+        </section>
       </div>
     </div>
   </section>

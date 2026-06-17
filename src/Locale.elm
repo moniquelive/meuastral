@@ -8,6 +8,7 @@ type Locale
 
 type alias Copy =
     { birthdayTitle : String
+    , changeBirthdayLabel : String
     , bornOnPrefix : String
     , daysMiddle : String
     , daysSuffix : String
@@ -54,6 +55,7 @@ copy locale =
     case locale of
         PtBR ->
             { birthdayTitle = "Data do meu Aniversário"
+            , changeBirthdayLabel = "Alterar data"
             , bornOnPrefix = "As pessoas nascidas em "
             , daysMiddle = " possuem mais ou menos "
             , daysSuffix = " dias de vida."
@@ -73,6 +75,7 @@ copy locale =
 
         EnUS ->
             { birthdayTitle = "My Birthday"
+            , changeBirthdayLabel = "Change date"
             , bornOnPrefix = "People born on "
             , daysMiddle = " have about "
             , daysSuffix = " days of life."

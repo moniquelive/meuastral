@@ -214,6 +214,21 @@
   justify-content: center;
   overflow: auto;
 }
+
+.meuastral-date-picker .edp-container {
+  box-shadow: 0 8px 18px rgba(31, 41, 55, 0.22);
+  left: 50%;
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%) scale(0.82);
+  transform-origin: top center;
+}
+
+.meuastral-date-picker {
+  height: 356px;
+  min-height: 0;
+  position: relative;
+}
 @-moz-keyframes edp-slideupprevious {
   from {
     transform: translateY(0%);

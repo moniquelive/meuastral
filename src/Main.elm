@@ -17,6 +17,7 @@ import HoroscopeRanges
 import HoroscopeView
 import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
+import Html.Events as HE
 import Http
 import Locale
 import LocalizedDate
@@ -38,6 +39,8 @@ type alias Model =
     , selectedHoroscopeId : Maybe HoroscopeId
     , ascentMaster : Maybe CosmicRay
     , locale : Locale.Locale
+    , activeTab : WidgetTab
+    , isDatePickerOpen : Bool
     }
 
 
@@ -45,6 +48,12 @@ type HoroscopeStatus
     = LoadingHoroscope
     | HoroscopeReady
     | HoroscopeUnavailable
+
+
+type WidgetTab
+    = HoroscopeTab
+    | AscentMasterTab
+    | BiorhythmTab
 
 
 type alias Flags =
@@ -82,6 +91,8 @@ init flags =
               , selectedHoroscopeId = Nothing
               , ascentMaster = Nothing
               , locale = locale
+              , activeTab = HoroscopeTab
+              , isDatePickerOpen = False
               }
             , Cmd.batch
                 (Cmd.map DatePickerMsg datePickerInitCmd :: defaultCmds)
@@ -100,6 +111,8 @@ init flags =
               , selectedHoroscopeId = Nothing
               , ascentMaster = AM.for_birthday userDoB
               , locale = locale
+              , activeTab = HoroscopeTab
+              , isDatePickerOpen = False
               }
             , Cmd.batch defaultCmds
             )
@@ -128,6 +141,8 @@ type Msg
     | DatePickerMsg DatePicker.Msg
     | GotHoroscope (Result Http.Error (List Horoscope))
     | SelectHoroscopeId HoroscopeId
+    | SelectWidgetTab WidgetTab
+    | ToggleDatePicker
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -166,6 +181,13 @@ update msg model =
                             , datePickerData = data
                             , selectedDate = newBirthday
                             , ascentMaster = Maybe.andThen AM.for_birthday newBirthday
+                            , isDatePickerOpen =
+                                case data.selectedDate of
+                                    Just _ ->
+                                        False
+
+                                    Nothing ->
+                                        model.isDatePickerOpen
                           }
                         , Cmd.batch
                             [ Cmd.map DatePickerMsg cmd
@@ -200,6 +222,12 @@ update msg model =
 
         SelectHoroscopeId horoscopeId ->
             ( { model | selectedHoroscopeId = Just horoscopeId }, Cmd.none )
+
+        SelectWidgetTab tab ->
+            ( { model | activeTab = tab }, Cmd.none )
+
+        ToggleDatePicker ->
+            ( { model | isDatePickerOpen = not model.isDatePickerOpen }, Cmd.none )
 
 
 selectedDateOrToday : Model -> Maybe Date
@@ -253,52 +281,12 @@ horoscopeIndex horoscopes =
 
 view : Model -> Html Msg
 view model =
-    div [ class "flex flex-col h-screen min-w-0 overflow-hidden" ]
-        [ H.header [ class "app-header w-full flex justify-center items-center border-b border-grey p-3" ]
-            [ H.img
-                [ class "h-28"
-                , HA.src "/logo-390.png"
-                , HA.alt "MeuAstral"
-                , HA.width 220
-                , HA.height 112
-                ]
-                []
-            ]
-        , H.main_ [ class "flex-1 min-w-0 overflow-y-scroll p-2 sm:p-4 content-center", HA.attribute "data-theme" "light" ]
-            [ dob model
-            , userInfo model
-            , horoscope model
-            , ascent_master model
-            , bio model
+    div [ class "meuastral-widget min-w-0", HA.attribute "data-theme" "light" ]
+        [ dobControl model
+        , tabNavigation model
+        , widgetTabContent model
 
-            -- , comments model -- ninho de spam :(
-            ]
-        , H.footer [ class "app-footer w-full border-t border-grey p-3 sm:p-4 justify-between items-center flex flex-wrap gap-3" ]
-            [ div []
-                [ H.a
-                    [ class "btn btn-circle mx-2"
-                    , HA.href "https://www.facebook.com/meuastral/"
-                    , HA.target "_blank"
-                    , HA.rel "noopener noreferrer"
-                    , HA.attribute "aria-label" "Facebook"
-                    ]
-                    [ H.span [ class "social-icon", HA.attribute "aria-hidden" "true" ] [ H.text "f" ] ]
-                , H.a
-                    [ class "btn btn-circle mx-2"
-                    , HA.href "https://twitter.com/MeuAstral_Com"
-                    , HA.target "_blank"
-                    , HA.rel "noopener noreferrer"
-                    , HA.attribute "aria-label" "X"
-                    ]
-                    [ H.span [ class "social-icon", HA.attribute "aria-hidden" "true" ] [ H.text "X" ] ]
-                ]
-            , div []
-                [ H.p []
-                    [ H.text (footerYear model.today ++ " - ")
-                    , H.b [] [ H.text "MeuAstral.com" ]
-                    ]
-                ]
-            ]
+        -- , comments model -- ninho de spam :(
         ]
 
 
@@ -306,44 +294,93 @@ view model =
 ---- VIEW Helpers ----
 
 
-dob : Model -> Html Msg
-dob model =
+dobControl : Model -> Html Msg
+dobControl model =
     let
         localizedCopy =
             Locale.copy model.locale
     in
-    H.section sectionAttributes
-        [ sectionTitle localizedCopy.birthdayTitle
-        , H.hr [] []
-        , div [ class "flex place-content-center pt-4" ]
-            [ DatePicker.view
-                model.datePickerData
-                (pickerProps model.locale)
-                |> H.map DatePickerMsg
+    H.section [ class "meuastral-date-control min-w-0" ]
+        [ H.button
+            [ class "meuastral-date-toggle"
+            , HA.type_ "button"
+            , HA.attribute "aria-expanded" (boolAttribute model.isDatePickerOpen)
+            , HE.onClick ToggleDatePicker
             ]
+            [ H.span [ class "meuastral-date-toggle__label" ] [ H.text localizedCopy.birthdayTitle ]
+            , H.span [ class "meuastral-date-toggle__value" ] [ formatDob model ]
+            , H.span [ class "meuastral-date-toggle__meta" ]
+                [ H.text localizedCopy.bornOnPrefix
+                , H.span [ class "font-bold" ] [ formatDob model ]
+                , H.text localizedCopy.daysMiddle
+                , H.span [ class "font-bold" ] [ daysSince model ]
+                , H.text localizedCopy.daysSuffix
+                ]
+            , H.span [ class "meuastral-date-toggle__action" ] [ H.text localizedCopy.changeBirthdayLabel ]
+            ]
+        , if model.isDatePickerOpen then
+            div [ class "meuastral-date-picker" ]
+                [ DatePicker.view
+                    model.datePickerData
+                    (pickerProps model.locale)
+                    |> H.map DatePickerMsg
+                ]
+
+          else
+            H.text ""
         ]
 
 
-userInfo : Model -> Html Msg
-userInfo model =
+tabNavigation : Model -> Html Msg
+tabNavigation model =
     let
         localizedCopy =
             Locale.copy model.locale
     in
-    H.section sectionAttributes
-        [ div [ class "flex place-content-center" ]
-            [ div [ class "card w-full lg:w-96 bg-neutral shadow-xl" ]
-                [ div [ class "card-body text-neutral-content" ]
-                    [ H.p []
-                        [ H.text localizedCopy.bornOnPrefix
-                        , H.span [ class "font-bold" ] [ formatDob model ]
-                        , H.text localizedCopy.daysMiddle
-                        , H.span [ class "font-bold" ] [ daysSince model ]
-                        , H.text localizedCopy.daysSuffix
-                        ]
-                    ]
-                ]
-            ]
+    H.nav
+        [ class "meuastral-tabs"
+        , HA.attribute "role" "tablist"
+        , HA.attribute "aria-label" "MeuAstral reading sections"
+        ]
+        [ tabButton model.activeTab HoroscopeTab localizedCopy.horoscopeTitle
+        , tabButton model.activeTab AscentMasterTab localizedCopy.ascentMasterTitle
+        , tabButton model.activeTab BiorhythmTab localizedCopy.biorhythmTitle
+        ]
+
+
+tabButton : WidgetTab -> WidgetTab -> String -> Html Msg
+tabButton activeTab tab label =
+    H.button
+        [ class
+            (if activeTab == tab then
+                "meuastral-tab meuastral-tab--active"
+
+             else
+                "meuastral-tab"
+            )
+        , HA.type_ "button"
+        , HA.attribute "role" "tab"
+        , HA.attribute "aria-selected" (boolAttribute (activeTab == tab))
+        , HE.onClick (SelectWidgetTab tab)
+        ]
+        [ H.text label ]
+
+
+widgetTabContent : Model -> Html Msg
+widgetTabContent model =
+    H.section
+        [ class "meuastral-tab-panel min-w-0"
+        , HA.attribute "role" "tabpanel"
+        ]
+        [ case model.activeTab of
+            HoroscopeTab ->
+                horoscopePanel model
+
+            AscentMasterTab ->
+                ascentMasterPanel model
+
+            BiorhythmTab ->
+                biorhythmPanel model
         ]
 
 
@@ -368,46 +405,35 @@ formatDob model =
         |> H.text
 
 
-horoscope : Model -> Html Msg
-horoscope model =
+horoscopePanel : Model -> Html Msg
+horoscopePanel model =
     let
         localizedCopy =
             Locale.copy model.locale
     in
-    H.section sectionAttributes
-        [ sectionTitle localizedCopy.horoscopeTitle
-        , H.hr [] []
-        , HoroscopeView.content SelectHoroscopeId
-            (horoscopeStatusMessage localizedCopy model.horoscopeStatus)
-            (selectedHoroscope model)
-            model.horoscopes
-        ]
+    HoroscopeView.content SelectHoroscopeId
+        (horoscopeStatusMessage localizedCopy model.horoscopeStatus)
+        (selectedHoroscope model)
+        model.horoscopes
 
 
-ascent_master : Model -> Html Msg
-ascent_master model =
-    let
-        localizedCopy =
-            Locale.copy model.locale
-    in
-    H.section sectionAttributes
-        [ sectionTitle localizedCopy.ascentMasterTitle
-        , H.hr [] []
-        , AscentMasterView.content model.locale model.ascentMaster
-        ]
+ascentMasterPanel : Model -> Html Msg
+ascentMasterPanel model =
+    AscentMasterView.content model.locale model.ascentMaster
 
 
-bio : Model -> Html Msg
-bio model =
-    let
-        localizedCopy =
-            Locale.copy model.locale
-    in
-    H.section sectionAttributes
-        [ sectionTitle localizedCopy.biorhythmTitle
-        , H.hr [] []
-        , BiorhythmView.content model.locale (ageInDays model)
-        ]
+biorhythmPanel : Model -> Html Msg
+biorhythmPanel model =
+    BiorhythmView.content model.locale (ageInDays model)
+
+
+boolAttribute : Bool -> String
+boolAttribute value =
+    if value then
+        "true"
+
+    else
+        "false"
 
 
 
@@ -428,16 +454,6 @@ bio model =
 --         ]
 
 
-sectionAttributes : List (H.Attribute Msg)
-sectionAttributes =
-    [ class "min-w-0 p-2 sm:p-4 grid" ]
-
-
-sectionTitle : String -> Html Msg
-sectionTitle title =
-    H.h2 [ class "text-xl" ] [ H.text title ]
-
-
 horoscopeStatusMessage : Locale.Copy -> HoroscopeStatus -> Maybe String
 horoscopeStatusMessage localizedCopy status =
     case status of
@@ -449,12 +465,6 @@ horoscopeStatusMessage localizedCopy status =
 
         HoroscopeUnavailable ->
             Just localizedCopy.horoscopeUnavailable
-
-
-footerYear : Maybe Date -> String
-footerYear maybeDate =
-    Maybe.map (Date.year >> String.fromInt) maybeDate
-        |> Maybe.withDefault "--"
 
 
 saveDoB : Date -> Cmd msg

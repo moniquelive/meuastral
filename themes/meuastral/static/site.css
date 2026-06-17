@@ -121,10 +121,125 @@ body {
 }
 
 .home-app-mount {
-  border: 1px solid var(--ma-border);
-  border-radius: 12px;
   margin-top: 22px;
+}
+
+.meuastral-widget {
+  display: grid;
+  gap: 14px;
+  margin-inline: auto;
+  max-width: 32rem;
+  min-width: 0;
+}
+
+.meuastral-widget > section {
+  min-width: 0;
+}
+
+.meuastral-date-control {
+  display: grid;
+  gap: 12px;
+}
+
+.meuastral-date-toggle {
+  align-items: center;
+  background: #273444;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 14px 28px rgba(31, 41, 55, 0.14);
+  color: white;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 14px 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.meuastral-date-toggle:hover,
+.meuastral-date-toggle:focus-visible {
+  background: #1f2937;
+}
+
+.meuastral-date-toggle__label {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.meuastral-date-toggle__value {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.meuastral-date-toggle__meta {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+  grid-column: 1 / -1;
+  line-height: 1.45;
+}
+
+.meuastral-date-toggle__action {
+  align-self: start;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 5px 9px;
+  white-space: nowrap;
+}
+
+.meuastral-date-picker {
+  display: flex;
+  justify-content: center;
   overflow: hidden;
+  padding: 2px 0 10px;
+}
+
+.meuastral-tabs {
+  background: #eef2f7;
+  border: 1px solid var(--ma-border);
+  border-radius: 999px;
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 4px;
+}
+
+.meuastral-tab {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--ma-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.15;
+  min-height: 38px;
+  padding: 7px 8px;
+}
+
+.meuastral-tab:hover,
+.meuastral-tab:focus-visible {
+  color: var(--ma-blue);
+}
+
+.meuastral-tab--active {
+  background: var(--ma-blue);
+  color: white;
+  box-shadow: 0 8px 18px rgba(51, 97, 173, 0.2);
+}
+
+.meuastral-tab--active:hover,
+.meuastral-tab--active:focus-visible {
+  color: white;
+}
+
+.meuastral-tab-panel {
+  min-width: 0;
 }
 
 .faq-list {
@@ -143,26 +258,6 @@ body {
   color: var(--ma-ink);
   cursor: pointer;
   font-weight: 800;
-}
-
-.home-fallback__header {
-  display: grid;
-  gap: 18px;
-  justify-items: center;
-  text-align: center;
-}
-
-.home-fallback__header img {
-  height: 92px;
-  width: auto;
-}
-
-.home-app-shell {
-  background: var(--ma-surface);
-}
-
-.home-app-shell__main {
-  background: var(--ma-surface);
 }
 
 .home-date-placeholder {
