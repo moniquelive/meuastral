@@ -1,48 +1,67 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-- `src/` contains all Elm modules (`Main.elm`, `AscentMasters.elm`, `Ports.elm`) plus supporting assets such as `main.css`, `datepicker.css`, and `zodiac.css`. Keep feature-specific helpers in their own `ModuleName.elm` files to match Elm’s module-per-file convention.
-- `src/bootstrap.js` is the JavaScript bootstrap that wires localStorage and Elm ports after `elm.js` loads.
-- `config.yaml`, `content/`, `data/`, and `themes/meuastral/` define the Hugo-generated site shell, localized content pages, metadata, sitemap, and robots output.
-- `public/` hosts passthrough static assets (icons, manifest, images, `ads.txt`) copied into `build/`.
-- `tests/` holds Elm test modules (currently `AscentMastersTests.elm`). Mirror source filenames with a `Tests` suffix for quick discovery.
+## Project structure
 
-## Build, Test, and Development Commands
-- `mise install` – installs the pinned Node and Hugo runtimes from `mise.toml` so Wrangler, Hugo, and Elm tooling resolve consistently.
-- `mise run install` – installs local CLI dependencies (`elm`, `elm-test`, `wrangler`) with `npm ci`.
-- `mise run dev` – runs `wrangler dev` with `ELM_HOME=.elm-home`; Wrangler executes the configured custom build before serving assets.
-- `mise run build` – runs `scripts/build.mjs`, which rebuilds `build/`, runs Hugo, writes the root sitemap, copies static assets/CSS/bootstrap files, and compiles `src/Main.elm` to `build/elm.js` with `--optimize`.
-- `mise run test` – runs Elm and Worker tests; use `npm run test:watch` for local Elm reruns.
-- `mise run ci` – runs the test and production build tasks; prefer this before commits and PRs.
-- Always run `mise run build` and `mise run test` before returning results to the user, and report any failures.
+- `src/` contains Elm modules, `bootstrap.js`, and component CSS. Keep one Elm module per `ModuleName.elm` file.
+- `content/`, `data/`, `config.yaml`, and `themes/meuastral/` define the bilingual Hugo site, metadata, templates, and shared shell styles.
+- `worker/` contains explicit Cloudflare request routing and horoscope-provider normalization.
+- `scripts/` owns dependency installation, development, production builds, and generated-output validation.
+- `tests/` mirrors source behavior with Elm suites and `node:test` Worker suites.
+- `public/` contains source static assets. Numbered PNG portraits are archival inputs; production ships their WebP counterparts.
+- `build/` and `.elm-home/` are generated. Never edit or commit generated output.
 
-## Tooling (Mise Preferred)
-- Run development tools through `mise` when a task exists.
-- Prefer `mise run <task>` over direct `npm` commands for repeated repo workflows.
-- Use one-off commands directly only when there is no matching `mise.toml` task.
-- Keep local and CI workflows aligned by adding or updating `mise.toml` tasks when a repeated command is needed.
-- Keep active CLI tools pinned in `mise.toml`; this project currently uses Hugo, `elm`, `elm-format`, `elm-test`, and `wrangler` directly rather than the older `elm-app` wrapper referenced in historical README text.
+## Commands and verification
 
-## Coding Style & Naming Conventions
-- Format Elm files with `elm-format` before committing; it enforces 4-space indentation, trailing newline, and alphabetical import grouping.
-- Use PascalCase for module names (`CosmicRay.elm`) and snake_case for functions/values, matching existing modules like `AscentMasters.elm`.
-- Keep CSS modules scoped and load them through Hugo templates; name selectors with BEM-like clarity (`.chart__axis-label`).
-- Prefer pure functions and explicit type annotations on public functions, especially when exposing helpers via `Ports.elm`.
-- Keep user-facing Portuguese and English spelling correct, including accents and diacritics in Brazilian Portuguese copy; use ASCII only for code identifiers, file names, URL slugs, or protocol-required values.
+- `mise install` installs the pinned runtimes and global CLI tools from `mise.toml`.
+- `mise run install` runs the serialized, hash-stamped `npm ci` workflow in `scripts/install.mjs`.
+- `mise run dev` starts the local Cloudflare Worker; its custom build reuses the original Mise home so pinned tools stay active.
+- `mise run format:check` validates every Elm source and test file with `elm-format`.
+- `mise run test` runs Elm tests followed by Worker tests.
+- `mise run build` produces the optimized and fingerprinted site in `build/`.
+- `mise run check:build` checks rendered HTML language/zoom requirements, duplicate IDs, sitemap coverage, local references, and shipped image formats.
+- `mise run ci` is the complete quality gate. Always run it before returning code changes; also report any individual `mise run test` or `mise run build` failure.
+- Use `npm run test:watch` only for the interactive Elm watch loop. Prefer Mise tasks for repeatable workflows.
 
-## Testing Guidelines
-- Tests rely on `elm-explorations/test`; place new suites under `tests/ModuleNameTests.elm` and expose a top-level `all` value for aggregation.
-- Aim to cover every `AscentMasters.CosmicRay` branch: validate parsing, formatting, and date handling with `Date.fromCalendarDate`.
-- Run `mise run test` locally and in CI before pushing; failures print descriptive diffs for `Expect.equal`.
+Do not run install/build/test workflows through parallel ad hoc commands. They share a serialized installer because concurrent `npm ci` runs previously corrupted `node_modules`.
 
-## Commit & Pull Request Guidelines
-- Follow the existing conventional style (`fix: upgrade elm-charts`, `chore: format`). Use a short type prefix, then a concise subject describing the change.
-- Rebase or merge latest `main` before opening a PR, and include: a summary of functional changes, test evidence (`npm test` output), and screenshots when UI changes the charts, date picker, or zodiac styling.
-- Reference tracking issues in the PR body and note any configuration updates (`scripts/build.mjs`, `wrangler.toml`, `mise.toml`) so reviewers can verify deployments.
+## Elm conventions
 
-## Cloudflare Worker Deployment
-- Cloudflare runs `bash build.sh`, which installs the pinned Hugo version when needed and delegates to `mise run build`.
-- Install JS dependencies via `mise run install`; this makes local `elm`, `elm-test`, and `wrangler` binaries available for all scripts.
-- Build assets with `mise run build`; the script keeps Elm caches inside `.elm-home`, compiles optimized Elm output, and writes the deployable static bundle consumed by the worker via `STATIC_CONTENT`.
-- Preview the worker locally with `mise run dev`, which stitches the Worker runtime with the built static assets so you can test SPA routing.
-- Deploy via `npm run deploy`. Populate `account_id`, `route`, and env-specific secrets in `wrangler.toml` (or `wrangler.toml` environments) before shipping; the default `workers_dev = true` preview remains available for smoke tests.
+- Format with `elm-format`; use PascalCase modules/types and lower camelCase functions and values.
+- Preserve legacy snake_case APIs in `AscentMasters.elm` unless a task explicitly includes a coordinated migration of callers and tests.
+- Prefer pure helpers and explicit type annotations for exposed functions.
+- Keep date-picker month/year navigation open; collapse it only after an actual calendar-day selection.
+- Birth dates must not be selectable after the current local date.
+- Put new suites in `tests/ModuleNameTests.elm` and expose a top-level `all` value.
+
+## HTML and CSS conventions
+
+- Use semantic HTML before ARIA. When a standard button group is sufficient, do not emulate a tab widget with incomplete tab semantics.
+- Every interactive control needs a localized accessible name, visible keyboard focus, and a touch target appropriate for mobile use.
+- Do not disable browser zoom in the viewport. Respect `prefers-reduced-motion` for nonessential animations.
+- Keep Hugo shell selectors in `themes/meuastral/static/site.css`; keep widget-specific CSS in `src/` and load it through `scripts/build.mjs`.
+- Use clear BEM-like selectors for project components. Remove dead selectors instead of keeping historical framework boilerplate.
+- Keep user-facing Portuguese and English spelling correct, including Brazilian Portuguese accents and diacritics.
+
+## JavaScript and Worker conventions
+
+- Use modern JavaScript with 2-space indentation, `const` by default, early returns, and built-in browser/Worker/Node APIs before dependencies.
+- Keep `src/bootstrap.js` limited to safe browser-state reads, Elm flags, and port wiring. The app must still initialize when local storage is blocked.
+- Keep provider secrets in the Worker; never expose `API_NINJAS_KEY` through Elm flags, templates, static assets, or browser requests.
+- Route API requests before static assets. Accept only intended methods and return controlled, non-cacheable errors for provider failures.
+- Cache only complete normalized horoscope payloads by locale and the configured São Paulo site date.
+- Give immutable caching only to fingerprinted assets. Stable-looking, non-fingerprinted images must revalidate so replacements reach returning users.
+- Use `node:test` and `node:assert/strict`; test routing, locale parsing, provider selection, normalization, cache decisions, and error responses.
+- Preserve the existing AdSense publisher/account behavior unless the user explicitly requests a change.
+
+## Build and deployment
+
+- `scripts/build.mjs` is the source of truth for Hugo, sitemap generation, CSS assembly, Elm compilation/minification, public assets, and fingerprinting.
+- Cloudflare runs `bash build.sh`; any dependency or build change must work through both local Mise tasks and this deployment entry point.
+- `wrangler.toml` serves `build/` through `STATIC_CONTENT`, with Worker routes evaluated first.
+- Deploy with `npm run deploy` only when the user asks for deployment and the target Cloudflare environment is configured.
+
+## Commits and pull requests
+
+- Follow the existing conventional style, such as `fix: handle provider failures` or `chore: refresh contributor docs`.
+- Preserve unrelated working-tree changes. Do not rewrite history or discard user work.
+- PRs should summarize functional changes, list `mise run ci` evidence, mention configuration/build changes, and include screenshots for visible widget, date-picker, chart, or zodiac changes.
