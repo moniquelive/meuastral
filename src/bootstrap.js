@@ -16,7 +16,8 @@ function storeBirthday(birthday) {
   }
 }
 
-const root = document.getElementById('root');
+const root = document.getElementById('elm-root');
+const mount = document.querySelector('[data-elm-mount]');
 const userBirthday = readStoredBirthday();
 const locale =
   window.__MEUASTRAL_LOCALE__ ||
@@ -34,4 +35,11 @@ if (root && window.Elm?.Main) {
   });
 
   app.ports.storeDoB.subscribe(storeBirthday);
+  if (mount) {
+    mount.dataset.elmState = 'ready';
+    mount.setAttribute('aria-busy', 'false');
+  }
+} else if (mount) {
+  mount.dataset.elmState = 'fallback';
+  mount.setAttribute('aria-busy', 'false');
 }

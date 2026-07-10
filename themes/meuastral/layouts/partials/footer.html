@@ -1,25 +1,39 @@
+{{- $isEnglish := eq .Site.Language.Lang "en" -}}
 <footer class="site-footer">
-  <nav aria-label="{{ .Site.Language.Params.navLabel }}">
-    <a href="{{ "/" | relLangURL }}">{{ .Site.Language.Params.homeLabel }}</a>
-    {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/who-maintains-meuastral" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.maintainerLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/quem-mantem-o-meuastral" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.maintainerLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/editorial-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.editorialLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/politica-editorial" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.editorialLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/terms" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/termos-de-uso" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/how-meuastral-is-funded" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.fundingLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/como-o-meuastral-se-financia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.fundingLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
-    <a href="#" data-cookie-preferences>{{ .Site.Language.Params.cookiePreferencesLabel }}</a>
-  </nav>
-  <p>{{ .Site.Language.Params.footerNote }}</p>
+  <div class="site-footer__inner">
+    <div class="site-footer__brand">
+      <img src="{{ "/logo-390.png" | relURL }}" alt="MeuAstral" width="138" height="70" loading="lazy">
+      <p>{{ .Site.Language.Params.brandTagline }}</p>
+    </div>
+
+    <div class="site-footer__navs">
+      <nav aria-label="{{ cond $isEnglish "Explore MeuAstral" "Explore o MeuAstral" }}">
+        <strong>{{ cond $isEnglish "Explore" "Explore" }}</strong>
+        <a href="{{ "/" | relLangURL }}">{{ .Site.Language.Params.homeLabel }}</a>
+        {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
+      </nav>
+
+      <nav aria-label="{{ cond $isEnglish "Policies and contact" "Políticas e contato" }}">
+        <strong>{{ cond $isEnglish "Trust" "Confiança" }}</strong>
+        {{ with .Site.GetPage "/editorial-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.editorialLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/politica-editorial" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.editorialLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/privacy-policy" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/politica-de-privacidade" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.privacyLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/terms" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/termos-de-uso" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
+        <a href="#" data-cookie-preferences>{{ .Site.Language.Params.cookiePreferencesLabel }}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <p>{{ .Site.Language.Params.footerNote }}</p>
+    <p>© {{ now.Year }} MeuAstral</p>
+  </div>
 </footer>

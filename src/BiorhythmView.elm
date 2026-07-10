@@ -15,9 +15,9 @@ content locale ageInDays =
             Locale.copy locale
     in
     div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 min-w-0" ]
-        [ bioCard 23 "hsl(var(--in))" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "🏃" ageInDays
-        , bioCard 28 "hsl(var(--er))" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "♥" ageInDays
-        , bioCard 33 "hsl(var(--su))" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "🧠" ageInDays
+        [ bioCard 23 "var(--ma-cycle-physical)" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "🏃" ageInDays
+        , bioCard 28 "var(--ma-cycle-emotional)" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "♥" ageInDays
+        , bioCard 33 "var(--ma-cycle-intellectual)" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "🧠" ageInDays
         ]
 
 

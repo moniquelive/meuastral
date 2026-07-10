@@ -296,7 +296,7 @@ horoscopeIndex horoscopes =
 
 view : Model -> Html Msg
 view model =
-    div [ class "meuastral-widget min-w-0", HA.attribute "data-theme" "light" ]
+    div [ class "meuastral-widget min-w-0" ]
         [ dobControl model
         , tabNavigation model
         , widgetTabContent model

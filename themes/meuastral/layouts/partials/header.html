@@ -1,20 +1,36 @@
+{{- $isEnglish := eq .Site.Language.Lang "en" -}}
+{{- $isHoroscope := or (eq .Section "horoscope") (eq .Section "horoscopo") -}}
+{{- $isGuides := or (eq .Section "guides") (eq .Section "guias") -}}
+{{- $isBiorhythm := or (eq .RelPermalink "/biorritmo/") (eq .RelPermalink "/en/biorhythm-calculator/") -}}
+{{- $isMasters := or (eq .RelPermalink "/mestres-ascensionados/") (eq .RelPermalink "/en/ascended-masters/") -}}
 <header class="site-header">
-  <a class="brand-link" href="{{ "/" | relLangURL }}" aria-label="MeuAstral">
-    <img src="{{ "/logo-390.png" | relURL }}" alt="MeuAstral" width="150" height="76">
-  </a>
-  <nav class="site-nav" aria-label="{{ .Site.Language.Params.navLabel }}">
-    <a href="{{ "/" | relLangURL }}">{{ .Site.Language.Params.homeLabel }}</a>
-    {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/horoscopo" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/biorritmo" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/sobre" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
-    {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
-  </nav>
+  <div class="site-header__inner">
+    <a class="brand-link" href="{{ "/" | relLangURL }}" aria-label="MeuAstral — {{ .Site.Language.Params.homeLabel }}">
+      <img src="{{ "/logo-390.png" | relURL }}" alt="" width="118" height="60">
+      <span class="brand-link__copy">
+        <strong>MeuAstral</strong>
+        <small>{{ .Site.Language.Params.brandTagline }}</small>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="{{ .Site.Language.Params.navLabel }}">
+      <a href="{{ "/" | relLangURL }}"{{ if .IsHome }} aria-current="page"{{ end }}>{{ .Site.Language.Params.homeLabel }}</a>
+      {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}"{{ if $isHoroscope }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/horoscopo" }}<a href="{{ .RelPermalink }}"{{ if $isHoroscope }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}"{{ if $isGuides }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}"{{ if $isGuides }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}"{{ if $isBiorhythm }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/biorritmo" }}<a href="{{ .RelPermalink }}"{{ if $isBiorhythm }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}"{{ if $isMasters }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+      {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}"{{ if $isMasters }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+    </nav>
+
+    <div class="site-header__tools">
+      {{ range .Translations }}
+      <a class="language-switch" href="{{ .RelPermalink }}" hreflang="{{ .Site.Language.Params.locale }}" lang="{{ .Site.Language.Params.locale }}" aria-label="{{ cond $isEnglish "Ver em português" "View in English" }}">
+        <span aria-hidden="true">✦</span> {{ .Site.Language.Params.shortLabel }}
+      </a>
+      {{ end }}
+    </div>
+  </div>
 </header>

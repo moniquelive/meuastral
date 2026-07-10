@@ -36,6 +36,8 @@ languages:
     params:
       locale: pt-BR
       ogLocale: pt_BR
+      shortLabel: PT
+      brandTagline: Seu céu, seus ciclos.
       description: MeuAstral combina horóscopo diário, biorritmo e mestres ascensionados para consultas gratuitas de autoconhecimento.
       navLabel: Páginas do MeuAstral
       homeLabel: Início
@@ -63,6 +65,8 @@ languages:
     params:
       locale: en-US
       ogLocale: en_US
+      shortLabel: EN
+      brandTagline: Your sky, your rhythm.
       description: MeuAstral combines daily horoscope, biorhythm cycles, and ascended master insights for free self-knowledge readings.
       navLabel: MeuAstral pages
       homeLabel: Home
