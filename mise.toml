@@ -52,7 +52,7 @@ run = "node scripts/check-build.mjs"
 
 [tasks.clean]
 description = "Remove generated output and transient files"
-run = "rm -rf build .hugo_build.lock .elm-home"
+run = "rm -rf build .hugo_build.lock .build.lock .install.lock .elm-home"
 
 [tasks.ci]
 description = "Run tests and production build"

@@ -2,6 +2,8 @@
 build/
 dist/
 .hugo_build.lock
+.build.lock/
+.install.lock/
 
 # elm-package generated files
 elm-stuff/

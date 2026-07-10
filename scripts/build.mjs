@@ -8,19 +8,51 @@ const currentFile = fileURLToPath(import.meta.url);
 const rootDir = resolve(dirname(currentFile), '..');
 const buildDir = resolve(rootDir, 'build');
 const publicDir = resolve(rootDir, 'public');
+const buildLockDir = resolve(rootDir, '.build.lock');
 
-await rm(buildDir, { recursive: true, force: true });
-await mkdir(buildDir, { recursive: true });
+await acquireBuildLock(buildLockDir);
 
-await runHugo(rootDir, buildDir);
-await writeSitemap(buildDir);
-await runTailwind(rootDir, buildDir);
-await writeCssBundle(rootDir, buildDir);
-await copyPublicAssets(publicDir, buildDir);
-await copyBootstrap(rootDir, buildDir);
-await runElmMake(rootDir, buildDir);
-await minifyJavaScript(rootDir, buildDir, 'elm.js');
-await fingerprintBuildAssets(buildDir);
+try {
+  await rm(buildDir, { recursive: true, force: true });
+  await mkdir(buildDir, { recursive: true });
+
+  await runHugo(rootDir, buildDir);
+  await writeSitemap(buildDir);
+  await runTailwind(rootDir, buildDir);
+  await writeCssBundle(rootDir, buildDir);
+  await copyPublicAssets(publicDir, buildDir);
+  await copyBootstrap(rootDir, buildDir);
+  await runElmMake(rootDir, buildDir);
+  await minifyJavaScript(rootDir, buildDir, 'elm.js');
+  await fingerprintBuildAssets(buildDir);
+} finally {
+  await rm(buildLockDir, { force: true, recursive: true });
+}
+
+async function acquireBuildLock(lockDir) {
+  const startedAt = Date.now();
+  const staleAfterMs = 10 * 60 * 1000;
+
+  while (true) {
+    try {
+      await mkdir(lockDir);
+      return;
+    } catch (error) {
+      if (error?.code !== 'EEXIST') {
+        throw error;
+      }
+
+      if (Date.now() - startedAt > staleAfterMs) {
+        await rm(lockDir, { force: true, recursive: true });
+        continue;
+      }
+
+      await new Promise(resolvePromise => {
+        setTimeout(resolvePromise, 100);
+      });
+    }
+  }
+}
 
 function runHugo(root, outDir) {
   return new Promise((resolvePromise, rejectPromise) => {
