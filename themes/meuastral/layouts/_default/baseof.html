@@ -10,5 +10,9 @@
   {{ partial "footer.html" . }}
   {{ partial "cookie-consent.html" . }}
   {{ partial "analytics.html" . }}
+  {{ if or .IsHome .Params.interactiveWidget }}
+  <script src="{{ "/elm.js" | relURL }}" defer></script>
+  <script src="{{ "/bootstrap.js" | relURL }}" defer></script>
+  {{ end }}
 </body>
 </html>

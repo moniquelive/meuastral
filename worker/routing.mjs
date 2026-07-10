@@ -1,17 +1,3 @@
-export function redirectPathForHomeLocale(request, locale) {
-  if (request.method !== "GET" && request.method !== "HEAD") {
-    return null;
-  }
-
-  const url = new URL(request.url);
-
-  if (url.pathname !== "/" && url.pathname !== "/index.html") {
-    return null;
-  }
-
-  return locale === "en-US" ? "/en/" : null;
-}
-
 export function cacheControlForStaticPath(pathname) {
   if (/\.[a-f0-9]{10}\.(avif|css|ico|js|png|webp)$/i.test(pathname)) {
     return "public, max-age=31536000, immutable";

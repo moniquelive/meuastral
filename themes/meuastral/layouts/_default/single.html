@@ -14,9 +14,27 @@
       {{ with $author }}{{ $byLabel }} {{ . }}{{ end }}
       {{ if gt .Lastmod.Year 1 }}{{ with $author }} · {{ end }}{{ $updatedLabel }} {{ .Lastmod.Format "02/01/2006" }}{{ end }}
     </p>
+    {{ if .Params.interactiveWidget }}
+    <section class="content-tool" id="{{ .Params.widgetId | default "calculadora" }}" aria-labelledby="content-tool-title">
+      <p class="content-eyebrow">{{ cond $isEnglish "Calculate now" "Calcule agora" }}</p>
+      <h2 id="content-tool-title">{{ .Params.widgetTitle }}</h2>
+      <p>{{ .Params.widgetDescription }}</p>
+      {{ partial "interactive-widget.html" (dict "page" . "initialTab" (.Params.initialTab | default "biorhythm")) }}
+    </section>
+    {{ end }}
     <div class="prose content-prose">
       {{ .Content }}
     </div>
+    {{ if .Params.interactiveWidget }}
+    <nav class="resource-links content-topic-links" aria-label="{{ cond $isEnglish "Related MeuAstral tools and guides" "Ferramentas e guias relacionados do MeuAstral" }}">
+      {{ with .Site.GetPage "/guides/how-to-read-biorhythm-cycles" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/guias/como-interpretar-biorritmo" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/horoscopo" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    </nav>
+    {{ end }}
     {{ partial "ad-slot.html" (dict "page" . "placement" "contentEnd") }}
     {{ if $isGuide }}
     {{- $related := where (where .Site.RegularPages "Section" .Section) "Permalink" "ne" .Permalink -}}

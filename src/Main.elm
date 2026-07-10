@@ -56,8 +56,22 @@ type WidgetTab
     | BiorhythmTab
 
 
+widgetTabFromString : String -> WidgetTab
+widgetTabFromString value =
+    case value of
+        "biorhythm" ->
+            BiorhythmTab
+
+        "master" ->
+            AscentMasterTab
+
+        _ ->
+            HoroscopeTab
+
+
 type alias Flags =
-    { userBirthday : Maybe String
+    { initialTab : String
+    , userBirthday : Maybe String
     , locale : String
     }
 
@@ -67,6 +81,9 @@ init flags =
     let
         locale =
             Locale.fromString flags.locale
+
+        initialTab =
+            widgetTabFromString flags.initialTab
 
         defaultCmds =
             [ Date.today |> Task.perform GotToday
@@ -91,7 +108,7 @@ init flags =
               , selectedHoroscopeId = Nothing
               , ascentMaster = Nothing
               , locale = locale
-              , activeTab = HoroscopeTab
+              , activeTab = initialTab
               , isDatePickerOpen = False
               }
             , Cmd.batch
@@ -111,7 +128,7 @@ init flags =
               , selectedHoroscopeId = Nothing
               , ascentMaster = AM.for_birthday userDoB
               , locale = locale
-              , activeTab = HoroscopeTab
+              , activeTab = initialTab
               , isDatePickerOpen = False
               }
             , Cmd.batch defaultCmds

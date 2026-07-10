@@ -1,10 +1,10 @@
 ---
-title: "Daily horoscope by zodiac sign"
+title: "Today's horoscope by zodiac sign"
 translationKey: horoscope
-description: "Read daily horoscope pages for Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, and Pisces."
+description: "Read today's daily horoscope for Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, and Pisces."
 type: horoscope
 date: 2026-06-14
-lastmod: 2026-06-14
+lastmod: 2026-07-10
 ---
 
 The MeuAstral daily horoscope section works as symbolic self-knowledge content. Each sign has a permanent page with dates, element, modality, ruling planet, and a practical focus for reading the day with more context.

@@ -25,6 +25,23 @@
   "inLanguage" $locale
 -}}
 <script type="application/ld+json">{{ $website | jsonify | safeJS }}</script>
+{{- else if .Params.interactiveWidget }}
+{{- $currency := cond (eq .Site.Language.Lang "en") "USD" "BRL" -}}
+{{- $application := dict
+  "@context" "https://schema.org"
+  "@type" "WebApplication"
+  "name" .Title
+  "description" $description
+  "url" .Permalink
+  "applicationCategory" "LifestyleApplication"
+  "browserRequirements" "Requires JavaScript"
+  "operatingSystem" "Any"
+  "isAccessibleForFree" true
+  "inLanguage" $locale
+  "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" $currency)
+  "publisher" (dict "@id" (printf "%s#organization" .Site.BaseURL))
+-}}
+<script type="application/ld+json">{{ $application | jsonify | safeJS }}</script>
 {{- else if and .IsPage (or (eq .Section "guides") (eq .Section "guias") (eq .Section "horoscope") (eq .Section "horoscopo")) }}
 {{- $authorName := .Params.author | default .Site.Params.publisher.name | default "MeuAstral" -}}
 {{- $article := dict

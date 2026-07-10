@@ -13,9 +13,6 @@
 {{- $featureBiorhythmText := cond $isEnglish "Compare physical, emotional, and intellectual cycles from a birth date without creating an account." "Compare ciclos físico, emocional e intelectual a partir da data de nascimento, sem criar conta." -}}
 {{- $featureMastersTitle := cond $isEnglish "Ascended masters" "Mestres ascensionados" -}}
 {{- $featureMastersText := cond $isEnglish "Explore the symbolic ray connected with the date and use it as reflective language, not prediction." "Explore o raio simbólico ligado à data e use a leitura como linguagem de reflexão, não como previsão absoluta." -}}
-{{- $birthdayTitle := cond $isEnglish "My birthday" "Data do meu aniversário" -}}
-{{- $changeDate := cond $isEnglish "Change date" "Alterar data" -}}
-{{- $todayReading := cond $isEnglish "Today's reading" "Leitura de hoje" -}}
 <noscript class="noscript-note">
   {{ .Site.Language.Params.noscript }}
 </noscript>
@@ -71,39 +68,7 @@
       </ol>
     </div>
 
-    <div class="app-stage__shell">
-      <div class="app-stage__status">
-        <span><i aria-hidden="true"></i> {{ cond $isEnglish "Interactive experience" "Experiência interativa" }}</span>
-        <span>MeuAstral</span>
-      </div>
-      <div class="home-app-mount" data-elm-mount data-elm-state="loading" aria-busy="true">
-        <div id="elm-root">
-          <div class="meuastral-widget meuastral-widget--fallback">
-            <section class="meuastral-date-control min-w-0">
-              <button class="meuastral-date-toggle" type="button" aria-expanded="false" aria-controls="meuastral-date-picker">
-                <span class="meuastral-date-toggle__label">{{ $birthdayTitle }}</span>
-                <span class="meuastral-date-toggle__value">{{ $todayReading }}</span>
-                <span class="meuastral-date-toggle__meta">{{ $appIntro }}</span>
-                <span class="meuastral-date-toggle__action">{{ $changeDate }}</span>
-              </button>
-            </section>
-            <div class="meuastral-tabs" role="group" aria-label="{{ .Site.Language.Params.navLabel }}">
-              <button class="meuastral-tab meuastral-tab--active" type="button" aria-pressed="true">{{ .Site.Language.Params.horoscopeLabel }}</button>
-              <button class="meuastral-tab" type="button" aria-pressed="false">{{ .Site.Language.Params.ascendedMastersLabel }}</button>
-              <button class="meuastral-tab" type="button" aria-pressed="false">{{ .Site.Language.Params.biorhythmLabel }}</button>
-            </div>
-            <section class="meuastral-tab-panel min-w-0">
-              <div class="card w-full max-w-96 bg-base-100 shadow-xl">
-                <article class="card-body">
-                  <h2 class="card-title">{{ .Site.Language.Params.horoscopeLabel }}</h2>
-                  <p>{{ cond $isEnglish "Preparing your interactive reading…" "Preparando sua consulta interativa…" }}</p>
-                </article>
-              </div>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
+    {{ partial "interactive-widget.html" (dict "page" . "initialTab" "horoscope") }}
   </section>
 
   <section class="content-card home-section" aria-labelledby="home-how-title">
@@ -196,6 +161,4 @@
   </section>
 </main>
 
-<script src="{{ "/elm.js" | relURL }}" defer></script>
-<script src="{{ "/bootstrap.js" | relURL }}" defer></script>
 {{ end }}

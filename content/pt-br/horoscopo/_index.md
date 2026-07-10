@@ -1,10 +1,10 @@
 ---
-title: "Horóscopo diário por signo"
+title: "Horóscopo diário de hoje por signo"
 translationKey: horoscope
-description: "Leia páginas de horóscopo diário para Áries, Touro, Gêmeos, Câncer, Leão, Virgem, Libra, Escorpião, Sagitário, Capricórnio, Aquário e Peixes."
+description: "Consulte o horóscopo diário de hoje para Áries, Touro, Gêmeos, Câncer, Leão, Virgem, Libra, Escorpião, Sagitário, Capricórnio, Aquário e Peixes."
 type: horoscope
 date: 2026-06-14
-lastmod: 2026-06-14
+lastmod: 2026-07-10
 ---
 
 O horóscopo diário do MeuAstral funciona como uma leitura simbólica de autoconhecimento. Cada signo tem uma página permanente com datas, elemento, modalidade, planeta regente e um foco prático para interpretar o dia com mais contexto.

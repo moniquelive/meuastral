@@ -12,6 +12,12 @@
         <a href="{{ "/" | relLangURL }}">{{ .Site.Language.Params.homeLabel }}</a>
         {{ with .Site.GetPage "/guides" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/guias" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.guidesLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/horoscopo" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/biorritmo" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.biorhythmLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
+        {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/methodology" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/metodologia" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.methodologyLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/about" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.aboutLabel }}</a>{{ end }}
@@ -28,6 +34,7 @@
         {{ with .Site.GetPage "/termos-de-uso" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.termsLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/contato" }}<a href="{{ .RelPermalink }}">{{ $.Site.Language.Params.contactLabel }}</a>{{ end }}
+        {{ range .Translations }}<a href="{{ .RelPermalink }}" hreflang="{{ .Site.Language.Params.hreflang | default .Site.Language.Params.locale }}">{{ cond $isEnglish "Versão em português" "English version" }}</a>{{ end }}
         <a href="#" data-cookie-preferences>{{ .Site.Language.Params.cookiePreferencesLabel }}</a>
       </nav>
     </div>

@@ -580,6 +580,72 @@ img {
   animation: elm-arrive 260ms ease-out both;
 }
 
+.content-tool {
+  background: linear-gradient(145deg, var(--ma-cream), var(--ma-paper));
+  border: 1px solid var(--ma-border);
+  border-radius: 26px;
+  margin: 2rem 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+}
+
+.content-tool > h2 {
+  color: var(--ma-plum-900);
+  font-family: var(--ma-font-display);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  margin: 0;
+}
+
+.content-tool > p:not(.content-eyebrow) {
+  color: var(--ma-muted);
+  line-height: 1.65;
+  margin: 0.65rem 0 1.25rem;
+}
+
+.content-tool .interactive-widget-shell {
+  margin-top: 1rem;
+}
+
+.content-topic-links {
+  border-top: 1px solid var(--ma-border);
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+}
+
+.daily-horoscope {
+  background:
+    radial-gradient(circle at 92% 12%, rgba(240, 197, 106, 0.32), transparent 10rem),
+    linear-gradient(145deg, var(--ma-plum-950), var(--ma-plum-700));
+  border-radius: 24px;
+  color: white;
+  margin: 1.75rem 0;
+  padding: clamp(1.35rem, 4vw, 2rem);
+}
+
+.daily-horoscope .content-eyebrow {
+  color: var(--ma-gold);
+}
+
+.daily-horoscope h2 {
+  color: white;
+  font-family: var(--ma-font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  margin: 0.25rem 0 0.85rem;
+}
+
+.daily-horoscope__reading {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.daily-horoscope__date {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin: 1rem 0 0;
+}
+
 @keyframes elm-arrive {
   from {
     opacity: 0;

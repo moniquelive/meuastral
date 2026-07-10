@@ -28,6 +28,14 @@
       {{ if gt .Lastmod.Year 1 }}{{ with $author }} · {{ end }}{{ $updatedLabel }} {{ .Lastmod.Format "02/01/2006" }}{{ end }}
     </p>
     {{ with $sign }}
+    <section class="daily-horoscope" data-daily-horoscope>
+      <p class="content-eyebrow">{{ cond $isEnglish "Today's horoscope" "Horóscopo de hoje" }}</p>
+      <h2>{{ cond $isEnglish (printf "%s horoscope today" .name) (printf "Horóscopo de %s hoje" .name) }}</h2>
+      <p class="daily-horoscope__reading">{{ .focus }}</p>
+      <p class="daily-horoscope__date">{{ cond $isEnglish "The current daily reading is loaded when this page opens." "A leitura diária atual é carregada quando esta página abre." }}</p>
+    </section>
+    {{ end }}
+    {{ with $sign }}
     <dl class="sign-facts">
       <div><dt>{{ $datesLabel }}</dt><dd>{{ .dates }}</dd></div>
       <div><dt>{{ $elementLabel }}</dt><dd>{{ .element }}</dd></div>

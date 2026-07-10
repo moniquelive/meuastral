@@ -16,8 +16,8 @@ function storeBirthday(birthday) {
   }
 }
 
-const root = document.getElementById('elm-root');
 const mount = document.querySelector('[data-elm-mount]');
+const root = mount?.querySelector('[data-elm-root]');
 const userBirthday = readStoredBirthday();
 const locale =
   window.__MEUASTRAL_LOCALE__ ||
@@ -30,7 +30,8 @@ if (root && window.Elm?.Main) {
     node: root,
     flags: {
       userBirthday,
-      locale
+      locale,
+      initialTab: mount.dataset.elmInitialTab || 'horoscope'
     }
   });
 
