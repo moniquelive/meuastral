@@ -183,6 +183,14 @@ update msg model =
 
                                     Nothing ->
                                         model.today
+
+                            birthdayToSave =
+                                case datePickerMsg of
+                                    DateSelected _ _ ->
+                                        data.selectedDate
+
+                                    _ ->
+                                        Nothing
                         in
                         ( { model
                             | selectedHoroscopeId = horoscopeIdForDate newBirthday
@@ -198,7 +206,7 @@ update msg model =
                           }
                         , Cmd.batch
                             [ Cmd.map DatePickerMsg cmd
-                            , case data.selectedDate of
+                            , case birthdayToSave of
                                 Just birthday ->
                                     saveDoB birthday
 
@@ -312,6 +320,7 @@ dobControl model =
             [ class "meuastral-date-toggle"
             , HA.type_ "button"
             , HA.attribute "aria-expanded" (boolAttribute model.isDatePickerOpen)
+            , HA.attribute "aria-controls" "meuastral-date-picker"
             , HE.onClick ToggleDatePicker
             ]
             [ H.span [ class "meuastral-date-toggle__label" ] [ H.text localizedCopy.birthdayTitle ]
@@ -326,10 +335,10 @@ dobControl model =
             , H.span [ class "meuastral-date-toggle__action" ] [ H.text localizedCopy.changeBirthdayLabel ]
             ]
         , if model.isDatePickerOpen then
-            div [ class "meuastral-date-picker" ]
+            div [ class "meuastral-date-picker", HA.id "meuastral-date-picker" ]
                 [ DatePicker.view
                     model.datePickerData
-                    (pickerProps model.locale)
+                    (pickerProps model.locale model.today)
                     |> H.map DatePickerMsg
                 ]
 
@@ -344,10 +353,10 @@ tabNavigation model =
         localizedCopy =
             Locale.copy model.locale
     in
-    H.nav
+    H.div
         [ class "meuastral-tabs"
-        , HA.attribute "role" "tablist"
-        , HA.attribute "aria-label" "MeuAstral reading sections"
+        , HA.attribute "role" "group"
+        , HA.attribute "aria-label" localizedCopy.readingSectionsLabel
         ]
         [ tabButton model.activeTab HoroscopeTab localizedCopy.horoscopeTitle
         , tabButton model.activeTab AscentMasterTab localizedCopy.ascentMasterTitle
@@ -366,8 +375,7 @@ tabButton activeTab tab label =
                 "meuastral-tab"
             )
         , HA.type_ "button"
-        , HA.attribute "role" "tab"
-        , HA.attribute "aria-selected" (boolAttribute (activeTab == tab))
+        , HA.attribute "aria-pressed" (boolAttribute (activeTab == tab))
         , HE.onClick (SelectWidgetTab tab)
         ]
         [ H.text label ]
@@ -376,9 +384,7 @@ tabButton activeTab tab label =
 widgetTabContent : Model -> Html Msg
 widgetTabContent model =
     H.section
-        [ class "meuastral-tab-panel min-w-0"
-        , HA.attribute "role" "tabpanel"
-        ]
+        [ class "meuastral-tab-panel min-w-0" ]
         [ case model.activeTab of
             HoroscopeTab ->
                 horoscopePanel model

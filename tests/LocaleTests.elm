@@ -18,4 +18,12 @@ all =
                 Locale.fromString "en-GB"
                     |> Locale.toQueryParam
                     |> Expect.equal "en-US"
+        , test "Portuguese interface copy uses correct spelling" <|
+            \_ ->
+                let
+                    copy =
+                        Locale.copy (Locale.fromString "pt-BR")
+                in
+                [ copy.birthdayTitle, copy.ascentMasterTitle ]
+                    |> Expect.equal [ "Data do meu aniversário", "Mestre ascensionado" ]
         ]

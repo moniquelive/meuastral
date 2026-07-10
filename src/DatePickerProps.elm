@@ -1,23 +1,45 @@
-module DatePickerProps exposing (monthDisplay, pickerProps, selectedDateDisplay, weekdaySymbol)
+module DatePickerProps exposing (canSelectBirthday, monthDisplay, pickerProps, selectedDateDisplay, weekdaySymbol)
 
 import Date exposing (Date)
-import DatePicker exposing (Msg(..))
+import DatePicker
 import Locale exposing (Locale)
 import Time exposing (Month(..), Weekday(..))
 
 
-pickerProps : Locale -> DatePicker.Props
-pickerProps locale =
+pickerProps : Locale -> Maybe Date -> DatePicker.Props
+pickerProps locale maybeToday =
     let
         props =
             DatePicker.defaultProps
     in
     { props
-        | hideFooter = True
+        | canSelectYear = canSelectYear maybeToday
+        , canSelectMonth = canSelectMonth maybeToday
+        , canSelectDate = canSelectBirthday maybeToday
+        , hideFooter = True
         , daySymbol = weekdaySymbol locale
         , monthDisplay = monthDisplay locale
         , selectedDateDisplay = selectedDateDisplay locale
     }
+
+
+canSelectYear : Maybe Date -> Int -> Bool
+canSelectYear maybeToday year =
+    maybeToday
+        |> Maybe.map (\today -> year <= Date.year today)
+        |> Maybe.withDefault True
+
+
+canSelectMonth : Maybe Date -> Int -> Month -> Bool
+canSelectMonth maybeToday year month =
+    canSelectBirthday maybeToday (Date.fromCalendarDate year month 1)
+
+
+canSelectBirthday : Maybe Date -> Date -> Bool
+canSelectBirthday maybeToday birthday =
+    maybeToday
+        |> Maybe.map (\today -> Date.compare birthday today /= GT)
+        |> Maybe.withDefault True
 
 
 monthDisplay : Locale -> Month -> String

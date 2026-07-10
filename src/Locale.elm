@@ -15,6 +15,7 @@ type alias Copy =
     , horoscopeTitle : String
     , horoscopeLoading : String
     , horoscopeUnavailable : String
+    , readingSectionsLabel : String
     , ascentMasterTitle : String
     , archangelPrefix : String
     , biorhythmTitle : String
@@ -54,7 +55,7 @@ copy : Locale -> Copy
 copy locale =
     case locale of
         PtBR ->
-            { birthdayTitle = "Data do meu Aniversário"
+            { birthdayTitle = "Data do meu aniversário"
             , changeBirthdayLabel = "Alterar data"
             , bornOnPrefix = "As pessoas nascidas em "
             , daysMiddle = " possuem mais ou menos "
@@ -62,7 +63,8 @@ copy locale =
             , horoscopeTitle = "Horóscopo"
             , horoscopeLoading = "Carregando horóscopo diário..."
             , horoscopeUnavailable = "O horóscopo diário não está disponível agora. Tente novamente em instantes."
-            , ascentMasterTitle = "Mestre Ascencionado"
+            , readingSectionsLabel = "Seções da consulta do MeuAstral"
+            , ascentMasterTitle = "Mestre ascensionado"
             , archangelPrefix = "Arcanjo "
             , biorhythmTitle = "Biorritmo"
             , biorhythmPhysical = "Físico"
@@ -82,6 +84,7 @@ copy locale =
             , horoscopeTitle = "Horoscope"
             , horoscopeLoading = "Loading daily horoscope..."
             , horoscopeUnavailable = "The daily horoscope is unavailable right now. Please try again shortly."
+            , readingSectionsLabel = "MeuAstral reading sections"
             , ascentMasterTitle = "Ascended Master"
             , archangelPrefix = "Archangel "
             , biorhythmTitle = "Biorhythm"

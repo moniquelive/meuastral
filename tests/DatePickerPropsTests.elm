@@ -37,4 +37,19 @@ all =
                     (Just (fromCalendarDate 2026 Jun 12))
                     (fromCalendarDate 2026 Jan 1)
                     |> Expect.equal "Sex, 12 de Junho"
+        , test "birthdays cannot be selected after today" <|
+            \_ ->
+                let
+                    today =
+                        fromCalendarDate 2026 Jun 12
+                in
+                [ DatePickerProps.canSelectBirthday (Just today) (fromCalendarDate 2026 Jun 11)
+                , DatePickerProps.canSelectBirthday (Just today) today
+                , DatePickerProps.canSelectBirthday (Just today) (fromCalendarDate 2026 Jun 13)
+                ]
+                    |> Expect.equal [ True, True, False ]
+        , test "birthdays remain selectable while today is loading" <|
+            \_ ->
+                DatePickerProps.canSelectBirthday Nothing (fromCalendarDate 2099 Jan 1)
+                    |> Expect.equal True
         ]

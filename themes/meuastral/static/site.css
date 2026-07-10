@@ -22,6 +22,11 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
+:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+
 .site-body {
   margin: 0;
   background: var(--ma-soft);
@@ -48,8 +53,7 @@ body {
 
 .site-nav,
 .site-footer nav,
-.resource-links,
-.home-fallback__links {
+.resource-links {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 18px;
@@ -69,8 +73,7 @@ body {
   padding: 40px clamp(18px, 4vw, 56px);
 }
 
-.content-card,
-.home-fallback {
+.content-card {
   background: var(--ma-surface);
   border: 1px solid var(--ma-border);
   border-radius: 8px;
@@ -238,6 +241,27 @@ body {
   color: white;
 }
 
+.horoscope-symbol {
+  align-items: center;
+  background: var(--ma-surface);
+  border: 1px solid var(--ma-border);
+  border-radius: 999px;
+  color: var(--ma-blue);
+  cursor: pointer;
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.horoscope-symbol:hover,
+.horoscope-symbol:focus-visible,
+.horoscope-symbol[aria-pressed="true"] {
+  background: var(--ma-blue);
+  border-color: var(--ma-blue);
+  color: white;
+}
+
 .meuastral-tab-panel {
   min-width: 0;
 }
@@ -260,33 +284,6 @@ body {
   font-weight: 800;
 }
 
-.home-date-placeholder {
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(31, 41, 55, 0.35);
-  height: 420px;
-  overflow: hidden;
-  width: 300px;
-}
-
-.home-date-placeholder__top {
-  background: #68b7c9;
-  height: 108px;
-}
-
-.home-date-placeholder__body {
-  background:
-    linear-gradient(#ffffff, #ffffff) padding-box,
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 38px,
-      rgba(31, 41, 55, 0.08) 39px
-    );
-  height: 312px;
-}
-
 .content-eyebrow {
   color: var(--ma-purple);
   font-size: 0.78rem;
@@ -296,16 +293,14 @@ body {
   text-transform: uppercase;
 }
 
-.content-card h1,
-.home-fallback h1 {
+.content-card h1 {
   color: var(--ma-ink);
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.05;
   margin: 0 0 18px;
 }
 
-.lead,
-.home-fallback p {
+.lead {
   color: var(--ma-muted);
   font-size: 1.1rem;
   line-height: 1.7;
@@ -365,8 +360,7 @@ body {
 }
 
 .content-link-card a,
-.resource-links a,
-.home-fallback__links a {
+.resource-links a {
   color: var(--ma-blue);
   font-weight: 800;
 }
@@ -522,12 +516,20 @@ body {
     padding-inline: 12px;
   }
 
-  .content-card,
-  .home-fallback {
+  .content-card {
     padding: 16px;
   }
 
   .home-app-mount {
     margin-inline: -4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

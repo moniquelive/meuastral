@@ -190,6 +190,16 @@
 .edp-container .edp-button:focus {
   outline: none;
 }
+
+.edp-container .edp-caret-button:focus-visible,
+.edp-container .edp-day-number:focus-visible,
+.edp-container .edp-button:focus-visible,
+.edp-container .edp-year-button:focus-visible,
+.edp-container .edp-header-year:focus-visible,
+.edp-container .edp-header-month-day:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: -2px;
+}
 .edp-container .edp-year-button {
   color: #60b5cd;
   padding: 0px;
@@ -419,5 +429,14 @@
   }
   to {
     transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edp-container *,
+  .edp-container *::before,
+  .edp-container *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

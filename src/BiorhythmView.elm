@@ -53,7 +53,11 @@ bioChart period color ageInDays =
     C.chart
         [ CA.height 50
         , CA.width 200
-        , CA.htmlAttrs [ HA.style "background" color ]
+        , CA.htmlAttrs
+            [ HA.style "background" color
+            , HA.attribute "aria-hidden" "true"
+            , HA.attribute "focusable" "false"
+            ]
         , CA.range [ CA.lowest -30 CA.exactly, CA.highest 0 CA.exactly ]
         , CA.domain [ CA.lowest -1 CA.exactly, CA.highest 1 CA.exactly, CA.pad 2 2 ]
         ]

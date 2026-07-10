@@ -3,9 +3,10 @@ module HoroscopeViewTests exposing (all)
 import Expect
 import Horoscope exposing (Horoscope)
 import HoroscopeView
+import Html.Attributes as HA
 import Test exposing (Test, describe, test)
 import Test.Html.Query as Query
-import Test.Html.Selector exposing (text)
+import Test.Html.Selector exposing (attribute, text)
 
 
 all : Test
@@ -27,6 +28,16 @@ all =
                     [ aries ]
                     |> Query.fromHtml
                     |> Query.has [ text "Aries", text "Start something new." ]
+        , test "renders accessible horoscope selection buttons" <|
+            \_ ->
+                HoroscopeView.content identity Nothing aries [ aries, taurus ]
+                    |> Query.fromHtml
+                    |> Query.has
+                        [ attribute (HA.attribute "aria-label" "Aries")
+                        , attribute (HA.attribute "aria-pressed" "true")
+                        , attribute (HA.attribute "aria-label" "Taurus")
+                        , attribute (HA.attribute "aria-pressed" "false")
+                        ]
         ]
 
 
@@ -38,3 +49,8 @@ emptyHoroscope =
 aries : Horoscope
 aries =
     { id = "aries", name = "Aries", resume = "Start something new." }
+
+
+taurus : Horoscope
+taurus =
+    { id = "taurus", name = "Taurus", resume = "Stay grounded." }
