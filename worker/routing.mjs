@@ -13,15 +13,11 @@ export function redirectPathForHomeLocale(request, locale) {
 }
 
 export function cacheControlForStaticPath(pathname) {
-  if (/\.(avif|ico|png|webp)$/i.test(pathname)) {
+  if (/\.[a-f0-9]{10}\.(avif|css|ico|js|png|webp)$/i.test(pathname)) {
     return "public, max-age=31536000, immutable";
   }
 
-  if (/\.[a-f0-9]{10}\.(css|js)$/i.test(pathname)) {
-    return "public, max-age=31536000, immutable";
-  }
-
-  if (/\.(css|js|json)$/i.test(pathname)) {
+  if (/\.(avif|css|ico|js|json|png|webp)$/i.test(pathname)) {
     return "public, max-age=86400, stale-while-revalidate=604800";
   }
 

@@ -19,17 +19,17 @@ export const ZODIAC_SIGNS = [
 
 const SIGN_NAMES = {
   "pt-BR": {
-    aries: "Aries",
+    aries: "Áries",
     taurus: "Touro",
-    gemini: "Gemeos",
-    cancer: "Cancer",
-    leo: "Leao",
+    gemini: "Gêmeos",
+    cancer: "Câncer",
+    leo: "Leão",
     virgo: "Virgem",
     libra: "Libra",
-    scorpio: "Escorpiao",
-    sagittarius: "Sagitario",
-    capricorn: "Capricornio",
-    aquarius: "Aquario",
+    scorpio: "Escorpião",
+    sagittarius: "Sagitário",
+    capricorn: "Capricórnio",
+    aquarius: "Aquário",
     pisces: "Peixes",
   },
   "en-US": {
@@ -123,6 +123,18 @@ export function providerForLocale(locale) {
   return resolveLocale(locale) === "en-US" ? "api-ninjas" : "terra";
 }
 
+export function dateKeyInTimeZone(date, timeZone = "America/Sao_Paulo") {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone,
+    year: "numeric",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
 export function normalizeTerraResponse(payload) {
   let signs = [];
 
@@ -189,6 +201,19 @@ export function normalizeApiNinjasResponses(responses) {
 }
 
 export async function handleHoroscopeRequest(request, env, ctx) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return jsonResponse(
+      { error: "method_not_allowed" },
+      {
+        status: 405,
+        headers: {
+          allow: "GET, HEAD",
+          "cache-control": "no-store",
+        },
+      },
+    );
+  }
+
   const locale = resolveLocaleFromRequest(request);
   const cacheKey = horoscopeCacheKey(request, locale);
   const cache = getRuntimeCache();
@@ -208,10 +233,34 @@ export async function handleHoroscopeRequest(request, env, ctx) {
     );
   }
 
-  const payload =
-    providerForLocale(locale) === "api-ninjas"
-      ? await fetchApiNinjasHoroscope(env)
-      : await fetchTerraHoroscope();
+  let payload;
+
+  try {
+    payload =
+      providerForLocale(locale) === "api-ninjas"
+        ? await fetchApiNinjasHoroscope(env)
+        : await fetchTerraHoroscope();
+  } catch (error) {
+    console.error("Horoscope provider request failed", error);
+    return jsonResponse(
+      { error: "horoscope_provider_unavailable" },
+      {
+        status: 502,
+        headers: { "cache-control": "no-store" },
+      },
+    );
+  }
+
+  if (!isCompleteHoroscopePayload(payload)) {
+    console.error("Horoscope provider returned an incomplete payload");
+    return jsonResponse(
+      { error: "horoscope_provider_unavailable" },
+      {
+        status: 502,
+        headers: { "cache-control": "no-store" },
+      },
+    );
+  }
 
   const response = jsonResponse(payload);
 
@@ -232,37 +281,41 @@ async function fetchTerraHoroscope() {
   const response = await fetch(TERRA_URL);
 
   if (!response.ok) {
-    console.error("Terra horoscope request failed", response.status);
-    return { signs_list: [] };
+    throw new Error(`Terra request failed with ${response.status}`);
   }
 
   return normalizeTerraResponse(await response.json());
 }
 
 async function fetchApiNinjasHoroscope(env) {
-  try {
-    const responses = await Promise.all(
-      ZODIAC_SIGNS.map(async (sign) => {
-        const url = new URL(API_NINJAS_URL);
-        url.searchParams.set("zodiac", sign);
+  const responses = await Promise.all(
+    ZODIAC_SIGNS.map(async (sign) => {
+      const url = new URL(API_NINJAS_URL);
+      url.searchParams.set("zodiac", sign);
 
-        const response = await fetch(url.toString(), {
-          headers: { "X-Api-Key": env.API_NINJAS_KEY },
-        });
+      const response = await fetch(url.toString(), {
+        headers: { "X-Api-Key": env.API_NINJAS_KEY },
+      });
 
-        if (!response.ok) {
-          throw new Error(`API Ninjas ${sign} failed with ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`API Ninjas ${sign} failed with ${response.status}`);
+      }
 
-        return response.json();
-      }),
-    );
+      return response.json();
+    }),
+  );
 
-    return normalizeApiNinjasResponses(responses);
-  } catch (error) {
-    console.error("API Ninjas horoscope request failed", error);
-    return { signs_list: [] };
-  }
+  return normalizeApiNinjasResponses(responses);
+}
+
+function isCompleteHoroscopePayload(payload) {
+  return (
+    Array.isArray(payload?.signs_list) &&
+    payload.signs_list.length === ZODIAC_SIGNS.length &&
+    payload.signs_list.every((sign) => {
+      return sign.id && sign.name && sign.resume;
+    })
+  );
 }
 
 function horoscopeCacheKey(request, locale) {
@@ -270,7 +323,7 @@ function horoscopeCacheKey(request, locale) {
   const cacheUrl = new URL("/api/horoscope-cache", sourceUrl.origin);
 
   cacheUrl.searchParams.set("locale", locale);
-  cacheUrl.searchParams.set("date", new Date().toISOString().slice(0, 10));
+  cacheUrl.searchParams.set("date", dateKeyInTimeZone(new Date()));
 
   return new Request(cacheUrl.toString(), { method: "GET" });
 }

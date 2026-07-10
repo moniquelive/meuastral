@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  dateKeyInTimeZone,
   handleHoroscopeRequest,
   normalizeApiNinjasResponses,
   normalizeTerraResponse,
@@ -38,6 +39,15 @@ describe("Worker provider selection", () => {
 
   it("uses API Ninjas for English", () => {
     assert.equal(providerForLocale("en-US"), "api-ninjas");
+  });
+});
+
+describe("Worker horoscope cache dates", () => {
+  it("uses the configured site day instead of the UTC day", () => {
+    assert.equal(
+      dateKeyInTimeZone(new Date("2026-07-10T01:30:00Z")),
+      "2026-07-09",
+    );
   });
 });
 
@@ -93,6 +103,15 @@ describe("Worker horoscope normalization", () => {
       },
     );
   });
+
+  it("uses accented Portuguese fallback names", () => {
+    assert.deepEqual(
+      normalizeTerraResponse({
+        signs_list: [{ id: "aquarius", resume: "Resumo." }],
+      }).signs_list[0],
+      { id: "aquarius", name: "Aquário", resume: "Resumo." },
+    );
+  });
 });
 
 describe("Worker horoscope endpoint", () => {
@@ -107,5 +126,66 @@ describe("Worker horoscope endpoint", () => {
     assert.deepEqual(await response.json(), {
       error: "api_ninjas_key_missing",
     });
+  });
+
+  it("rejects unsafe methods", async () => {
+    const response = await handleHoroscopeRequest(
+      new Request("https://meuastral.com/api/horoscope", { method: "POST" }),
+      {},
+      {},
+    );
+
+    assert.equal(response.status, 405);
+    assert.equal(response.headers.get("allow"), "GET, HEAD");
+    assert.equal(response.headers.get("cache-control"), "no-store");
+  });
+
+  it("returns a non-cacheable 502 when the provider fails", async () => {
+    const originalFetch = globalThis.fetch;
+    const originalConsoleError = console.error;
+    globalThis.fetch = async () => new Response("unavailable", { status: 503 });
+    console.error = () => {};
+
+    try {
+      const response = await handleHoroscopeRequest(
+        new Request("https://meuastral.com/api/horoscope?locale=pt-BR"),
+        {},
+        {},
+      );
+
+      assert.equal(response.status, 502);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+      assert.deepEqual(await response.json(), {
+        error: "horoscope_provider_unavailable",
+      });
+    } finally {
+      globalThis.fetch = originalFetch;
+      console.error = originalConsoleError;
+    }
+  });
+
+  it("does not cache incomplete provider payloads", async () => {
+    const originalFetch = globalThis.fetch;
+    const originalConsoleError = console.error;
+    globalThis.fetch = async () => {
+      return Response.json({
+        signs_list: [{ id: "aries", name: "Áries", resume: "Resumo." }],
+      });
+    };
+    console.error = () => {};
+
+    try {
+      const response = await handleHoroscopeRequest(
+        new Request("https://meuastral.com/api/horoscope?locale=pt-BR"),
+        {},
+        {},
+      );
+
+      assert.equal(response.status, 502);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+    } finally {
+      globalThis.fetch = originalFetch;
+      console.error = originalConsoleError;
+    }
   });
 });

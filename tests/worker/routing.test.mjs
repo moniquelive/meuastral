@@ -40,14 +40,14 @@ describe("Worker localized routing", () => {
     );
   });
 
-  it("uses long immutable cache lifetimes for version-stable image assets", () => {
+  it("revalidates image assets whose names are not fingerprinted", () => {
     assert.equal(
       cacheControlForStaticPath("/5-hilarion.webp"),
-      "public, max-age=31536000, immutable",
+      "public, max-age=86400, stale-while-revalidate=604800",
     );
     assert.equal(
       cacheControlForStaticPath("/logo.png"),
-      "public, max-age=31536000, immutable",
+      "public, max-age=86400, stale-while-revalidate=604800",
     );
   });
 
@@ -58,6 +58,10 @@ describe("Worker localized routing", () => {
     );
     assert.equal(
       cacheControlForStaticPath("/app.1234abcd99.css"),
+      "public, max-age=31536000, immutable",
+    );
+    assert.equal(
+      cacheControlForStaticPath("/logo.1234abcd99.webp"),
       "public, max-age=31536000, immutable",
     );
   });
@@ -86,7 +90,7 @@ describe("Worker localized routing", () => {
 
     assert.equal(
       okResponse.headers.get("cache-control"),
-      "public, max-age=31536000, immutable",
+      "public, max-age=86400, stale-while-revalidate=604800",
     );
     assert.equal(await okResponse.text(), "image");
 
