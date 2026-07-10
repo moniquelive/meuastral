@@ -45,13 +45,18 @@ description = "Validate Elm formatting"
 depends = ["install"]
 run = "elm-format src tests --validate"
 
+[tasks."check:build"]
+description = "Validate generated HTML, sitemap coverage, and local asset references"
+depends = ["build"]
+run = "node scripts/check-build.mjs"
+
 [tasks.clean]
 description = "Remove generated output and transient files"
 run = "rm -rf build .hugo_build.lock .elm-home"
 
 [tasks.ci]
 description = "Run tests and production build"
-depends = ["format:check", "test", "build"]
+depends = ["format:check", "test", "check:build"]
 
 [shell_alias]
 w = "mise x node@latest -- npx wrangler"

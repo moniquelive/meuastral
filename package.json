@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node scripts/dev.mjs",
     "build": "cross-env ELM_HOME=.elm-home node scripts/build.mjs",
+    "check:build": "node scripts/check-build.mjs",
     "test": "npm run test:elm && npm run test:worker",
     "test:elm": "cross-env ELM_HOME=.elm-home CI=true elm-test",
     "test:worker": "node --test tests/worker/*.test.mjs",
@@ -19,7 +20,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "cross-env": "^10.1.0",

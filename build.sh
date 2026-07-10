@@ -10,6 +10,11 @@ REPO_PARENT="$(dirname "${SCRIPT_DIR}")"
 ORIGINAL_HOME="${HOME}"
 cd "${SCRIPT_DIR}"
 
+if [[ "${MEUASTRAL_LOCAL_DEV:-}" == "1" ]]; then
+  HOME="${ORIGINAL_HOME}" mise run build
+  exit 0
+fi
+
 export HOME="${PWD}/.mise-ci/home"
 export PATH="${PWD}/.mise-ci/bin:${HOME}/.local/bin:${HOME}/.mise/bin:${ORIGINAL_HOME}/.local/bin:${ORIGINAL_HOME}/.mise/bin:${PATH}"
 export TZ="${TZ:-America/Sao_Paulo}"

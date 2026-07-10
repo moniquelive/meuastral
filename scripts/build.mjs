@@ -102,7 +102,12 @@ async function copyPublicAssets(sourceDir, outDir) {
   const entries = await readdir(sourceDir, { withFileTypes: true });
 
   await Promise.all(entries.map(async entry => {
+    const sourcePath = resolve(sourceDir, entry.name);
+    const outputPath = resolve(outDir, entry.name);
+
     if (entry.isDirectory()) {
+      await mkdir(outputPath, { recursive: true });
+      await copyPublicAssets(sourcePath, outputPath);
       return;
     }
 
@@ -110,13 +115,17 @@ async function copyPublicAssets(sourceDir, outDir) {
       return;
     }
 
-    await copyFile(resolve(sourceDir, entry.name), resolve(outDir, entry.name));
+    await copyFile(sourcePath, outputPath);
   }));
 }
 
 function shouldCopyPublicAsset(fileName) {
   if (fileName === 'ads.txt' || fileName === 'CNAME') {
     return true;
+  }
+
+  if (/^\d+-.*\.png$/i.test(fileName)) {
+    return false;
   }
 
   return [
@@ -133,23 +142,33 @@ async function copyBootstrap(root, outDir) {
 
 async function writeSitemap(outDir) {
   const htmlPaths = await collectIndexHtmlFiles(outDir);
-  const urlPaths = htmlPaths
-    .map(filePath => urlPathFromIndexFile(outDir, filePath))
-    .filter(path => path !== null)
-    .sort((left, right) => left.localeCompare(right));
+  const pages = (await Promise.all(htmlPaths.map(async filePath => {
+    const urlPath = urlPathFromIndexFile(outDir, filePath);
+
+    if (urlPath === null) {
+      return null;
+    }
+
+    return {
+      alternates: alternateLinks(await readFile(filePath, 'utf8')),
+      urlPath
+    };
+  })))
+    .filter(page => page !== null)
+    .sort((left, right) => left.urlPath.localeCompare(right.urlPath));
 
   const lines = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">'
   ];
 
-  for (const urlPath of urlPaths) {
+  for (const page of pages) {
     lines.push('  <url>');
-    lines.push(`    <loc>${xmlEscape(absoluteUrl(urlPath))}</loc>`);
+    lines.push(`    <loc>${xmlEscape(absoluteUrl(page.urlPath))}</loc>`);
 
-    for (const alternate of alternatesForPath(urlPath)) {
+    for (const alternate of page.alternates) {
       lines.push(
-        `    <xhtml:link rel="alternate" hreflang="${alternate.lang}" href="${xmlEscape(absoluteUrl(alternate.path))}" />`
+        `    <xhtml:link rel="alternate" hreflang="${xmlEscape(alternate.lang)}" href="${xmlEscape(alternate.href)}" />`
       );
     }
 
@@ -162,6 +181,23 @@ async function writeSitemap(outDir) {
   await writeFile(resolve(outDir, 'sitemap.xml'), lines.join('\n'));
   await rm(resolve(outDir, 'pt-br', 'sitemap.xml'), { force: true });
   await rm(resolve(outDir, 'en', 'sitemap.xml'), { force: true });
+}
+
+function alternateLinks(html) {
+  return [...html.matchAll(/<link\b[^>]*\brel=(?:"alternate"|'alternate'|alternate)[^>]*>/gi)]
+    .map(match => match[0])
+    .map(tag => ({
+      href: htmlAttribute(tag, 'href'),
+      lang: htmlAttribute(tag, 'hreflang')
+    }))
+    .filter(alternate => alternate.href && alternate.lang && alternate.lang !== 'x-default');
+}
+
+function htmlAttribute(tag, name) {
+  const pattern = new RegExp(`\\b${name}=(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i');
+  const match = tag.match(pattern);
+
+  return match ? match[1] ?? match[2] ?? match[3] : '';
 }
 
 async function collectIndexHtmlFiles(dir) {
@@ -195,55 +231,6 @@ function urlPathFromIndexFile(outDir, filePath) {
   }
 
   return `/${fileName.replace(/\/?index\.html$/, '')}/`;
-}
-
-function alternatesForPath(urlPath) {
-  const pair = translatedPaths().find(paths => {
-    return paths.pt === urlPath || paths.en === urlPath;
-  });
-
-  if (!pair) {
-    return [];
-  }
-
-  return [
-    { lang: 'pt-BR', path: pair.pt },
-    { lang: 'en-US', path: pair.en }
-  ];
-}
-
-function translatedPaths() {
-  return [
-    { pt: '/', en: '/en/' },
-    { pt: '/sobre/', en: '/en/about/' },
-    { pt: '/politica-de-privacidade/', en: '/en/privacy-policy/' },
-    { pt: '/termos-de-uso/', en: '/en/terms/' },
-    { pt: '/como-o-meuastral-se-financia/', en: '/en/how-meuastral-is-funded/' },
-    { pt: '/politica-editorial/', en: '/en/editorial-policy/' },
-    { pt: '/metodologia/', en: '/en/methodology/' },
-    { pt: '/biorritmo/', en: '/en/biorhythm-calculator/' },
-    { pt: '/mestres-ascensionados/', en: '/en/ascended-masters/' },
-    { pt: '/horoscopo/', en: '/en/horoscope/' },
-    { pt: '/horoscopo/aries/', en: '/en/horoscope/aries/' },
-    { pt: '/horoscopo/touro/', en: '/en/horoscope/taurus/' },
-    { pt: '/horoscopo/gemeos/', en: '/en/horoscope/gemini/' },
-    { pt: '/horoscopo/cancer/', en: '/en/horoscope/cancer/' },
-    { pt: '/horoscopo/leao/', en: '/en/horoscope/leo/' },
-    { pt: '/horoscopo/virgem/', en: '/en/horoscope/virgo/' },
-    { pt: '/horoscopo/libra/', en: '/en/horoscope/libra/' },
-    { pt: '/horoscopo/escorpiao/', en: '/en/horoscope/scorpio/' },
-    { pt: '/horoscopo/sagitario/', en: '/en/horoscope/sagittarius/' },
-    { pt: '/horoscopo/capricornio/', en: '/en/horoscope/capricorn/' },
-    { pt: '/horoscopo/aquario/', en: '/en/horoscope/aquarius/' },
-    { pt: '/horoscopo/peixes/', en: '/en/horoscope/pisces/' },
-    { pt: '/contato/', en: '/en/contact/' },
-    { pt: '/quem-mantem-o-meuastral/', en: '/en/who-maintains-meuastral/' },
-    { pt: '/guias/', en: '/en/guides/' },
-    { pt: '/guias/como-usar-horoscopo-diario/', en: '/en/guides/how-to-use-daily-horoscope/' },
-    { pt: '/guias/como-interpretar-biorritmo/', en: '/en/guides/how-to-read-biorhythm-cycles/' },
-    { pt: '/guias/mestres-ascensionados-e-raios/', en: '/en/guides/ascended-masters-and-rays/' },
-    { pt: '/guias/combinar-signo-biorritmo-data-nascimento/', en: '/en/guides/combine-sign-biorhythm-birth-date/' }
-  ];
 }
 
 function absoluteUrl(path) {

@@ -3,7 +3,11 @@ import { chmod, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const env = { ...process.env, ELM_HOME: ".elm-home" };
+const env = {
+  ...process.env,
+  ELM_HOME: ".elm-home",
+  MEUASTRAL_LOCAL_DEV: "1",
+};
 const args = ["wrangler", "dev"];
 let envFile;
 
