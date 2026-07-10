@@ -27,7 +27,7 @@
 
     <div class="site-header__tools">
       {{ range .Translations }}
-      <a class="language-switch" href="{{ .RelPermalink }}" hreflang="{{ .Site.Language.Params.locale }}" lang="{{ .Site.Language.Params.locale }}" aria-label="{{ cond $isEnglish "Ver em português" "View in English" }}">
+      <a class="language-switch" href="{{ .RelPermalink }}?lang={{ .Site.Language.Params.locale }}" hreflang="{{ .Site.Language.Params.locale }}" lang="{{ .Site.Language.Params.locale }}" aria-label="{{ cond $isEnglish "Ver em português" "View in English" }}">
         <span aria-hidden="true">✦</span> {{ .Site.Language.Params.shortLabel }}
       </a>
       {{ end }}

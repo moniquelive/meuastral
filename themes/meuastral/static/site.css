@@ -755,6 +755,10 @@ img {
   overflow: hidden;
 }
 
+.meuastral-widget .indicator.card {
+  overflow: visible;
+}
+
 .meuastral-widget .card-body {
   gap: 0.75rem;
   padding: 1.25rem;
@@ -1198,10 +1202,10 @@ img {
 }
 
 .site-footer__brand img {
-  filter: brightness(0) invert(1);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.24));
   height: auto;
-  opacity: 0.92;
-  width: 138px;
+  opacity: 1;
+  width: 156px;
 }
 
 .site-footer__brand p {
