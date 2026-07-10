@@ -3,49 +3,11 @@ import { describe, it } from "node:test";
 
 import {
   cacheControlForStaticPath,
-  localePreferenceCookie,
-  localePreferenceFromRequest,
   redirectPathForHomeLocale,
   withStaticCacheHeaders,
 } from "../../worker/routing.mjs";
 
 describe("Worker localized routing", () => {
-  it("persists an explicit language switch and strips its query parameter", () => {
-    assert.deepEqual(
-      localePreferenceFromRequest(
-        new Request("https://meuastral.com/?lang=pt-BR"),
-      ),
-      {
-        cleanUrl: "https://meuastral.com/",
-        locale: "pt-BR",
-        source: "query",
-      },
-    );
-    assert.equal(
-      localePreferenceCookie("pt-BR"),
-      "meuastral-locale=pt-BR; Path=/; Max-Age=31536000; SameSite=Lax; Secure",
-    );
-  });
-
-  it("uses a stored supported language and ignores unsupported values", () => {
-    assert.deepEqual(
-      localePreferenceFromRequest(
-        new Request("https://meuastral.com/", {
-          headers: { cookie: "theme=light; meuastral-locale=en-US" },
-        }),
-      ),
-      { cleanUrl: null, locale: "en-US", source: "cookie" },
-    );
-    assert.equal(
-      localePreferenceFromRequest(
-        new Request("https://meuastral.com/?lang=fr-FR", {
-          headers: { cookie: "meuastral-locale=fr-FR" },
-        }),
-      ),
-      null,
-    );
-  });
-
   it("redirects English browser home requests to the English URL", () => {
     assert.equal(
       redirectPathForHomeLocale(new Request("https://meuastral.com/"), "en-US"),

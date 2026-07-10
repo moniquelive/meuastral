@@ -1,4 +1,3 @@
-{{- $isEnglish := eq .Site.Language.Lang "en" -}}
 {{- $isHoroscope := or (eq .Section "horoscope") (eq .Section "horoscopo") -}}
 {{- $isGuides := or (eq .Section "guides") (eq .Section "guias") -}}
 {{- $isBiorhythm := or (eq .RelPermalink "/biorritmo/") (eq .RelPermalink "/en/biorhythm-calculator/") -}}
@@ -25,12 +24,5 @@
       {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}"{{ if $isMasters }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
     </nav>
 
-    <div class="site-header__tools">
-      {{ range .Translations }}
-      <a class="language-switch" href="{{ .RelPermalink }}?lang={{ .Site.Language.Params.locale }}" hreflang="{{ .Site.Language.Params.locale }}" lang="{{ .Site.Language.Params.locale }}" aria-label="{{ cond $isEnglish "Ver em português" "View in English" }}">
-        <span aria-hidden="true">✦</span> {{ .Site.Language.Params.shortLabel }}
-      </a>
-      {{ end }}
-    </div>
   </div>
 </header>
