@@ -6,7 +6,7 @@ node = "26.3.0"
 "npm:elm-test" = "0.19.1-revision17"
 "npm:tailwindcss" = "3.4.17"
 "npm:terser" = "5.48.0"
-"npm:wrangler" = "4.100.0"
+"npm:wrangler" = "4.102.0"
 
 [env]
 TZ = "America/Sao_Paulo"
