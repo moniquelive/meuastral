@@ -29,6 +29,19 @@
   scroll-padding-top: 8.5rem;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 140ms;
+    animation-timing-function: ease-out;
+  }
+}
+
 *,
 *::before,
 *::after {
