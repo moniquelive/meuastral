@@ -5,7 +5,6 @@ import {
   dailyHoroscopeTarget,
   injectDailyHoroscope,
 } from "./daily-horoscope.mjs";
-import { withStaticCacheHeaders } from "./routing.mjs";
 
 export default {
   async fetch(request, env, ctx) {
@@ -44,7 +43,7 @@ export default {
       );
     }
 
-    return withStaticCacheHeaders(response, url.pathname);
+    return response;
   },
 };
 

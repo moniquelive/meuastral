@@ -152,7 +152,7 @@ async function copyPublicAssets(sourceDir, outDir) {
 }
 
 function shouldCopyPublicAsset(fileName) {
-  if (fileName === 'ads.txt' || fileName === 'CNAME') {
+  if (fileName === '_headers' || fileName === 'ads.txt' || fileName === 'CNAME') {
     return true;
   }
 

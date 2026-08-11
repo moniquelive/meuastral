@@ -1,0 +1,24 @@
+# Static assets bypass Worker code, so keep browser caching declarative here.
+/app.:app_hash
+  Cache-Control: public, max-age=31536000, immutable
+
+/elm.:elm_hash
+  Cache-Control: public, max-age=31536000, immutable
+
+/bootstrap.:bootstrap_hash
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.avif
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*.ico
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*.json
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*.webp
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

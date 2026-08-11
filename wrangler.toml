@@ -6,7 +6,12 @@ workers_dev = true
 [assets]
 directory = "build"
 binding = "STATIC_CONTENT"
-run_worker_first = true
+run_worker_first = [
+  "/",
+  "/*/",
+  "/en",
+  "/api/horoscope",
+]
 
 [build]
 command = "bash build.sh"

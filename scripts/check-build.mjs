@@ -71,6 +71,13 @@ for (const sitemapUrl of sitemapUrls) {
   }
 }
 
+const sourceHeaders = await readFile(resolve(rootDir, 'public', '_headers'), 'utf8');
+const builtHeaders = await readFile(resolve(buildDir, '_headers'), 'utf8');
+
+if (builtHeaders !== sourceHeaders) {
+  errors.push('build/_headers: does not match the source static-asset cache policy');
+}
+
 if (errors.length > 0) {
   console.error(errors.join('\n'));
   process.exitCode = 1;

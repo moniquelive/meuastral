@@ -64,6 +64,22 @@ describe("Daily horoscope pages", () => {
       "https://meuastral.com/?utm_source=archive",
     );
     assert.equal(
+      cleanLegacyCommentUrl(
+        new Request(
+          "https://meuastral.com/sobre/?fb_comment_id=456&utm_source=archive",
+        ),
+      ),
+      "https://meuastral.com/sobre/?utm_source=archive",
+    );
+    assert.equal(
+      cleanLegacyCommentUrl(
+        new Request(
+          "https://meuastral.com/en/guides/how-to-use-daily-horoscope/?ref=legacy&fb_comment_id=789",
+        ),
+      ),
+      "https://meuastral.com/en/guides/how-to-use-daily-horoscope/?ref=legacy",
+    );
+    assert.equal(
       cleanLegacyCommentUrl(new Request("https://meuastral.com/horoscopo/")),
       null,
     );

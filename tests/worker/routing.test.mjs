@@ -1,72 +1,67 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 
-import {
-  cacheControlForStaticPath,
-  withStaticCacheHeaders,
-} from "../../worker/routing.mjs";
+const headersFile = await readFile(
+  new URL("../../public/_headers", import.meta.url),
+  "utf8",
+);
+const wranglerConfig = await readFile(
+  new URL("../../wrangler.toml", import.meta.url),
+  "utf8",
+);
 
-describe("Worker localized routing", () => {
-  it("revalidates image assets whose names are not fingerprinted", () => {
-    assert.equal(
-      cacheControlForStaticPath("/5-hilarion.webp"),
-      "public, max-age=86400, stale-while-revalidate=604800",
-    );
-    assert.equal(
-      cacheControlForStaticPath("/logo.png"),
-      "public, max-age=86400, stale-while-revalidate=604800",
-    );
-  });
+describe("Workers Static Assets routing", () => {
+  it("invokes code only for canonical pages and the horoscope API", () => {
+    assert.doesNotMatch(wranglerConfig, /run_worker_first\s*=\s*true/);
 
-  it("uses long immutable cache lifetimes for fingerprinted app assets", () => {
-    assert.equal(
-      cacheControlForStaticPath("/elm.1234abcd99.js"),
-      "public, max-age=31536000, immutable",
-    );
-    assert.equal(
-      cacheControlForStaticPath("/app.1234abcd99.css"),
-      "public, max-age=31536000, immutable",
-    );
-    assert.equal(
-      cacheControlForStaticPath("/logo.1234abcd99.webp"),
-      "public, max-age=31536000, immutable",
-    );
-  });
+    for (const pattern of [
+      '"/"',
+      '"/*/"',
+      '"/en"',
+      '"/api/horoscope"',
+    ]) {
+      assert.match(wranglerConfig, new RegExp(escapeRegex(pattern)));
+    }
 
-  it("uses revalidating cache lifetimes for non-fingerprinted static app assets", () => {
-    assert.equal(
-      cacheControlForStaticPath("/bootstrap.js"),
-      "public, max-age=86400, stale-while-revalidate=604800",
-    );
-    assert.equal(
-      cacheControlForStaticPath("/manifest.json"),
-      "public, max-age=86400, stale-while-revalidate=604800",
-    );
-  });
-
-  it("does not add static cache headers to generated HTML or sitemap files", () => {
-    assert.equal(cacheControlForStaticPath("/en/"), null);
-    assert.equal(cacheControlForStaticPath("/sitemap.xml"), null);
-  });
-
-  it("adds cache headers only to successful static asset responses", async () => {
-    const okResponse = withStaticCacheHeaders(
-      new Response("image", { status: 200 }),
-      "/5-hilarion.webp",
-    );
-
-    assert.equal(
-      okResponse.headers.get("cache-control"),
-      "public, max-age=86400, stale-while-revalidate=604800",
-    );
-    assert.equal(await okResponse.text(), "image");
-
-    const missingResponse = withStaticCacheHeaders(
-      new Response("missing", { status: 404 }),
-      "/5-hilarion.webp",
-    );
-
-    assert.equal(missingResponse.headers.get("cache-control"), null);
-    assert.equal(await missingResponse.text(), "missing");
+    assert.doesNotMatch(wranglerConfig, /"\/\*"/);
+    assert.doesNotMatch(wranglerConfig, /"\/horoscopo\/\*"/);
+    assert.doesNotMatch(wranglerConfig, /"\/en\/horoscope\/\*"/);
   });
 });
+
+describe("Workers Static Assets cache policy", () => {
+  it("caches fingerprinted application assets immutably", () => {
+    for (const pattern of [
+      "/app.:app_hash",
+      "/elm.:elm_hash",
+      "/bootstrap.:bootstrap_hash",
+    ]) {
+      assert.match(
+        headersFile,
+        new RegExp(
+          `${escapeRegex(pattern)}\\n  Cache-Control: public, max-age=31536000, immutable`,
+        ),
+      );
+    }
+  });
+
+  it("revalidates non-fingerprinted images and manifests daily", () => {
+    for (const extension of ["avif", "ico", "json", "png", "webp"]) {
+      assert.match(
+        headersFile,
+        new RegExp(
+          `${escapeRegex(`/*.${extension}`)}\\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800`,
+        ),
+      );
+    }
+  });
+
+  it("leaves generated HTML and XML on Cloudflare's revalidation policy", () => {
+    assert.doesNotMatch(headersFile, /\/\*\.(?:html|xml)/);
+  });
+});
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
