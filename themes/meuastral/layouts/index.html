@@ -150,6 +150,29 @@
     </nav>
   </section>
 
+  {{- $projectNetworkData := index hugo.Data "project-network" | default dict -}}
+  {{- $projectNetwork := index $projectNetworkData .Site.Language.Lang | default dict -}}
+  {{- $networkProjects := index $projectNetwork "projects" | default slice -}}
+  {{- if gt (len $networkProjects) 0 }}
+  <section class="content-card home-section project-network" aria-labelledby="project-network-title">
+    <p class="content-eyebrow">{{ index $projectNetwork "heading" | default "Independent projects" }}</p>
+    <h2 id="project-network-title">{{ index $projectNetwork "title" | default "Useful information, across different projects" }}</h2>
+    <p class="project-network__intro">{{ index $projectNetwork "intro" }}</p>
+    <div class="content-grid project-network__grid">
+      {{- range $networkProjects }}
+      <article class="content-link-card project-network__card">
+        {{- if eq .id (index $projectNetwork "current_id") }}
+        <h3><span class="project-network__current" aria-current="page">{{ .name }}</span></h3>
+        {{- else }}
+        <h3><a href="{{ .url }}">{{ .name }}</a></h3>
+        {{- end }}
+        <p>{{ .description }}</p>
+      </article>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
   <section class="content-card home-section" aria-labelledby="home-faq-title">
     <p class="content-eyebrow">FAQ</p>
     <h2 id="home-faq-title">{{ $faqTitle }}</h2>

@@ -1046,6 +1046,19 @@ img {
   text-decoration: none;
 }
 
+.project-network__intro {
+  color: var(--ma-muted);
+  max-width: 44rem;
+}
+
+.project-network__card {
+  background: linear-gradient(150deg, rgba(255, 253, 249, 0.96), rgba(248, 232, 185, 0.42));
+}
+
+.project-network__current {
+  color: var(--ma-muted);
+}
+
 .resource-links a:hover,
 .resource-links a:focus-visible {
   background: var(--ma-gold-soft);
