@@ -14,37 +14,28 @@ content locale ageInDays =
         localizedCopy =
             Locale.copy locale
     in
-    div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 min-w-0" ]
-        [ bioCard 23 "var(--ma-cycle-physical)" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "🏃" ageInDays
-        , bioCard 28 "var(--ma-cycle-emotional)" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "♥" ageInDays
-        , bioCard 33 "var(--ma-cycle-intellectual)" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "🧠" ageInDays
+    div []
+        [ H.p [ class "meuastral-cycle-hint" ] [ H.text localizedCopy.cycleChartHint ]
+        , div [ class "meuastral-cycles" ]
+            [ bioCard 23 "var(--ma-cycle-physical)" localizedCopy.biorhythmPhysical localizedCopy.biorhythmPhysicalTooltip "🏃" ageInDays
+            , bioCard 28 "var(--ma-cycle-emotional)" localizedCopy.biorhythmEmotional localizedCopy.biorhythmEmotionalTooltip "♥" ageInDays
+            , bioCard 33 "var(--ma-cycle-intellectual)" localizedCopy.biorhythmIntellectual localizedCopy.biorhythmIntellectualTooltip "🧠" ageInDays
+            ]
         ]
 
 
 bioCard : Float -> String -> String -> String -> String -> Int -> Html msg
 bioCard period color label tooltip icon ageInDays =
-    div
-        [ class "indicator tooltip tooltip-bottom"
-        , HA.attribute "data-tip" tooltip
-        , HA.title tooltip
-        ]
-        [ H.span [ class "indicator-item badge badge-lg py-3", HA.style "background" color ]
-            [ H.text (bioValue period ageInDays ++ "%") ]
-        , div [ class "card card-compact w-full max-w-80 lg:max-w-none lg:w-96 bg-base-100 shadow-xl" ]
-            [ bioChart period color ageInDays
-            , div [ class "card-body" ]
-                [ H.p [ class "text-center prose" ]
-                    [ H.span
-                        [ class "biorhythm-icon"
-                        , HA.style "color" color
-                        , HA.attribute "aria-hidden" "true"
-                        ]
-                        [ H.text icon ]
-                    , H.span [] [ H.text " " ]
-                    , H.text label
-                    ]
+    H.article [ class "card meuastral-cycle" ]
+        [ div [ class "meuastral-cycle__heading" ]
+            [ H.h3 []
+                [ H.span [ class "biorhythm-icon", HA.style "color" color, HA.attribute "aria-hidden" "true" ] [ H.text icon ]
+                , H.text (" " ++ label)
                 ]
+            , H.strong [ class "meuastral-cycle__value" ] [ H.text (bioValue period ageInDays ++ "%") ]
             ]
+        , bioChart period color ageInDays
+        , H.p [ class "meuastral-cycle__description" ] [ H.text tooltip ]
         ]
 
 

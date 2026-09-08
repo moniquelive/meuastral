@@ -278,7 +278,7 @@ export async function handleHoroscopeRequest(request, env, ctx) {
 }
 
 async function fetchTerraHoroscope() {
-  const response = await fetch(TERRA_URL);
+  const response = await fetch(TERRA_URL, { signal: AbortSignal.timeout(15_000) });
 
   if (!response.ok) {
     throw new Error(`Terra request failed with ${response.status}`);
@@ -295,6 +295,7 @@ async function fetchApiNinjasHoroscope(env) {
 
       const response = await fetch(url.toString(), {
         headers: { "X-Api-Key": env.API_NINJAS_KEY },
+        signal: AbortSignal.timeout(15_000),
       });
 
       if (!response.ok) {

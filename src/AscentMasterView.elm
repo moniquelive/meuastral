@@ -19,7 +19,7 @@ ascentMasterView locale maybeMaster =
             div [] []
 
         Just master ->
-            div [ class "flex justify-center flex-wrap py-4 gap-4 lg:gap-3 min-w-0" ]
+            div [ class "meuastral-masters" ]
                 [ ascentMasterCard locale master
                 , archangelCard locale master
                 ]
@@ -27,16 +27,16 @@ ascentMasterView locale maybeMaster =
 
 ascentMasterCard : Locale.Locale -> CosmicRay -> Html msg
 ascentMasterCard locale master =
-    div [ class "indicator card w-full max-w-80 lg:max-w-none lg:w-2/5 bg-base-100 shadow-xl" ]
+    div [ class "card meuastral-master" ]
         [ H.span
-            [ class "indicator-item indicator-start py-6 badge badge-lg text-4xl text-white font-bold"
+            [ class "meuastral-ray-badge"
             , HA.style "background" (AM.color_name master)
             , HA.style "color" (badgeTextColor master)
             ]
-            [ H.text (AM.number master) ]
+            [ H.text ((Locale.copy locale).rayLabel ++ " " ++ AM.number master) ]
         , H.figure [ class "flex-col w-full" ]
             [ H.img
-                [ class "rounded ring"
+                [ class "meuastral-master-image"
                 , HA.src (AM.master_image master)
                 , HA.alt (AM.master_name_for locale master)
                 , HA.width 512
@@ -77,10 +77,10 @@ archangelCard locale master =
         localizedCopy =
             Locale.copy locale
     in
-    div [ class "card w-full max-w-80 lg:max-w-none lg:w-2/5 bg-base-100 shadow-xl" ]
+    div [ class "card meuastral-master" ]
         [ H.figure [ class "flex-col w-full" ]
             [ H.img
-                [ class "rounded ring"
+                [ class "meuastral-master-image"
                 , HA.src (AM.archangel_image master)
                 , HA.alt (localizedCopy.archangelPrefix ++ AM.archangel_name_for locale master)
                 , HA.width 512

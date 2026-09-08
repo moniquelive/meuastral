@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{- $isEnglish := eq .Site.Language.Lang "en" -}}
-{{- $appTitle := cond $isEnglish "Open your interactive reading" "Abra sua consulta interativa" -}}
+{{- $appTitle := cond $isEnglish "Your reading starts here" "Sua leitura começa aqui" -}}
 {{- $appIntro := cond $isEnglish "Choose a birth date to bring today's horoscope, biorhythm cycles, and ascended master correspondence into one personal view." "Escolha uma data de nascimento para reunir horóscopo do dia, ciclos de biorritmo e correspondência com mestres ascensionados em uma visão pessoal." -}}
 {{- $heroDisplay := cond $isEnglish "Your sky. Your cycles. Your moment." "Seu céu. Seus ciclos. Seu momento." -}}
 {{- $howTitle := cond $isEnglish "Three lenses, one moment" "Três perspectivas, um só momento" -}}
@@ -24,7 +24,7 @@
       <h1 id="home-hero-title">{{ $heroDisplay }}</h1>
       <p class="lead">{{ .Params.heroIntro }}</p>
       <div class="hero-actions">
-        <a class="button-link button-link--primary" href="#consulta-interativa">{{ $appTitle }} <span aria-hidden="true">→</span></a>
+        <a class="button-link button-link--primary" href="#consulta-interativa">{{ cond $isEnglish "Explore my reading" "Explorar minha leitura" }} <span aria-hidden="true">→</span></a>
         {{ with .Site.GetPage "/horoscope" }}<a class="button-link button-link--ghost" href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
         {{ with .Site.GetPage "/horoscopo" }}<a class="button-link button-link--ghost" href="{{ .RelPermalink }}">{{ $.Site.Language.Params.horoscopeLabel }}</a>{{ end }}
       </div>

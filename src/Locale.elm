@@ -9,6 +9,22 @@ type Locale
 type alias Copy =
     { birthdayTitle : String
     , changeBirthdayLabel : String
+    , rayLabel : String
+    , masterTabLabel : String
+    , chooseDateAction : String
+    , calendarLabel : String
+    , cycleChartHint : String
+    , chooseBirthdayLabel : String
+    , birthdayHint : String
+    , birthdayInputLabel : String
+    , applyBirthdayLabel : String
+    , cancelLabel : String
+    , invalidBirthday : String
+    , calendarHint : String
+    , retryLabel : String
+    , chooseSignLabel : String
+    , readingDateLabel : String
+    , birthdayRequired : String
     , bornOnPrefix : String
     , daysMiddle : String
     , daysSuffix : String
@@ -57,6 +73,22 @@ copy locale =
         PtBR ->
             { birthdayTitle = "Data do meu aniversário"
             , changeBirthdayLabel = "Alterar data"
+            , rayLabel = "Raio"
+            , masterTabLabel = "Mestre"
+            , chooseDateAction = "Escolher data"
+            , calendarLabel = "Escolher no calendário"
+            , cycleChartHint = "As curvas mostram os últimos 30 dias; os valores são de hoje."
+            , chooseBirthdayLabel = "Escolha sua data"
+            , birthdayHint = "Sua data fica apenas neste dispositivo."
+            , birthdayInputLabel = "Data de nascimento"
+            , applyBirthdayLabel = "Usar esta data"
+            , cancelLabel = "Fechar"
+            , invalidBirthday = "Escolha uma data válida até hoje."
+            , calendarHint = "Ou use o calendário abaixo. Toque no ano para mudar mais rápido."
+            , retryLabel = "Tentar novamente"
+            , chooseSignLabel = "Escolha seu signo"
+            , readingDateLabel = "Leitura de"
+            , birthdayRequired = "Escolha sua data de nascimento para descobrir esta leitura."
             , bornOnPrefix = "As pessoas nascidas em "
             , daysMiddle = " possuem mais ou menos "
             , daysSuffix = " dias de vida."
@@ -78,6 +110,22 @@ copy locale =
         EnUS ->
             { birthdayTitle = "My Birthday"
             , changeBirthdayLabel = "Change date"
+            , rayLabel = "Ray"
+            , masterTabLabel = "Master"
+            , chooseDateAction = "Choose date"
+            , calendarLabel = "Choose on the calendar"
+            , cycleChartHint = "Curves show the last 30 days; values are for today."
+            , chooseBirthdayLabel = "Choose your birth date"
+            , birthdayHint = "Your date stays on this device."
+            , birthdayInputLabel = "Birth date"
+            , applyBirthdayLabel = "Use this date"
+            , cancelLabel = "Close"
+            , invalidBirthday = "Choose a valid date on or before today."
+            , calendarHint = "Or use the calendar below. Select the year to change it faster."
+            , retryLabel = "Try again"
+            , chooseSignLabel = "Choose your sign"
+            , readingDateLabel = "Reading for"
+            , birthdayRequired = "Choose your birth date to discover this reading."
             , bornOnPrefix = "People born on "
             , daysMiddle = " have about "
             , daysSuffix = " days of life."

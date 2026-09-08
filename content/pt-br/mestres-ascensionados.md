@@ -5,6 +5,11 @@ description: "Explore o mestre ascensionado e o raio espiritual associados à su
 date: 2026-06-14
 lastmod: 2026-06-14
 author: MeuAstral
+interactiveWidget: true
+initialTab: master
+widgetId: leitura
+widgetTitle: "Descubra seu mestre ascensionado"
+widgetDescription: "Escolha sua data de nascimento para explorar seu raio e suas qualidades simbólicas."
 ---
 
 O MeuAstral conecta cada data de nascimento a um dos sete raios simbólicos e a uma tradição de mestres ascensionados. Essa leitura é reflexiva, não determinista: oferece linguagem para qualidades, aprendizados e temas que podem ser úteis no dia.

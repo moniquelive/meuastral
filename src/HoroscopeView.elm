@@ -14,9 +14,9 @@ content onSelect statusMessage selectedHoroscope horoscopes =
                 [ statusCard message ]
 
             Nothing ->
-                [ horoscopeCard selectedHoroscope
-                , div [ class "flex justify-center flex-wrap py-4 gap-3 lg:gap-2 min-w-0" ]
+                [ div [ class "meuastral-signs" ]
                     (horoscopeSymbols onSelect selectedHoroscope.id horoscopes)
+                , horoscopeCard selectedHoroscope
                 ]
         )
 
@@ -37,6 +37,8 @@ horoscopeCard : Horoscope -> Html msg
 horoscopeCard horoscopeData =
     div
         [ class "card w-full max-w-96 bg-base-100 shadow-xl"
+        , HA.id "horoscope-reading"
+        , HA.tabindex -1
         , HA.attribute "aria-live" "polite"
         ]
         [ H.article [ class "card-body" ]
@@ -66,6 +68,7 @@ horoscopeSymbol onSelect selectedId horoscopeData =
             , HA.attribute "aria-hidden" "true"
             ]
             []
+        , H.span [ class "horoscope-symbol__name" ] [ H.text horoscopeData.name ]
         ]
 
 

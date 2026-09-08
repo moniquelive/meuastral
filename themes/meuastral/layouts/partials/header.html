@@ -23,6 +23,9 @@
       {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}"{{ if $isMasters }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
       {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}"{{ if $isMasters }} aria-current="page"{{ end }}>{{ $.Site.Language.Params.ascendedMastersLabel }}</a>{{ end }}
     </nav>
+    <div class="site-language">
+      {{ range .Translations }}<a href="{{ .RelPermalink }}" lang="{{ .Site.Language.Lang }}" hreflang="{{ .Site.Language.Params.hreflang | default .Site.Language.Params.locale }}" aria-label="{{ cond (eq .Site.Language.Lang "en") "Read this page in English" "Ler esta página em português" }}">{{ cond (eq .Site.Language.Lang "en") "EN" "PT" }}</a>{{ end }}
+    </div>
 
   </div>
 </header>

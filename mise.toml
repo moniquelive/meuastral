@@ -50,6 +50,10 @@ description = "Validate generated HTML, sitemap coverage, and local asset refere
 depends = ["build"]
 run = "node scripts/check-build.mjs"
 
+[tasks."check:sources"]
+description = "Check fresh horoscope providers and the production API in both languages"
+run = "node scripts/check-horoscope-sources.mjs"
+
 [tasks.clean]
 description = "Remove generated output and transient files"
 run = "rm -rf build .hugo_build.lock .build.lock .install.lock .elm-home"

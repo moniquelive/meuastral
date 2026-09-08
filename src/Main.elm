@@ -1,12 +1,13 @@
 -- vim: tw=0
 
 
-module Main exposing (main)
+module Main exposing (Model, Msg(..), WidgetTab(..), init, main, update, view)
 
 import AscentMasterView
 import AscentMasters as AM exposing (CosmicRay)
 import BiorhythmView
 import Browser exposing (element)
+import Browser.Dom
 import Date exposing (Date, Unit(..))
 import DatePicker exposing (Msg(..))
 import DatePickerProps exposing (pickerProps)
@@ -19,6 +20,7 @@ import Html as H exposing (Html, div)
 import Html.Attributes as HA exposing (class)
 import Html.Events as HE
 import Http
+import Json.Decode as Decode
 import Locale
 import LocalizedDate
 import Ports
@@ -40,12 +42,15 @@ type alias Model =
     , ascentMaster : Maybe CosmicRay
     , locale : Locale.Locale
     , activeTab : WidgetTab
+    , birthdayInput : String
+    , birthdayError : Bool
     , isDatePickerOpen : Bool
     }
 
 
 type HoroscopeStatus
     = LoadingHoroscope
+    | RetryingHoroscope
     | HoroscopeReady
     | HoroscopeUnavailable
 
@@ -109,6 +114,8 @@ init flags =
               , ascentMaster = Nothing
               , locale = locale
               , activeTab = initialTab
+              , birthdayInput = Maybe.withDefault "" flags.userBirthday
+              , birthdayError = False
               , isDatePickerOpen = False
               }
             , Cmd.batch
@@ -129,6 +136,8 @@ init flags =
               , ascentMaster = AM.for_birthday userDoB
               , locale = locale
               , activeTab = initialTab
+              , birthdayInput = Maybe.withDefault "" flags.userBirthday
+              , birthdayError = False
               , isDatePickerOpen = False
               }
             , Cmd.batch defaultCmds
@@ -160,6 +169,11 @@ type Msg
     | SelectHoroscopeId HoroscopeId
     | SelectWidgetTab WidgetTab
     | ToggleDatePicker
+    | EditBirthday String
+    | ApplyBirthday
+    | CloseDatePicker
+    | RetryHoroscope
+    | FocusFinished (Result Browser.Dom.Error ())
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -168,14 +182,26 @@ update msg model =
         GotToday today ->
             let
                 newModel =
-                    { model | today = Just today }
+                    { model
+                        | today = Just today
+                        , selectedDate =
+                            model.selectedDate
+                                |> Maybe.andThen
+                                    (\date ->
+                                        if DatePickerProps.canSelectBirthday (Just today) date then
+                                            Just date
+
+                                        else
+                                            Nothing
+                                    )
+                    }
 
                 effectiveDate =
                     selectedDateOrToday newModel
             in
             ( { newModel
-                | selectedHoroscopeId = horoscopeIdForDate effectiveDate
-                , ascentMaster = Maybe.andThen AM.for_birthday effectiveDate
+                | selectedHoroscopeId = preferredHoroscopeId model effectiveDate
+                , ascentMaster = Maybe.andThen AM.for_birthday newModel.selectedDate
               }
             , Cmd.none
             )
@@ -192,45 +218,21 @@ update msg model =
 
                                     _ ->
                                         False
-
-                            newBirthday =
-                                case data.selectedDate of
-                                    Just date ->
-                                        Just date
-
-                                    Nothing ->
-                                        model.today
-
-                            birthdayToSave =
-                                case datePickerMsg of
-                                    DateSelected _ _ ->
-                                        data.selectedDate
-
-                                    _ ->
-                                        Nothing
                         in
-                        ( { model
-                            | selectedHoroscopeId = horoscopeIdForDate newBirthday
-                            , datePickerData = data
-                            , selectedDate = newBirthday
-                            , ascentMaster = Maybe.andThen AM.for_birthday newBirthday
-                            , isDatePickerOpen =
-                                if pickedCalendarDay then
-                                    False
-
-                                else
-                                    model.isDatePickerOpen
-                          }
-                        , Cmd.batch
-                            [ Cmd.map DatePickerMsg cmd
-                            , case birthdayToSave of
+                        if pickedCalendarDay then
+                            case data.selectedDate of
                                 Just birthday ->
-                                    saveDoB birthday
+                                    if DatePickerProps.canSelectBirthday model.today birthday then
+                                        applyBirthday birthday { model | datePickerData = data }
+
+                                    else
+                                        ( model, Cmd.none )
 
                                 Nothing ->
-                                    Cmd.none
-                            ]
-                        )
+                                    ( model, Cmd.none )
+
+                        else
+                            ( { model | datePickerData = data }, Cmd.map DatePickerMsg cmd )
                    )
 
         GotHoroscope result ->
@@ -247,9 +249,13 @@ update msg model =
 
                             else
                                 HoroscopeReady
-                        , selectedHoroscopeId = horoscopeIdForDate (selectedDateOrToday model)
+                        , selectedHoroscopeId = preferredHoroscopeId model (selectedDateOrToday model)
                       }
-                    , Cmd.none
+                    , if model.horoscopeStatus == RetryingHoroscope && not (List.isEmpty horoscopes) then
+                        Browser.Dom.focus "horoscope-reading" |> Task.attempt FocusFinished
+
+                      else
+                        Cmd.none
                     )
 
         SelectHoroscopeId horoscopeId ->
@@ -259,7 +265,62 @@ update msg model =
             ( { model | activeTab = tab }, Cmd.none )
 
         ToggleDatePicker ->
-            ( { model | isDatePickerOpen = not model.isDatePickerOpen }, Cmd.none )
+            if model.isDatePickerOpen then
+                update CloseDatePicker model
+
+            else
+                ( { model | isDatePickerOpen = True, birthdayInput = Maybe.map Date.toIsoString model.selectedDate |> Maybe.withDefault "", birthdayError = False }
+                , Browser.Dom.focus "birthday-input" |> Task.attempt FocusFinished
+                )
+
+        EditBirthday value ->
+            ( { model | birthdayInput = value, birthdayError = False }, Cmd.none )
+
+        ApplyBirthday ->
+            case Date.fromIsoString model.birthdayInput of
+                Ok birthday ->
+                    if DatePickerProps.canSelectBirthday model.today birthday then
+                        applyBirthday birthday model
+
+                    else
+                        ( { model | birthdayError = True }, Cmd.none )
+
+                Err _ ->
+                    ( { model | birthdayError = True }, Cmd.none )
+
+        CloseDatePicker ->
+            ( { model | isDatePickerOpen = False }, Browser.Dom.focus "birthday-toggle" |> Task.attempt FocusFinished )
+
+        RetryHoroscope ->
+            ( { model | horoscopeStatus = RetryingHoroscope }, HoroscopeApi.request model.locale GotHoroscope )
+
+        FocusFinished _ ->
+            ( model, Cmd.none )
+
+
+applyBirthday : Date -> Model -> ( Model, Cmd Msg )
+applyBirthday birthday model =
+    ( { model
+        | selectedDate = Just birthday
+        , selectedHoroscopeId = horoscopeIdForDate (Just birthday)
+        , ascentMaster = AM.for_birthday birthday
+        , datePickerData = DatePicker.initFromDate "my-datepicker-id" birthday
+        , birthdayInput = Date.toIsoString birthday
+        , birthdayError = False
+        , isDatePickerOpen = False
+      }
+    , Cmd.batch [ saveDoB birthday, Browser.Dom.focus "birthday-toggle" |> Task.attempt FocusFinished ]
+    )
+
+
+preferredHoroscopeId : Model -> Maybe Date -> Maybe HoroscopeId
+preferredHoroscopeId model date =
+    case model.selectedHoroscopeId of
+        Just sign ->
+            Just sign
+
+        Nothing ->
+            horoscopeIdForDate date
 
 
 selectedDateOrToday : Model -> Maybe Date
@@ -335,32 +396,95 @@ dobControl model =
     H.section [ class "meuastral-date-control min-w-0" ]
         [ H.button
             [ class "meuastral-date-toggle"
+            , HA.id "birthday-toggle"
             , HA.type_ "button"
             , HA.attribute "aria-expanded" (boolAttribute model.isDatePickerOpen)
             , HA.attribute "aria-controls" "meuastral-date-picker"
             , HE.onClick ToggleDatePicker
             ]
             [ H.span [ class "meuastral-date-toggle__label" ] [ H.text localizedCopy.birthdayTitle ]
-            , H.span [ class "meuastral-date-toggle__value" ] [ formatDob model ]
-            , H.span [ class "meuastral-date-toggle__meta" ]
-                [ H.text localizedCopy.bornOnPrefix
-                , H.span [ class "font-bold" ] [ formatDob model ]
-                , H.text localizedCopy.daysMiddle
-                , H.span [ class "font-bold" ] [ daysSince model ]
-                , H.text localizedCopy.daysSuffix
+            , H.span [ class "meuastral-date-toggle__value" ]
+                [ if model.selectedDate == Nothing then
+                    H.text localizedCopy.chooseBirthdayLabel
+
+                  else
+                    formatDob model
                 ]
-            , H.span [ class "meuastral-date-toggle__action" ] [ H.text localizedCopy.changeBirthdayLabel ]
+            , H.span [ class "meuastral-date-toggle__meta" ]
+                (if model.selectedDate == Nothing then
+                    [ H.text localizedCopy.birthdayHint ]
+
+                 else
+                    [ daysSince model, H.text localizedCopy.daysSuffix ]
+                )
+            , H.span [ class "meuastral-date-toggle__action" ]
+                [ H.text
+                    (if model.isDatePickerOpen then
+                        localizedCopy.cancelLabel
+
+                     else if model.selectedDate == Nothing then
+                        localizedCopy.chooseDateAction
+
+                     else
+                        localizedCopy.changeBirthdayLabel
+                    )
+                ]
             ]
-        , if model.isDatePickerOpen then
-            div [ class "meuastral-date-picker", HA.id "meuastral-date-picker" ]
-                [ DatePicker.view
-                    model.datePickerData
-                    (pickerProps model.locale model.today)
-                    |> H.map DatePickerMsg
+        , div
+            [ HA.id "meuastral-date-picker", HA.hidden (not model.isDatePickerOpen) ]
+            (if model.isDatePickerOpen then
+                [ H.form
+                    [ class "meuastral-date-form"
+                    , HE.onSubmit ApplyBirthday
+                    , HE.on "keydown"
+                        (Decode.field "key" Decode.string
+                            |> Decode.andThen
+                                (\key ->
+                                    if key == "Escape" then
+                                        Decode.succeed CloseDatePicker
+
+                                    else
+                                        Decode.fail "Not Escape"
+                                )
+                        )
+                    ]
+                    [ H.label [ HA.for "birthday-input" ] [ H.text localizedCopy.birthdayInputLabel ]
+                    , H.input
+                        [ HA.id "birthday-input"
+                        , HA.type_ "date"
+                        , HA.required True
+                        , HA.max (Maybe.map Date.toIsoString model.today |> Maybe.withDefault "")
+                        , HA.value model.birthdayInput
+                        , HE.onInput EditBirthday
+                        , HA.attribute "aria-describedby" "birthday-hint"
+                        , HA.attribute "aria-invalid" (boolAttribute model.birthdayError)
+                        ]
+                        []
+                    , H.p [ HA.id "birthday-hint" ]
+                        [ H.text
+                            (if model.birthdayError then
+                                localizedCopy.invalidBirthday
+
+                             else
+                                localizedCopy.birthdayHint
+                            )
+                        ]
+                    , div [ class "meuastral-date-form__actions" ]
+                        [ H.button [ HA.type_ "submit", class "meuastral-action" ] [ H.text localizedCopy.applyBirthdayLabel ]
+                        , H.button [ HA.type_ "button", class "meuastral-action meuastral-action--secondary", HE.onClick CloseDatePicker ] [ H.text localizedCopy.cancelLabel ]
+                        ]
+                    ]
+                , H.details [ class "meuastral-calendar" ]
+                    [ H.summary [] [ H.text localizedCopy.calendarLabel ]
+                    , H.p [ class "meuastral-calendar-hint" ] [ H.text localizedCopy.calendarHint ]
+                    , div [ class "meuastral-date-picker" ]
+                        [ DatePicker.view model.datePickerData (pickerProps model.locale model.today) |> H.map DatePickerMsg ]
+                    ]
                 ]
 
-          else
-            H.text ""
+             else
+                []
+            )
         ]
 
 
@@ -376,7 +500,7 @@ tabNavigation model =
         , HA.attribute "aria-label" localizedCopy.readingSectionsLabel
         ]
         [ tabButton model.activeTab HoroscopeTab localizedCopy.horoscopeTitle
-        , tabButton model.activeTab AscentMasterTab localizedCopy.ascentMasterTitle
+        , tabButton model.activeTab AscentMasterTab localizedCopy.masterTabLabel
         , tabButton model.activeTab BiorhythmTab localizedCopy.biorhythmTitle
         ]
 
@@ -441,20 +565,50 @@ horoscopePanel model =
         localizedCopy =
             Locale.copy model.locale
     in
-    HoroscopeView.content SelectHoroscopeId
-        (horoscopeStatusMessage localizedCopy model.horoscopeStatus)
-        (selectedHoroscope model)
-        model.horoscopes
+    div [ class "meuastral-horoscope" ]
+        [ H.p [ class "meuastral-reading-date" ]
+            [ H.text (localizedCopy.readingDateLabel ++ " " ++ (Maybe.map (LocalizedDate.numeric model.locale) model.today |> Maybe.withDefault "…")) ]
+        , if model.horoscopeStatus == HoroscopeReady then
+            H.p [ class "meuastral-sign-hint" ] [ H.text localizedCopy.chooseSignLabel ]
+
+          else
+            H.text ""
+        , HoroscopeView.content SelectHoroscopeId
+            (horoscopeStatusMessage localizedCopy model.horoscopeStatus)
+            (selectedHoroscope model)
+            model.horoscopes
+        , if model.horoscopeStatus == HoroscopeUnavailable || model.horoscopeStatus == RetryingHoroscope then
+            H.button [ HA.type_ "button", class "meuastral-action", HE.onClick RetryHoroscope, HA.disabled (model.horoscopeStatus == RetryingHoroscope) ] [ H.text localizedCopy.retryLabel ]
+
+          else
+            H.text ""
+        ]
 
 
 ascentMasterPanel : Model -> Html Msg
 ascentMasterPanel model =
-    AscentMasterView.content model.locale model.ascentMaster
+    if model.selectedDate == Nothing then
+        birthdayPrompt model
+
+    else
+        AscentMasterView.content model.locale model.ascentMaster
 
 
 biorhythmPanel : Model -> Html Msg
 biorhythmPanel model =
-    BiorhythmView.content model.locale (ageInDays model)
+    if model.selectedDate == Nothing then
+        birthdayPrompt model
+
+    else
+        BiorhythmView.content model.locale (ageInDays model)
+
+
+birthdayPrompt : Model -> Html Msg
+birthdayPrompt model =
+    div [ class "meuastral-empty" ]
+        [ H.p [] [ H.text (Locale.copy model.locale).birthdayRequired ]
+        , H.button [ HA.type_ "button", class "meuastral-action", HE.onClick ToggleDatePicker ] [ H.text (Locale.copy model.locale).chooseBirthdayLabel ]
+        ]
 
 
 boolAttribute : Bool -> String
@@ -488,6 +642,9 @@ horoscopeStatusMessage : Locale.Copy -> HoroscopeStatus -> Maybe String
 horoscopeStatusMessage localizedCopy status =
     case status of
         LoadingHoroscope ->
+            Just localizedCopy.horoscopeLoading
+
+        RetryingHoroscope ->
             Just localizedCopy.horoscopeLoading
 
         HoroscopeReady ->

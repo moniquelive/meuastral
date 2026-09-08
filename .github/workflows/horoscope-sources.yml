@@ -1,0 +1,44 @@
+name: Daily horoscope sources
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+      timezone: America/Sao_Paulo
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: horoscope-sources
+  cancel-in-progress: false
+
+jobs:
+  source:
+    name: Check ${{ matrix.locale }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: [pt-BR, en-US]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Read the pinned Node version
+        id: node
+        run: |
+          node_version=$(awk -F '"' '/^node = / { print $2; exit }' mise.toml)
+          test -n "$node_version"
+          printf 'version=%s\n' "$node_version" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ steps.node.outputs.version }}
+          package-manager-cache: false
+      - name: Check fresh provider and production API responses
+        env:
+          HOROSCOPE_LOCALE: ${{ matrix.locale }}
+          API_NINJAS_KEY: ${{ matrix.locale == 'en-US' && secrets.API_NINJAS_KEY || '' }}
+          TZ: America/Sao_Paulo
+        run: node scripts/check-horoscope-sources.mjs "$HOROSCOPE_LOCALE"

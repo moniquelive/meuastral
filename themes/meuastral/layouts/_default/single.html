@@ -4,6 +4,7 @@
 {{- $byLabel := cond $isEnglish "By" "Por" -}}
 {{- $updatedLabel := cond $isEnglish "Updated" "Atualizado" -}}
 {{- $relatedHeading := cond $isEnglish "Related reading" "Leituras relacionadas" -}}
+{{- $isMasterWidget := eq .Params.initialTab "master" -}}
 {{- $isGuide := or (eq .Section "guides") (eq .Section "guias") -}}
 <main class="content-page">
   <article class="content-card">
@@ -16,7 +17,7 @@
     </p>
     {{ if .Params.interactiveWidget }}
     <section class="content-tool" id="{{ .Params.widgetId | default "calculadora" }}" aria-labelledby="content-tool-title">
-      <p class="content-eyebrow">{{ cond $isEnglish "Calculate now" "Calcule agora" }}</p>
+      <p class="content-eyebrow">{{ if $isMasterWidget }}{{ cond $isEnglish "Your symbolic reading" "Sua leitura simbólica" }}{{ else }}{{ cond $isEnglish "Calculate now" "Calcule agora" }}{{ end }}</p>
       <h2 id="content-tool-title">{{ .Params.widgetTitle }}</h2>
       <p>{{ .Params.widgetDescription }}</p>
       {{ partial "interactive-widget.html" (dict "page" . "initialTab" (.Params.initialTab | default "biorhythm")) }}
@@ -27,12 +28,22 @@
     </div>
     {{ if .Params.interactiveWidget }}
     <nav class="resource-links content-topic-links" aria-label="{{ cond $isEnglish "Related MeuAstral tools and guides" "Ferramentas e guias relacionados do MeuAstral" }}">
+      {{ if $isMasterWidget }}
+      {{ with .Site.GetPage "/guides/ascended-masters-and-rays" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/guias/mestres-ascensionados-e-raios" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ else }}
       {{ with .Site.GetPage "/guides/how-to-read-biorhythm-cycles" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/guias/como-interpretar-biorritmo" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ end }}
       {{ with .Site.GetPage "/horoscope" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/horoscopo" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ if $isMasterWidget }}
+      {{ with .Site.GetPage "/biorhythm-calculator" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ with .Site.GetPage "/biorritmo" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ else }}
       {{ with .Site.GetPage "/ascended-masters" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
       {{ with .Site.GetPage "/mestres-ascensionados" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+      {{ end }}
     </nav>
     {{ end }}
     {{ partial "ad-slot.html" (dict "page" . "placement" "contentEnd") }}

@@ -5,6 +5,11 @@ description: "Explore the ascended master and spiritual ray associated with your
 date: 2026-06-14
 lastmod: 2026-06-14
 author: MeuAstral
+interactiveWidget: true
+initialTab: master
+widgetId: leitura
+widgetTitle: "Discover your ascended master"
+widgetDescription: "Choose your birth date to explore your ray and its symbolic qualities."
 ---
 
 MeuAstral connects each birth date with one of seven symbolic rays and an ascended master tradition. This reading is reflective, not deterministic: it offers language for qualities, lessons, and themes that may feel useful for the day.
@@ -27,4 +32,4 @@ You can accept what resonates, leave aside what does not, and return later with 
 
 Use it as a prompt for reflection together with the daily horoscope and biorhythm cycles. Notice what resonates, what does not, and what helps you make a more conscious choice.
 
-[Open the interactive reading](/en/)
+[Open the interactive reading](/en/#consulta-interativa)
