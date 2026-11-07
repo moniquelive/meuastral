@@ -1,44 +1,50 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { checkSource, validateResponse } from '../../scripts/check-horoscope-sources.mjs';
-import { ZODIAC_SIGNS } from '../../worker/horoscope.mjs';
+import { providerForLocale, ZODIAC_SIGNS } from '../../worker/horoscope.mjs';
 
 const signs = () => ZODIAC_SIGNS.map(id => ({ id, name: id, resume: 'A complete reading.' }));
-const response = () => Response.json({ signs_list: signs() });
+const now = () => new Date('2026-11-08T01:30:00Z');
+const response = (locale, date = '2026-11-07', provider = providerForLocale(locale)) => Response.json(
+  { signs_list: signs() },
+  { headers: { 'x-horoscope-date': date, 'x-horoscope-provider': provider } },
+);
 
 describe('Daily source checks', () => {
-  it('rejects a missing English key before making requests', async () => {
-    await assert.rejects(checkSource('en-US', {
-      env: {},
-      providerRequest: () => assert.fail('must not make an unauthenticated request'),
-    }), /API_NINJAS_KEY/);
+  it('rejects unsupported locales before making requests', async () => {
+    await assert.rejects(checkSource('fr-FR', {
+      publicRequest: () => assert.fail('must not request an unsupported locale'),
+    }), /Use pt-BR or en-US/);
   });
 
-  it('checks the fresh adapter and public API for both supported locales', async () => {
+  it('checks one shared production response per locale without credentials or provider calls', async () => {
     for (const locale of ['en-US', 'pt-BR']) {
       const calls = [];
-      const env = { API_NINJAS_KEY: 'test-key' };
       await checkSource(locale, {
-        env,
-        providerRequest: async (request, actualEnv) => {
-          assert.equal(actualEnv, env);
-          calls.push(request.url);
-          return response();
-        },
+        now,
         publicRequest: async (url, options) => {
           assert.ok(options.signal);
           assert.equal(options.headers, undefined);
           calls.push(url);
-          return response();
+          return response(locale);
         },
       });
-      assert.deepEqual(calls, Array(2).fill(`https://meuastral.com/api/horoscope?locale=${locale}`));
+      assert.deepEqual(calls, [`https://meuastral.com/api/horoscope?locale=${locale}`]);
     }
   });
 
   it('rejects HTTP errors and HTML error pages', async () => {
     await assert.rejects(validateResponse(new Response('', { status: 503 }), 'provider'), /HTTP 503/);
     await assert.rejects(validateResponse(new Response('<html>Error</html>'), 'provider'), /invalid JSON/);
+  });
+
+  it('fails on a stale snapshot or the retired provider even when all readings are present', async () => {
+    for (const result of [response('en-US', '2026-11-06'), response('en-US', '2026-11-07', 'api-ninjas')]) {
+      await assert.rejects(checkSource('en-US', {
+        now,
+        publicRequest: async () => result,
+      }), /expected (a shared snapshot|provider)/);
+    }
   });
 
   it('rejects incomplete, duplicate, and empty readings despite HTTP 200', async () => {
@@ -52,10 +58,8 @@ describe('Daily source checks', () => {
     }
   });
 
-  it('fails when production is broken even if the source is healthy', async () => {
+  it('fails when production is unavailable', async () => {
     await assert.rejects(checkSource('pt-BR', {
-      env: {},
-      providerRequest: async () => response(),
       publicRequest: async () => new Response('', { status: 502 }),
     }), /production API: HTTP 502/);
   });

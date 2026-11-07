@@ -1,4 +1,5 @@
 import { handleHoroscopeRequest } from "./horoscope.mjs";
+export { DailyHoroscopeCache } from "./horoscope-cache.mjs";
 import {
   cleanLegacyCommentUrl,
   dailyHoroscopeMarkup,
@@ -80,7 +81,7 @@ async function renderDailyHoroscopePage(
   const headers = new Headers(staticResponse.headers);
   headers.delete("content-length");
   headers.delete("etag");
-  headers.set("cache-control", "public, max-age=300, s-maxage=21600");
+  headers.set("cache-control", horoscopeResponse.headers.get("cache-control"));
 
   return new Response(html, {
     headers,

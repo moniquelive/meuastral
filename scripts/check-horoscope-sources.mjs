@@ -2,16 +2,22 @@ import { appendFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import {
   dateKeyInTimeZone,
-  handleHoroscopeRequest,
   providerForLocale,
   ZODIAC_SIGNS,
-} from '../worker/horoscope.mjs';
+} from '../worker/horoscope-config.mjs';
 
 const LOCALES = ['pt-BR', 'en-US'];
 
-export async function validateResponse(response, label) {
+export async function validateResponse(response, label, { date, provider } = {}) {
   if (!response.ok) {
     throw new Error(`${label}: HTTP ${response.status}`);
+  }
+
+  if (date && response.headers.get('x-horoscope-date') !== date) {
+    throw new Error(`${label}: expected a shared snapshot for ${date}`);
+  }
+  if (provider && response.headers.get('x-horoscope-provider') !== provider) {
+    throw new Error(`${label}: expected provider ${provider}`);
   }
 
   let payload;
@@ -39,30 +45,23 @@ export async function validateResponse(response, label) {
 }
 
 export async function checkSource(locale, {
-  env = process.env,
-  providerRequest = handleHoroscopeRequest,
   publicRequest = fetch,
+  now = () => new Date(),
 } = {}) {
   if (!LOCALES.includes(locale)) {
     throw new Error('Use pt-BR or en-US');
   }
-  if (locale === 'en-US' && !env.API_NINJAS_KEY?.trim()) {
-    throw new Error('en-US: configure the API_NINJAS_KEY GitHub Actions secret');
-  }
-
   const provider = providerForLocale(locale);
   const url = `https://meuastral.com/api/horoscope?locale=${locale}`;
-  // Node has no Cloudflare Cache API, so this executes the real provider adapter
-  // without reading or warming the site's cache. The key stays server-side.
+  // Use the same shared daily snapshot as visitors. An uncached adapter call
+  // here would defeat the provider request budget on every monitoring run.
+  const response = await publicRequest(url, { signal: AbortSignal.timeout(20_000) });
   await validateResponse(
-    await providerRequest(new Request(url), env, {}),
-    `${locale} / ${provider}`,
-  );
-  await validateResponse(
-    await publicRequest(url, { signal: AbortSignal.timeout(20_000) }),
+    response,
     `${locale} / production API`,
+    { date: dateKeyInTimeZone(now()), provider },
   );
-  return `${locale}: ${provider} and production API each returned 12 complete signs`;
+  return `${locale}: production API returned today's shared ${provider} snapshot with 12 complete signs`;
 }
 
 async function main() {

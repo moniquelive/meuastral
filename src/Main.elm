@@ -573,6 +573,15 @@ horoscopePanel model =
 
           else
             H.text ""
+        , if model.horoscopeStatus == HoroscopeReady && Locale.toQueryParam model.locale == "en-US" then
+            H.p [ class "meuastral-horoscope__attribution" ]
+                [ H.a
+                    [ HA.href "https://zodiactimeline.com" ]
+                    [ H.text "Horoscopes by Zodiac Timeline" ]
+                ]
+
+          else
+            H.text ""
         , HoroscopeView.content SelectHoroscopeId
             (horoscopeStatusMessage localizedCopy model.horoscopeStatus)
             (selectedHoroscope model)

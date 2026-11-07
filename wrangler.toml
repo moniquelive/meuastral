@@ -3,6 +3,14 @@ main = "worker/index.js"
 compatibility_date = "2025-07-31"
 workers_dev = true
 
+[[durable_objects.bindings]]
+name = "HOROSCOPE_CACHE"
+class_name = "DailyHoroscopeCache"
+
+[[migrations]]
+tag = "v1-horoscope-cache"
+new_sqlite_classes = ["DailyHoroscopeCache"]
+
 [assets]
 directory = "build"
 binding = "STATIC_CONTENT"

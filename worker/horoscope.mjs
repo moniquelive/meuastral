@@ -1,21 +1,33 @@
+import { XMLParser, XMLValidator } from "fast-xml-parser";
+import {
+  dateKeyInTimeZone,
+  providerForLocale,
+  resolveLocale,
+  resolveLocaleFromRequest,
+  ZODIAC_SIGNS,
+} from "./horoscope-config.mjs";
+
+export {
+  dateKeyInTimeZone,
+  providerForLocale,
+  resolveLocale,
+  resolveLocaleFromAcceptLanguage,
+  resolveLocaleFromRequest,
+  ZODIAC_SIGNS,
+} from "./horoscope-config.mjs";
+
 const TERRA_URL =
   "https://www.terra.com.br/feeder/horoscopo/card-sign-pt?type=json&country=br&jsonp=false";
-const API_NINJAS_URL = "https://api.api-ninjas.com/v1/horoscope";
-
-export const ZODIAC_SIGNS = [
-  "aries",
-  "taurus",
-  "gemini",
-  "cancer",
-  "leo",
-  "virgo",
-  "libra",
-  "scorpio",
-  "sagittarius",
-  "capricorn",
-  "aquarius",
-  "pisces",
-];
+const ZODIAC_TIMELINE_URL = "https://zodiactimeline.com/feed.xml";
+const SITE_TIME_ZONE = "America/Sao_Paulo";
+const XML_MAX_LENGTH = 512_000;
+const XML_PARSER = new XMLParser({
+  ignoreAttributes: true,
+  parseTagValue: false,
+  processEntities: true,
+  removeNSPrefix: false,
+  trimValues: true,
+});
 
 const SIGN_NAMES = {
   "pt-BR": {
@@ -47,93 +59,6 @@ const SIGN_NAMES = {
     pisces: "Pisces",
   },
 };
-
-const JSON_HEADERS = {
-  "content-type": "application/json; charset=utf-8",
-  "cache-control": "public, max-age=300, s-maxage=21600",
-};
-
-export function resolveLocale(locale) {
-  return supportedLocaleForTag(locale) ?? "pt-BR";
-}
-
-function supportedLocaleForTag(locale) {
-  if (!locale) {
-    return null;
-  }
-
-  const normalized = locale.trim().toLowerCase();
-
-  if (normalized === "pt" || normalized.startsWith("pt-")) {
-    return "pt-BR";
-  }
-
-  if (normalized === "en" || normalized.startsWith("en-")) {
-    return "en-US";
-  }
-
-  return null;
-}
-
-export function resolveLocaleFromAcceptLanguage(header) {
-  if (!header) {
-    return "pt-BR";
-  }
-
-  const candidates = header
-    .split(",")
-    .map((entry, index) => {
-      const [tag, ...params] = entry.trim().split(";");
-      const qParam = params.find((param) => param.trim().startsWith("q="));
-      const q = qParam ? Number(qParam.trim().slice(2)) : 1;
-
-      return {
-        index,
-        q: Number.isFinite(q) ? q : 0,
-        tag: tag.trim(),
-      };
-    })
-    .filter((candidate) => candidate.tag)
-    .filter((candidate) => candidate.q > 0)
-    .sort((a, b) => b.q - a.q || a.index - b.index);
-
-  for (const candidate of candidates) {
-    const locale = supportedLocaleForTag(candidate.tag);
-
-    if (locale === "pt-BR" || locale === "en-US") {
-      return locale;
-    }
-  }
-
-  return "pt-BR";
-}
-
-export function resolveLocaleFromRequest(request) {
-  const url = new URL(request.url);
-  const explicitLocale = url.searchParams.get("locale");
-
-  if (explicitLocale) {
-    return resolveLocale(explicitLocale);
-  }
-
-  return resolveLocaleFromAcceptLanguage(request.headers.get("accept-language"));
-}
-
-export function providerForLocale(locale) {
-  return resolveLocale(locale) === "en-US" ? "api-ninjas" : "terra";
-}
-
-export function dateKeyInTimeZone(date, timeZone = "America/Sao_Paulo") {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-
-  return `${values.year}-${values.month}-${values.day}`;
-}
 
 export function normalizeTerraResponse(payload) {
   let signs = [];
@@ -173,31 +98,138 @@ export function normalizeTerraResponse(payload) {
   };
 }
 
-export function normalizeApiNinjasResponses(responses) {
-  const byId = new Map(
-    responses
-      .map((response) => {
-        const id = normalizeSignId(response?.zodiac ?? response?.sign);
+export function normalizeZodiacTimelineResponse(xml, dateKey) {
+  if (typeof xml !== "string" || !xml.trim() || xml.length > XML_MAX_LENGTH) {
+    throw new Error("Invalid Zodiac Timeline RSS feed size");
+  }
 
-        if (!id) {
-          return null;
-        }
+  if (!isDateKey(dateKey)) {
+    throw new Error("Invalid horoscope date");
+  }
 
-        return [
-          id,
-          {
-            id,
-            name: SIGN_NAMES["en-US"][id],
-            resume: toStringOrFallback(response?.horoscope, ""),
-          },
-        ];
-      })
-      .filter(Boolean),
-  );
+  // This feed needs only XML's predefined and numeric references. Reject DTDs
+  // before parsing so upstream content cannot introduce custom entities.
+  if (/<!\s*DOCTYPE\b/i.test(xml)) {
+    throw new Error("Zodiac Timeline RSS must not define XML entities");
+  }
 
-  return {
+  if (XMLValidator.validate(xml) !== true) {
+    throw new Error("Malformed Zodiac Timeline RSS XML");
+  }
+
+  const feed = XML_PARSER.parse(xml);
+  const items = feed?.rss?.channel?.item;
+
+  if (!Array.isArray(items)) {
+    throw new Error("Zodiac Timeline RSS is missing its items");
+  }
+
+  const todayItems = items.filter((item) => item?.["zt:date"] === dateKey);
+
+  if (todayItems.length !== ZODIAC_SIGNS.length) {
+    throw new Error("Zodiac Timeline RSS is missing today's readings");
+  }
+
+  const byId = new Map();
+
+  for (const item of todayItems) {
+    const id = normalizeSignId(item?.["zt:sign"]);
+    const resume = item?.description;
+
+    if (!id || byId.has(id)) {
+      throw new Error("Zodiac Timeline RSS has an unknown or duplicate sign");
+    }
+
+    if (typeof resume !== "string" || !resume.trim()) {
+      throw new Error("Zodiac Timeline RSS has an empty reading");
+    }
+
+    byId.set(id, {
+      id,
+      name: SIGN_NAMES["en-US"][id],
+      resume: resume.trim(),
+    });
+  }
+
+  const payload = {
     signs_list: ZODIAC_SIGNS.map((id) => byId.get(id)).filter(Boolean),
   };
+
+  if (!isCompleteHoroscopePayload(payload)) {
+    throw new Error("Zodiac Timeline RSS is missing a zodiac sign");
+  }
+
+  return payload;
+}
+
+export async function fetchHoroscopePayload(locale, date = new Date()) {
+  const normalizedLocale = resolveLocale(locale);
+  const provider = providerForLocale(normalizedLocale);
+  const response =
+    provider === "zodiac-timeline"
+      ? await fetch(ZODIAC_TIMELINE_URL, { signal: AbortSignal.timeout(15_000) })
+      : await fetch(TERRA_URL, { signal: AbortSignal.timeout(15_000) });
+
+  if (!response.ok) {
+    throw new Error(`${provider} request failed with ${response.status}`);
+  }
+
+  const payload =
+    provider === "zodiac-timeline"
+      ? normalizeZodiacTimelineResponse(
+          await response.text(),
+          dateKeyInTimeZone(date),
+        )
+      : normalizeTerraResponse(await response.json());
+
+  if (!isCompleteHoroscopePayload(payload)) {
+    throw new Error(`${provider} returned an incomplete horoscope`);
+  }
+
+  return payload;
+}
+
+export function isCompleteHoroscopePayload(payload) {
+  if (
+    !Array.isArray(payload?.signs_list) ||
+    payload.signs_list.length !== ZODIAC_SIGNS.length
+  ) {
+    return false;
+  }
+
+  const seen = new Set();
+
+  return payload.signs_list.every((sign) => {
+    if (
+      !ZODIAC_SIGNS.includes(sign?.id) ||
+      seen.has(sign.id) ||
+      typeof sign.name !== "string" ||
+      !sign.name.trim() ||
+      typeof sign.resume !== "string" ||
+      !sign.resume.trim()
+    ) {
+      return false;
+    }
+
+    seen.add(sign.id);
+    return true;
+  });
+}
+
+export function horoscopeResponse(payload, dateKey, locale, nowDate = new Date()) {
+  const normalizedLocale = resolveLocale(locale);
+
+  if (!isDateKey(dateKey) || !isCompleteHoroscopePayload(payload)) {
+    throw new Error("Cannot cache an incomplete horoscope response");
+  }
+
+  return jsonResponse(payload, {
+    headers: {
+      "cache-control": horoscopeCacheControl(dateKey, nowDate),
+      "x-horoscope-date": dateKey,
+      "x-horoscope-provider": providerForLocale(normalizedLocale),
+    },
+  });
 }
 
 export async function handleHoroscopeRequest(request, env, ctx) {
@@ -215,118 +247,172 @@ export async function handleHoroscopeRequest(request, env, ctx) {
   }
 
   const locale = resolveLocaleFromRequest(request);
-  const cacheKey = horoscopeCacheKey(request, locale);
   const cache = getRuntimeCache();
-  const cachedResponse = cache ? await cache.match(cacheKey) : null;
 
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  if (providerForLocale(locale) === "api-ninjas" && !env.API_NINJAS_KEY) {
+  if (!env?.HOROSCOPE_CACHE) {
     return jsonResponse(
-      { error: "api_ninjas_key_missing" },
-      {
-        status: 503,
-        headers: { "cache-control": "no-store" },
-      },
+      { error: "horoscope_cache_missing" },
+      { status: 503, headers: { "cache-control": "no-store" } },
     );
   }
 
-  let payload;
+  let requestDate = new Date();
 
-  try {
-    payload =
-      providerForLocale(locale) === "api-ninjas"
-        ? await fetchApiNinjasHoroscope(env)
-        : await fetchTerraHoroscope();
-  } catch (error) {
-    console.error("Horoscope provider request failed", error);
-    return jsonResponse(
-      { error: "horoscope_provider_unavailable" },
-      {
-        status: 502,
-        headers: { "cache-control": "no-store" },
-      },
-    );
-  }
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const dateKey = dateKeyInTimeZone(requestDate);
+    const cacheKey = horoscopeCacheKey(request, locale, dateKey);
+    const cachedResponse = cache ? await cache.match(cacheKey) : null;
 
-  if (!isCompleteHoroscopePayload(payload)) {
-    console.error("Horoscope provider returned an incomplete payload");
-    return jsonResponse(
-      { error: "horoscope_provider_unavailable" },
-      {
-        status: 502,
-        headers: { "cache-control": "no-store" },
-      },
-    );
-  }
+    if (cachedResponse && hasExpectedHoroscopeHeaders(cachedResponse, locale, dateKey)) {
+      const servedAt = new Date();
 
-  const response = jsonResponse(payload);
-
-  if (cache) {
-    const cachePut = cache.put(cacheKey, response.clone());
-
-    if (ctx?.waitUntil) {
-      ctx.waitUntil(cachePut);
-    } else {
-      await cachePut;
-    }
-  }
-
-  return response;
-}
-
-async function fetchTerraHoroscope() {
-  const response = await fetch(TERRA_URL, { signal: AbortSignal.timeout(15_000) });
-
-  if (!response.ok) {
-    throw new Error(`Terra request failed with ${response.status}`);
-  }
-
-  return normalizeTerraResponse(await response.json());
-}
-
-async function fetchApiNinjasHoroscope(env) {
-  const responses = await Promise.all(
-    ZODIAC_SIGNS.map(async (sign) => {
-      const url = new URL(API_NINJAS_URL);
-      url.searchParams.set("zodiac", sign);
-
-      const response = await fetch(url.toString(), {
-        headers: { "X-Api-Key": env.API_NINJAS_KEY },
-        signal: AbortSignal.timeout(15_000),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Ninjas ${sign} failed with ${response.status}`);
+      if (dateKeyInTimeZone(servedAt) === dateKey) {
+        return responseForMethod(
+          responseWithCurrentCacheControl(cachedResponse, dateKey, servedAt),
+          request.method,
+        );
       }
 
-      return response.json();
-    }),
-  );
+      requestDate = servedAt;
+      continue;
+    }
 
-  return normalizeApiNinjasResponses(responses);
+    let response;
+
+    try {
+      const id = env.HOROSCOPE_CACHE.idFromName(locale);
+      const stub = env.HOROSCOPE_CACHE.get(id);
+      response = await stub.fetch(
+        new Request(`https://horoscope-cache/${locale}`, { method: "GET" }),
+      );
+    } catch (error) {
+      console.error("Horoscope cache request failed", error);
+      return jsonResponse(
+        { error: "horoscope_cache_unavailable" },
+        { status: 503, headers: { "cache-control": "no-store" } },
+      );
+    }
+
+    if (!response.ok) {
+      return responseForMethod(response, request.method);
+    }
+
+    const servedAt = new Date();
+    const responseDateKey = response.headers.get("x-horoscope-date");
+
+    if (
+      !isDateKey(responseDateKey) ||
+      response.headers.get("x-horoscope-provider") !== providerForLocale(locale)
+    ) {
+      return jsonResponse(
+        { error: "horoscope_cache_unavailable" },
+        { status: 502, headers: { "cache-control": "no-store" } },
+      );
+    }
+
+    const servedDateKey = dateKeyInTimeZone(servedAt);
+
+    if (responseDateKey !== servedDateKey) {
+      requestDate = servedAt;
+      continue;
+    }
+
+    const completedCacheKey = horoscopeCacheKey(request, locale, servedDateKey);
+    const freshResponse = responseWithCurrentCacheControl(
+      response,
+      responseDateKey,
+      servedAt,
+    );
+
+    if (cache) {
+      try {
+        const cachePut = cache.put(completedCacheKey, freshResponse.clone());
+
+        if (ctx?.waitUntil) {
+          ctx.waitUntil(cachePut);
+        } else {
+          await cachePut;
+        }
+      } catch (error) {
+        console.error("Edge horoscope cache write failed", error);
+      }
+    }
+
+    return responseForMethod(freshResponse, request.method);
+  }
+
+  return jsonResponse(
+    { error: "horoscope_cache_unavailable" },
+    { status: 503, headers: { "cache-control": "no-store" } },
+  );
 }
 
-function isCompleteHoroscopePayload(payload) {
-  return (
-    Array.isArray(payload?.signs_list) &&
-    payload.signs_list.length === ZODIAC_SIGNS.length &&
-    payload.signs_list.every((sign) => {
-      return sign.id && sign.name && sign.resume;
-    })
-  );
-}
-
-function horoscopeCacheKey(request, locale) {
+function horoscopeCacheKey(request, locale, dateKey) {
   const sourceUrl = new URL(request.url);
-  const cacheUrl = new URL("/api/horoscope-cache", sourceUrl.origin);
+  const cacheUrl = new URL("/api/horoscope-cache/v2", sourceUrl.origin);
 
   cacheUrl.searchParams.set("locale", locale);
-  cacheUrl.searchParams.set("date", dateKeyInTimeZone(new Date()));
+  cacheUrl.searchParams.set("provider", providerForLocale(locale));
+  cacheUrl.searchParams.set("date", dateKey);
 
   return new Request(cacheUrl.toString(), { method: "GET" });
+}
+
+function horoscopeCacheControl(dateKey, nowDate) {
+  if (dateKey !== dateKeyInTimeZone(nowDate)) {
+    return "public, max-age=0, s-maxage=0";
+  }
+
+  const secondsUntilMidnight = secondsUntilSiteMidnight(nowDate);
+  const edgeTtl = Math.min(21_600, secondsUntilMidnight);
+  const browserTtl = Math.min(300, edgeTtl);
+
+  return `public, max-age=${browserTtl}, s-maxage=${edgeTtl}`;
+}
+
+function secondsUntilSiteMidnight(date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    hourCycle: "h23",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone: SITE_TIME_ZONE,
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, Number(part.value)]));
+  const elapsedSeconds =
+    values.hour * 3600 +
+    values.minute * 60 +
+    values.second +
+    date.getUTCMilliseconds() / 1000;
+
+  return Math.max(0, Math.floor(86_400 - elapsedSeconds));
+}
+
+function hasExpectedHoroscopeHeaders(response, locale, dateKey) {
+  return (
+    response.headers.get("x-horoscope-date") === dateKey &&
+    response.headers.get("x-horoscope-provider") === providerForLocale(locale)
+  );
+}
+
+function responseWithCurrentCacheControl(response, dateKey, nowDate) {
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", horoscopeCacheControl(dateKey, nowDate));
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function isDateKey(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
 function getRuntimeCache() {
@@ -337,9 +423,21 @@ function jsonResponse(payload, init = {}) {
   return new Response(JSON.stringify(payload), {
     ...init,
     headers: {
-      ...JSON_HEADERS,
+      "content-type": "application/json; charset=utf-8",
       ...(init.headers ?? {}),
     },
+  });
+}
+
+function responseForMethod(response, method) {
+  if (method !== "HEAD") {
+    return response;
+  }
+
+  return new Response(null, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
   });
 }
 

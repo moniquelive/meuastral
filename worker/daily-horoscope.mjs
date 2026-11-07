@@ -43,12 +43,16 @@ export function dailyHoroscopeMarkup(sign, locale, date = new Date()) {
   const updateNote = isEnglish
     ? "Daily reading updated for the São Paulo calendar date."
     : "Leitura diária atualizada conforme a data de São Paulo.";
+  const attribution = isEnglish
+    ? '<p class="daily-horoscope__attribution"><a href="https://zodiactimeline.com">Horoscopes by Zodiac Timeline</a></p>'
+    : "";
 
   return [
     '<section class="daily-horoscope" data-daily-horoscope>',
     `<p class="content-eyebrow">${escapeHtml(eyebrow)}</p>`,
     `<h2>${escapeHtml(heading)}</h2>`,
     `<p class="daily-horoscope__reading">${escapeHtml(sign.resume)}</p>`,
+    attribution,
     `<p class="daily-horoscope__date">${escapeHtml(updateNote)}</p>`,
     "</section>",
   ].join("");
