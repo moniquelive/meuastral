@@ -51,7 +51,7 @@ depends = ["build"]
 run = "node scripts/check-build.mjs"
 
 [tasks."check:sources"]
-description = "Check fresh horoscope providers and the production API in both languages"
+description = "Check today's shared production horoscope snapshots in both languages"
 run = "node scripts/check-horoscope-sources.mjs"
 
 [tasks.clean]

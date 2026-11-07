@@ -35,6 +35,33 @@ describe("Daily horoscope pages", () => {
     assert.match(markup, /Escolha &lt;calma&gt; &amp; clareza\./);
   });
 
+  it("credits Zodiac Timeline only on escaped English readings", () => {
+    const english = dailyHoroscopeMarkup(
+      {
+        name: "Aries",
+        resume: "Keep an open mind. <img src=x onerror=alert(1)>",
+      },
+      "en-US",
+      new Date("2026-07-10T15:00:00Z"),
+    );
+    const portuguese = dailyHoroscopeMarkup(
+      {
+        name: "Áries",
+        resume: "Mantenha a mente aberta.",
+      },
+      "pt-BR",
+      new Date("2026-07-10T15:00:00Z"),
+    );
+
+    assert.match(
+      english,
+      /<a href="https:\/\/zodiactimeline\.com">Horoscopes by Zodiac Timeline<\/a>/,
+    );
+    assert.match(english, /&lt;img src=x onerror=alert\(1\)&gt;/);
+    assert.doesNotMatch(english, /<img\b/i);
+    assert.doesNotMatch(portuguese, /Zodiac Timeline|zodiactimeline\.com/);
+  });
+
   it("replaces only the crawlable daily-reading placeholder", () => {
     const html = [
       "<main>",

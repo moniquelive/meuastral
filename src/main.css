@@ -76,6 +76,17 @@
   margin: 1rem 0 0;
 }
 
+.daily-horoscope__attribution {
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0;
+}
+
+.daily-horoscope__attribution a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 @keyframes elm-arrive {
   from {
     opacity: 0;
@@ -385,10 +396,17 @@
 }
 
 .meuastral-reading-date,
-.meuastral-sign-hint {
+.meuastral-sign-hint,
+.meuastral-horoscope__attribution {
   color: var(--ma-muted);
   font-size: 0.85rem;
   text-align: center;
+}
+
+.meuastral-horoscope__attribution a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .meuastral-sign-hint {

@@ -36,9 +36,8 @@ jobs:
         with:
           node-version: ${{ steps.node.outputs.version }}
           package-manager-cache: false
-      - name: Check fresh provider and production API responses
+      - name: Check today's shared horoscope snapshots
         env:
           HOROSCOPE_LOCALE: ${{ matrix.locale }}
-          API_NINJAS_KEY: ${{ matrix.locale == 'en-US' && secrets.API_NINJAS_KEY || '' }}
           TZ: America/Sao_Paulo
         run: node scripts/check-horoscope-sources.mjs "$HOROSCOPE_LOCALE"

@@ -1,30 +1,11 @@
 import { spawn } from "node:child_process";
-import { chmod, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 
 const env = {
   ...process.env,
   ELM_HOME: ".elm-home",
   MEUASTRAL_LOCAL_DEV: "1",
 };
-const args = ["wrangler", "dev"];
-let envFile;
-
-if (env.API_NINJAS_KEY) {
-  envFile = join(
-    tmpdir(),
-    `meuastral-wrangler-${Date.now()}-${Math.random().toString(16).slice(2)}.env`,
-  );
-
-  await writeFile(envFile, `API_NINJAS_KEY=${env.API_NINJAS_KEY}\n`, {
-    mode: 0o600,
-  });
-  await chmod(envFile, 0o600);
-  args.push("--env-file", envFile);
-}
-
-const child = spawn("npx", args, {
+const child = spawn("npx", ["wrangler", "dev"], {
   env,
   shell: false,
   stdio: "inherit",
@@ -36,11 +17,7 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
   });
 }
 
-child.on("exit", async (code, signal) => {
-  if (envFile) {
-    await rm(envFile, { force: true });
-  }
-
+child.on("exit", (code, signal) => {
   if (signal) {
     process.kill(process.pid, signal);
     return;
@@ -49,11 +26,7 @@ child.on("exit", async (code, signal) => {
   process.exit(code ?? 0);
 });
 
-child.on("error", async (error) => {
-  if (envFile) {
-    await rm(envFile, { force: true });
-  }
-
+child.on("error", (error) => {
   console.error(error);
   process.exit(1);
 });

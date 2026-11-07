@@ -18,7 +18,7 @@ mise run install
 mise run dev
 ```
 
-The development server uses Wrangler and normally listens on `http://localhost:8787/`. Set `API_NINJAS_KEY` in the environment to exercise the English horoscope provider locally; never put that key in browser code or committed files.
+The development server uses Wrangler and normally listens on `http://localhost:8787/`. Both horoscope sources are public and require no API key. Wrangler provides a local Durable Object store for the daily cache.
 
 ## Commands
 
@@ -47,7 +47,11 @@ Use `npm run test:watch` for an interactive Elm test loop. Prefer the Mise tasks
 
 ## Architecture notes
 
-The Worker handles `/api/horoscope` before static assets. Portuguese requests use Terra; English requests use API Ninjas. Provider payloads are normalized to one public response shape and cached only when all twelve signs are present. Static HTML falls through to Cloudflare Assets.
+The Worker handles `/api/horoscope` before static assets. Portuguese requests use Terra; English requests use the [Zodiac Timeline feed](https://zodiactimeline.com/horoscope-api/), with visible attribution beside English readings. The feed contains all twelve signs for several dates; the adapter selects the configured São Paulo date. Provider payloads are normalized to one public response shape. Static HTML falls through to Cloudflare Assets.
+
+One SQLite-backed Durable Object per locale stores the latest complete daily snapshot. Requests from every Cloudflare data center share it, and simultaneous misses share one provider fetch. A normal day therefore needs one English feed request and one Terra request globally, including monitoring. The edge Cache API remains a fast local layer; its expiry and browser caching are capped at São Paulo midnight. The API exposes the snapshot date and provider through `X-Horoscope-Date` and `X-Horoscope-Provider`.
+
+Only complete, unique twelve-sign snapshots are stored. Failed refreshes return non-cacheable errors and persist a five-minute retry cooldown to prevent request bursts; yesterday's readings are never presented as today's. Storage failure does not bypass the shared cache. A Worker restart reuses the persisted snapshot, though an interruption between fetching and saving may require a duplicate fetch. Each object keeps only the latest snapshot and retry state, so storage stays bounded.
 
 The production build runs Hugo, generates the localized sitemap from rendered `hreflang` metadata, builds the CSS bundle, compiles and minifies Elm, fingerprints app assets, copies public assets, and validates the result through `mise run check:build`.
 
@@ -65,12 +69,14 @@ npm run deploy
 
 Run `mise run ci` before deployment or before opening a pull request.
 
+The `HOROSCOPE_CACHE` binding and `v1-horoscope-cache` SQLite migration in `wrangler.toml` must be deployed together with the Worker. SQLite Durable Objects are available on Cloudflare's free plan, subject to its included limits. The retired `API_NINJAS_KEY` is no longer read by the app or GitHub workflow.
+
 ## Daily horoscope source checks
 
 `.github/workflows/horoscope-sources.yml` runs every day at **09:00 America/Sao_Paulo** and supports **Run workflow** in GitHub Actions. It becomes active once committed to the default branch. GitHub may delay scheduled runs.
 
-Each locale has an independent job, so a Portuguese failure does not hide the English result. The check calls the real Worker provider adapter directly from Node, bypassing the Cloudflare cache, then checks the production API. Both responses must contain all 12 unique signs with nonempty names and readings. Network errors, malformed JSON, incomplete data, or missing credentials fail the job, with results in its log and summary. The checks verify availability and payload shape; they cannot independently establish the editorial freshness or language of provider text.
+Each locale has an independent job, so a Portuguese failure does not hide the English result. The check requests the production API once per locale, using the same shared cache as visitors. It requires today's São Paulo snapshot date, the configured provider, all 12 unique signs, and nonempty names and readings. Network errors, malformed JSON, stale snapshots, and incomplete data fail the job, with results in its log and summary. These checks establish served availability and snapshot freshness; they cannot independently establish the editorial freshness or language of provider text.
 
-The English job requires the repository Actions secret `API_NINJAS_KEY`. Do not put its value in workflow YAML or logs. Scheduled and manual runs use trusted repository code; this workflow does not run against pull requests. A normal successful run makes one Terra request and twelve API Ninjas requests, plus two requests to the public API (which may itself refresh its cache). No package installation is required.
+No provider secrets are required. Scheduled and manual runs use trusted repository code; this workflow does not run against pull requests. Monitoring can populate a missing daily snapshot, but it never bypasses the shared cache for a separate provider check.
 
-Run both checks locally with `mise run check:sources` when the key is already in your environment, or `mise exec -- node --env-file=.dev.vars scripts/check-horoscope-sources.mjs`. These live checks are separate from `mise run ci`, which uses deterministic tests and does not consume provider requests. GitHub's normal Actions notification preferences control failure notifications.
+Run both live checks locally with `mise run check:sources`. They are separate from `mise run ci`, which uses deterministic tests and does not consume provider requests. GitHub's normal Actions notification preferences control failure notifications.
