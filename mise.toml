@@ -1,12 +1,12 @@
 [tools]
-hugo-extended = "0.162.1"
-node = "26.3.0"
+hugo-extended = "0.169.0"
+node = "26.13.0"
 "npm:elm" = "0.19.1-6"
 "npm:elm-format" = "0.8.8"
 "npm:elm-test" = "0.19.1-revision17"
 "npm:tailwindcss" = "3.4.17"
-"npm:terser" = "5.48.0"
-"npm:wrangler" = "4.102.0"
+"npm:terser" = "5.51.2"
+"npm:wrangler" = "4.158.0"
 
 [env]
 TZ = "America/Sao_Paulo"
